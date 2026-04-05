@@ -84,7 +84,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               }} />
             </div>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 700, color: '#EDEDEA' }}>
-              corpus
+              Corpus
             </span>
           </Link>
         </div>

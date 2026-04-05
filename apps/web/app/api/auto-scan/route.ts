@@ -82,7 +82,7 @@ export async function POST(): Promise<Response> {
       execSync(`git clone --depth 1 https://github.com/${repo} ${tmp}`, { timeout: 15000, stdio: 'pipe' });
 
       // Scan
-      const graphEngine = await import('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/graph-engine.js');
+      const graphEngine = await import(path.resolve(process.cwd(), '../../packages/core/dist/graph-engine.js'));
       const start = Date.now();
       const graph = graphEngine.buildGraph(tmp);
       const scanMs = Date.now() - start;
@@ -90,8 +90,8 @@ export async function POST(): Promise<Response> {
       // Security scan
       let findings = 0;
       try {
-        const secretMod = await import('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/scanners/secret-detector.js');
-        const safetyMod = await import('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/scanners/code-safety.js');
+        const secretMod = await import(path.resolve(process.cwd(), '../../packages/core/dist/scanners/secret-detector.js'));
+        const safetyMod = await import(path.resolve(process.cwd(), '../../packages/core/dist/scanners/code-safety.js'));
         const files = collectFiles(tmp, 80);
         for (const file of files) {
           try {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import Link from 'next/link';
 import { NavBar } from '../../components/NavBar';
 
 interface GraphNode {

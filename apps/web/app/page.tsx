@@ -81,7 +81,7 @@ function FloatingDots() {
 
 /* ---- Terminal typing animation ---- */
 function HeroSubtitle() {
-  const [stats, setStats] = useState({ repos: 214, findings: 548 });
+  const [stats, setStats] = useState({ repos: 280, findings: 711 });
   useEffect(() => {
     fetch('/benchmarks.json').then(r => r.json()).then(d => {
       setStats({ repos: d.totalReposScanned || 214, findings: 548 });
@@ -97,7 +97,7 @@ function HeroSubtitle() {
 }
 
 function LiveStats() {
-  const [stats, setStats] = useState({ repos: 214, files: 187000, findings: 548, nodes: 617000 });
+  const [stats, setStats] = useState({ repos: 280, files: 216000, findings: 711, nodes: 723000 });
   const [animated, setAnimated] = useState({ repos: 0, files: 0, findings: 0, nodes: 0 });
 
   useEffect(() => {

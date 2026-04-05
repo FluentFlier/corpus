@@ -4,7 +4,7 @@ export default function Loading(): React.ReactElement {
   return (
     <main className="min-h-screen bg-corpus-bg bg-grid">
       <nav className="flex items-center justify-between px-8 py-5">
-        <span className="font-mono text-corpus-text text-sm">corpus</span>
+        <span className="font-mono text-corpus-text text-sm">Corpus</span>
       </nav>
 
       <div className="max-w-4xl mx-auto px-8">
