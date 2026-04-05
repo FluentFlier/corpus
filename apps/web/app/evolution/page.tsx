@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { NavBar } from '../../components/NavBar';
 
 /* ---- Types ---- */
 interface TimelinePoint {
@@ -267,25 +268,9 @@ export default function EvolutionPage() {
   return (
     <div className="min-h-screen" style={{ background: '#050505', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4" style={{ background: 'rgba(5,5,5,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid #111' }}>
-        <a href="/" className="flex items-center gap-2 text-[#EDEDEA] text-lg tracking-tight" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-            <path d="M2 12h20" />
-          </svg>
-          corpus
-        </a>
-        <div className="flex items-center gap-6">
-          <a href="/scan" className="text-[#777] text-sm hover:text-[#EDEDEA] transition-colors duration-200">Scan</a>
-          <a href="/graph" className="text-[#777] text-sm hover:text-[#EDEDEA] transition-colors duration-200">Explorer</a>
-          <a href="/evolution" className="text-emerald-400 text-sm">Evolution</a>
-          <a href="/demo" className="text-[#777] text-sm hover:text-[#EDEDEA] transition-colors duration-200">Demo</a>
-          <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" className="text-[#777] text-sm hover:text-[#EDEDEA] transition-colors duration-200">GitHub</a>
-        </div>
-      </nav>
+      <NavBar />
 
-      <main className="max-w-4xl mx-auto px-6 pt-28 pb-20">
+      <main className="max-w-4xl mx-auto px-6 pt-12 pb-20">
         {/* Header */}
         <header className="mb-16">
           <h1 className="text-3xl md:text-4xl font-bold text-[#EDEDEA] tracking-tight">

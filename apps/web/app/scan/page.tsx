@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { NavBar } from '../../components/NavBar';
 
 /* ---- Types ---- */
 
@@ -225,26 +226,9 @@ export default function ScanPage(): React.ReactElement {
       </div>
 
       {/* ---- NAV ---- */}
-      <nav
-        aria-label="Main navigation"
-        className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 max-w-6xl mx-auto w-full animate-fade-in"
-      >
-        <a href="/" className="flex items-center gap-2.5 group">
-          <div className="relative w-3 h-3">
-            <div className="absolute inset-0 rounded-full bg-emerald-500 animate-glow-pulse" />
-            <div className="absolute inset-[2px] rounded-full bg-emerald-400" />
-          </div>
-          <span className="font-mono text-base tracking-tight font-bold text-corpus-text">
-            corpus
-          </span>
-        </a>
-        <div className="flex items-center gap-6">
-          <a href="/scan" className="text-emerald-400 text-sm font-medium transition-colors duration-200">Scan</a>
-          <a href="/graph" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Explorer</a>
-          <a href="/demo" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Demo</a>
-          <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">GitHub</a>
-        </div>
-      </nav>
+      <div className="relative z-10">
+        <NavBar />
+      </div>
 
       {/* ---- CONTENT ---- */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-24">

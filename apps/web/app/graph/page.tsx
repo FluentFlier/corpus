@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
+import { NavBar } from '../../components/NavBar';
 
 interface GraphNode {
   id: string; name: string; type: string; file: string; line: number;
@@ -120,16 +121,12 @@ export default function GraphPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#050505', color: '#e5e7eb', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* Top bar */}
+      <NavBar />
       <div style={{
-        position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '12px 24px', borderBottom: '1px solid #1f2937', background: '#050505ee', backdropFilter: 'blur(8px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '8px 24px', borderBottom: '1px solid #1f2937', background: '#050505', fontSize: 13,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, fontSize: 13 }}>
-          <Link href="/" style={{ color: '#6b7280', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ color: '#10b981', fontSize: 8 }}>●</span>
-            <span style={{ fontWeight: 600, color: '#e5e7eb' }}>corpus</span>
-          </Link>
-          <span style={{ color: '#374151' }}>|</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <span><strong>{data.stats.totalFiles}</strong> <span style={{ color: '#6b7280' }}>files</span></span>
           <span><strong>{data.stats.totalFunctions}</strong> <span style={{ color: '#6b7280' }}>functions</span></span>
           <span style={{ color: '#10b981' }}><strong>{data.stats.healthScore}</strong>/100</span>
@@ -140,8 +137,6 @@ export default function GraphPage() {
             style={{ background: '#111', border: '1px solid #1f2937', borderRadius: 6, padding: '6px 12px', color: '#e5e7eb', fontSize: 13, width: 200, outline: 'none' }}
           />
           <span style={{ color: '#6b7280', fontSize: 12 }}>Codebase Explorer</span>
-          <Link href="/live" style={{ color: '#6b7280', textDecoration: 'none', fontSize: 13 }}>Live</Link>
-          <Link href="/demo" style={{ color: '#6b7280', textDecoration: 'none', fontSize: 13 }}>Demo</Link>
         </div>
       </div>
 
@@ -473,6 +468,167 @@ export default function GraphPage() {
           )}
         </div>
       </div>}
+    </div>
+  );
+}
+
+// ── Dependency Graph (box diagram with arrows) ──────────────────────────────
+
+function DependencyGraph({
+  clusters,
+  edges,
+  nodes,
+}: {
+  clusters: [string, GraphNode[]][];
+  edges: GraphEdge[];
+  nodes: GraphNode[];
+}) {
+  // Build a lookup: nodeId -> cluster name
+  const nodeCluster = useMemo(() => {
+    const map = new Map<string, string>();
+    nodes.forEach(n => map.set(n.id, getCluster(n.file)));
+    return map;
+  }, [nodes]);
+
+  // Find cross-cluster connections (deduplicated, directional)
+  const connections = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { from: string; to: string }[] = [];
+    edges.forEach(e => {
+      const sc = nodeCluster.get(e.source);
+      const tc = nodeCluster.get(e.target);
+      if (sc && tc && sc !== tc) {
+        const key = `${sc}->${tc}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          result.push({ from: sc, to: tc });
+        }
+      }
+    });
+    return result;
+  }, [edges, nodeCluster]);
+
+  // Count files per cluster (module-type nodes)
+  const fileCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    clusters.forEach(([name, clusterNodes]) => {
+      map.set(name, clusterNodes.filter(n => n.type === 'module').length);
+    });
+    return map;
+  }, [clusters]);
+
+  // Layout: arrange boxes in 2 rows
+  const boxW = 120;
+  const boxH = 48;
+  const gapX = 40;
+  const gapY = 36;
+  const clusterNames = clusters.map(([name]) => name);
+  const topRowCount = Math.ceil(clusterNames.length / 2);
+
+  const positions = useMemo(() => {
+    const map = new Map<string, { x: number; y: number }>();
+    clusterNames.forEach((name, i) => {
+      const row = i < topRowCount ? 0 : 1;
+      const col = i < topRowCount ? i : i - topRowCount;
+      map.set(name, {
+        x: 24 + col * (boxW + gapX),
+        y: 16 + row * (boxH + gapY),
+      });
+    });
+    return map;
+  }, [clusterNames, topRowCount]);
+
+  const svgW = 24 + Math.max(topRowCount, clusterNames.length - topRowCount) * (boxW + gapX);
+  const svgH = 16 + (clusterNames.length > topRowCount ? 2 : 1) * (boxH + gapY) + 8;
+
+  return (
+    <div style={{ padding: '16px 24px 0' }}>
+      <div style={{ marginBottom: 6 }}>
+        <span style={{ fontSize: 11, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 500 }}>
+          Package dependencies
+        </span>
+      </div>
+      <div style={{ overflowX: 'auto' }}>
+        <svg width={svgW} height={svgH} style={{ display: 'block', maxHeight: 200 }}>
+          <defs>
+            <marker id="dep-arrow" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6" fill="none" stroke="#4b5563" strokeWidth="1" />
+            </marker>
+          </defs>
+
+          {/* Connection lines */}
+          {connections.map(({ from, to }) => {
+            const fp = positions.get(from);
+            const tp = positions.get(to);
+            if (!fp || !tp) return null;
+
+            // Compute edge points from box centers
+            const fcx = fp.x + boxW / 2;
+            const fcy = fp.y + boxH / 2;
+            const tcx = tp.x + boxW / 2;
+            const tcy = tp.y + boxH / 2;
+
+            // Determine which side to connect from/to
+            const dx = tcx - fcx;
+            const dy = tcy - fcy;
+            let sx: number, sy: number, ex: number, ey: number;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+              // Horizontal connection
+              sx = dx > 0 ? fp.x + boxW : fp.x;
+              sy = fcy;
+              ex = dx > 0 ? tp.x : tp.x + boxW;
+              ey = tcy;
+            } else {
+              // Vertical connection
+              sx = fcx;
+              sy = dy > 0 ? fp.y + boxH : fp.y;
+              ex = tcx;
+              ey = dy > 0 ? tp.y : tp.y + boxH;
+            }
+
+            return (
+              <line
+                key={`${from}-${to}`}
+                x1={sx} y1={sy} x2={ex} y2={ey}
+                stroke="#4b5563" strokeWidth={1} opacity={0.5}
+                markerEnd="url(#dep-arrow)"
+              />
+            );
+          })}
+
+          {/* Boxes */}
+          {clusterNames.map(name => {
+            const pos = positions.get(name);
+            if (!pos) return null;
+            const color = COLORS[name] || '#64748b';
+            const files = fileCounts.get(name) || 0;
+
+            return (
+              <g key={name}>
+                <rect
+                  x={pos.x} y={pos.y} width={boxW} height={boxH} rx={6}
+                  fill={color + '12'} stroke={color + '40'} strokeWidth={1}
+                />
+                <text
+                  x={pos.x + boxW / 2} y={pos.y + 20}
+                  textAnchor="middle" fill="#e5e7eb" fontSize={12} fontWeight={600}
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >
+                  {name}
+                </text>
+                <text
+                  x={pos.x + boxW / 2} y={pos.y + 35}
+                  textAnchor="middle" fill="#6b7280" fontSize={10}
+                  fontFamily="system-ui, -apple-system, sans-serif"
+                >
+                  {files} files
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
     </div>
   );
 }

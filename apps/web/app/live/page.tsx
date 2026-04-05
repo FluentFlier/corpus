@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { NavBar } from '../../components/NavBar';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -331,72 +332,7 @@ export default function LivePage() {
       }}
     >
       {/* ---- Top nav ---- */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 24px',
-          height: 48,
-          borderBottom: '1px solid #1f2937',
-          flexShrink: 0,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <a
-            href="/"
-            style={{
-              fontSize: 14,
-              fontWeight: 600,
-              color: '#e5e7eb',
-              textDecoration: 'none',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            corpus
-          </a>
-          <span style={{ color: '#374151' }}>|</span>
-          <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}>Live</span>
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              marginLeft: 4,
-            }}
-          >
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                backgroundColor: connected ? '#10b981' : '#ef4444',
-                display: 'inline-block',
-              }}
-            />
-            <span style={{ fontSize: 11, color: '#6b7280' }}>
-              {connected ? 'Connected' : 'Demo'}
-            </span>
-          </span>
-        </div>
-
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <a href="/graph" style={{ fontSize: 13, color: '#6b7280', textDecoration: 'none' }}>
-            Graph
-          </a>
-          <a href="/demo" style={{ fontSize: 13, color: '#6b7280', textDecoration: 'none' }}>
-            Demo
-          </a>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ fontSize: 13, color: '#6b7280', textDecoration: 'none' }}
-          >
-            GitHub
-          </a>
-        </nav>
-      </header>
+      <NavBar />
 
       {/* ---- Main content ---- */}
       <div

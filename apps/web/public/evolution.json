@@ -97,6 +97,146 @@
       "patternsLearned": 15,
       "suppressed": 6,
       "note": "Auto-scan batch at 2:13:04 AM"
+    },
+    {
+      "reposScanned": 78,
+      "totalFindings": 14,
+      "patternsLearned": 16,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:23:44 AM"
+    },
+    {
+      "reposScanned": 83,
+      "totalFindings": 20,
+      "patternsLearned": 16,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:23:57 AM"
+    },
+    {
+      "reposScanned": 88,
+      "totalFindings": 50,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:24:14 AM"
+    },
+    {
+      "reposScanned": 93,
+      "totalFindings": 58,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:24:17 AM"
+    },
+    {
+      "reposScanned": 98,
+      "totalFindings": 124,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:24:26 AM"
+    },
+    {
+      "reposScanned": 103,
+      "totalFindings": 139,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:24:35 AM"
+    },
+    {
+      "reposScanned": 108,
+      "totalFindings": 182,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:24:42 AM"
+    },
+    {
+      "reposScanned": 113,
+      "totalFindings": 186,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:24:45 AM"
+    },
+    {
+      "reposScanned": 118,
+      "totalFindings": 190,
+      "patternsLearned": 16,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:24:47 AM"
+    },
+    {
+      "reposScanned": 123,
+      "totalFindings": 247,
+      "patternsLearned": 16,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:24:51 AM"
+    },
+    {
+      "reposScanned": 128,
+      "totalFindings": 251,
+      "patternsLearned": 16,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:24:53 AM"
+    },
+    {
+      "reposScanned": 133,
+      "totalFindings": 252,
+      "patternsLearned": 16,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:24:56 AM"
+    },
+    {
+      "reposScanned": 138,
+      "totalFindings": 266,
+      "patternsLearned": 16,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:25:03 AM"
+    },
+    {
+      "reposScanned": 143,
+      "totalFindings": 293,
+      "patternsLearned": 16,
+      "suppressed": 3,
+      "note": "Auto-scan batch at 2:25:18 AM"
+    },
+    {
+      "reposScanned": 148,
+      "totalFindings": 295,
+      "patternsLearned": 16,
+      "suppressed": 3,
+      "note": "Auto-scan batch at 2:25:21 AM"
+    },
+    {
+      "reposScanned": 153,
+      "totalFindings": 304,
+      "patternsLearned": 16,
+      "suppressed": 3,
+      "note": "Auto-scan batch at 2:26:37 AM"
+    },
+    {
+      "reposScanned": 158,
+      "totalFindings": 304,
+      "patternsLearned": 16,
+      "suppressed": 2,
+      "note": "Auto-scan batch at 2:27:17 AM"
+    },
+    {
+      "reposScanned": 163,
+      "totalFindings": 315,
+      "patternsLearned": 16,
+      "suppressed": 2,
+      "note": "Auto-scan batch at 2:27:22 AM"
+    },
+    {
+      "reposScanned": 168,
+      "totalFindings": 338,
+      "patternsLearned": 16,
+      "suppressed": 2,
+      "note": "Auto-scan batch at 2:27:29 AM"
+    },
+    {
+      "reposScanned": 173,
+      "totalFindings": 342,
+      "patternsLearned": 16,
+      "suppressed": 2,
+      "note": "Auto-scan batch at 2:27:36 AM"
     }
   ],
   "insights": [
@@ -127,12 +267,12 @@
     }
   ],
   "summary": {
-    "totalRepos": 73,
+    "totalRepos": 173,
     "totalFiles": 50418,
     "totalNodes": 164295,
-    "totalFindings": 337,
-    "patternsLearned": 15,
-    "patternsSuppressed": 6,
+    "totalFindings": 342,
+    "patternsLearned": 16,
+    "patternsSuppressed": 2,
     "falsePositiveReduction": "45%",
     "note": "Corpus reduces noise by 45% compared to a static scanner by learning which patterns are test-only."
   }

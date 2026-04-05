@@ -21,8 +21,15 @@ const FINDINGS_PATH = path.join(CORPUS_ROOT, 'apps/web/public/findings.json');
 const EVOLUTION_PATH = path.join(CORPUS_ROOT, 'apps/web/public/evolution.json');
 const SCAN_LOG_PATH = path.join(CORPUS_ROOT, '.corpus/scan-log.json');
 
+// Load repos from batch files + hardcoded list
+const batchFile = path.join(__dirname, 'repos-batch2.txt');
+const batchRepos = fs.existsSync(batchFile)
+  ? fs.readFileSync(batchFile, 'utf-8').split('\n').filter(Boolean)
+  : [];
+
 // Popular TS/JS repos to scan (organized by category)
 const REPOS = [
+  ...batchRepos,
   // Already scanned (skip)
   // Web frameworks
   'koajs/koa', 'hapijs/hapi', 'total-js/framework', 'feathersjs/feathers',

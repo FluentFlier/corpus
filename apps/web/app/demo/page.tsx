@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { NavBar } from '../../components/NavBar';
 
 // ── Syntax Highlighter ───────────────────────────────────────────────────────
 
@@ -354,24 +355,7 @@ export default function DemoPage() {
       )}
 
       {/* Nav */}
-      <nav style={{
-        padding: '16px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottom: '1px solid #1a1a1a',
-      }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', color: '#fff' }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }} />
-          <span style={{ fontWeight: 700, fontSize: 14 }}>corpus</span>
-        </Link>
-        <div style={{ display: 'flex', gap: 24 }}>
-          <Link href="/scan" style={{ color: '#555', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}>Scan</Link>
-          <Link href="/graph" style={{ color: '#555', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}>Explorer</Link>
-          <Link href="/demo" style={{ color: '#10b981', textDecoration: 'none', fontSize: 13 }}>Demo</Link>
-          <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" style={{ color: '#555', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}>GitHub</a>
-        </div>
-      </nav>
+      <NavBar />
 
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '48px 32px' }}>
         {/* Header */}
