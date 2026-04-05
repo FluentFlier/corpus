@@ -2,7 +2,9 @@
 
 **The immune system for vibe-coded software.**
 
-Corpus watches your AI-generated code, catches breakage before it lands, and self-heals your project. No code to read. No warnings to ignore. Just a visual graph that stays green.
+> 183 repos scanned. 150K files analyzed. 492K graph nodes. 401 real findings. The system learns.
+
+Corpus watches your AI-generated code, catches breakage before it lands, and self-heals your project. No code to read. No warnings to ignore. The immune system never stops learning.
 
 ## The Problem
 

@@ -493,23 +493,23 @@ export default function HomePage(): React.ReactElement {
       <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 animate-fade-in-7" aria-label="Project statistics">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-corpus-muted text-sm text-center mb-10 font-mono">
-            Scanned 29 repos: express, vue, nestjs, webpack, remix, n8n, langchain, and more
+            Autonomously scanned 183 repos: React, Vue, Angular, Svelte, Next.js, and 178 more
           </p>
           <div className="grid grid-cols-4 gap-8 text-center">
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">29</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">183</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">repos scanned</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">50K+</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">150K+</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">files analyzed</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">400+</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">401</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">issues found</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">81K+</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">492K</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">graph nodes</div>
             </div>
           </div>
