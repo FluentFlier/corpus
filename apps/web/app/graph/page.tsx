@@ -665,7 +665,7 @@ function DependencyGraph({
   );
 }
 
-// ── Visual Graph Component (SVG, pre-computed positions) ─────────────────────
+// ── Layered Visual Graph (packages → files → functions) ──────────────────────
 
 function VisualGraph({ data, clusters, selected, onSelect, search }: {
   data: GraphData;
@@ -674,145 +674,288 @@ function VisualGraph({ data, clusters, selected, onSelect, search }: {
   onSelect: (n: GraphNode | null) => void;
   search: string;
 }) {
+  const [expanded, setExpanded] = useState<string | null>(null); // cluster name
+  const [expandedFile, setExpandedFile] = useState<string | null>(null); // file path
+
   const W = typeof window !== 'undefined' ? window.innerWidth : 1200;
-  const H = typeof window !== 'undefined' ? window.innerHeight - 60 : 700;
+  const H = typeof window !== 'undefined' ? window.innerHeight - 100 : 650;
+  const centerX = W / 2;
+  const centerY = H / 2;
 
-  // Position clusters in a circle
-  const clusterPositions = useMemo(() => {
-    const positions = new Map<string, { cx: number; cy: number; r: number }>();
-    const centerX = W / 2;
-    const centerY = H / 2;
-    const orbitRadius = Math.min(W, H) * 0.32;
+  // Cross-cluster edge counts for line thickness
+  const crossEdges = useMemo(() => {
+    const counts = new Map<string, number>();
+    data.edges.forEach(e => {
+      const sc = clusters.find(([, ns]) => ns.some(n => n.id === e.source))?.[0];
+      const tc = clusters.find(([, ns]) => ns.some(n => n.id === e.target))?.[0];
+      if (sc && tc && sc !== tc) {
+        const key = [sc, tc].sort().join('::');
+        counts.set(key, (counts.get(key) || 0) + 1);
+      }
+    });
+    return counts;
+  }, [data.edges, clusters]);
 
-    clusters.forEach(([name, nodes], i) => {
+  // ── LAYER 1: Package overview ──
+  if (!expanded) {
+    const orbitR = Math.min(W, H) * 0.28;
+    const positions = clusters.map(([name, nodes], i) => {
       const angle = (i / clusters.length) * Math.PI * 2 - Math.PI / 2;
-      const r = Math.max(40, Math.sqrt(nodes.length) * 12);
-      positions.set(name, {
-        cx: centerX + Math.cos(angle) * orbitRadius,
-        cy: centerY + Math.sin(angle) * orbitRadius,
-        r,
-      });
-    });
-    return positions;
-  }, [clusters, W, H]);
-
-  // Position nodes within their clusters
-  const nodePositions = useMemo(() => {
-    const pos = new Map<string, { x: number; y: number }>();
-
-    clusters.forEach(([clusterName, nodes]) => {
-      const cp = clusterPositions.get(clusterName);
-      if (!cp) return;
-
-      // Sort: modules first (larger), then by name
-      const sorted = [...nodes].sort((a, b) => {
-        if (a.type === 'module' && b.type !== 'module') return -1;
-        if (a.type !== 'module' && b.type === 'module') return 1;
-        return a.name.localeCompare(b.name);
-      });
-
-      sorted.forEach((n, i) => {
-        const angle = (i / sorted.length) * Math.PI * 2;
-        const dist = n.type === 'module'
-          ? cp.r * 0.5 * (0.3 + (i / sorted.length) * 0.7)
-          : cp.r * (0.4 + Math.random() * 0.5);
-        pos.set(n.id, {
-          x: cp.cx + Math.cos(angle) * dist,
-          y: cp.cy + Math.sin(angle) * dist,
-        });
-      });
+      const modules = nodes.filter(n => n.type === 'module').length;
+      const funcs = nodes.filter(n => n.type === 'function').length;
+      const r = Math.max(32, Math.sqrt(nodes.length) * 6);
+      return {
+        name, nodes, modules, funcs, r,
+        cx: centerX + Math.cos(angle) * orbitR,
+        cy: centerY + Math.sin(angle) * orbitR,
+        color: COLORS[name] || '#64748b',
+      };
     });
 
-    return pos;
-  }, [clusters, clusterPositions]);
+    return (
+      <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
+        <svg width={W} height={H} style={{ background: '#050505' }}>
+          {/* Center label */}
+          <text x={centerX} y={centerY - 12} textAnchor="middle" fill="#ffffff20" fontSize={14} fontWeight={700} fontFamily="system-ui">corpus</text>
+          <text x={centerX} y={centerY + 8} textAnchor="middle" fill="#ffffff10" fontSize={11} fontFamily="system-ui">{data.stats.totalFiles} files · {data.stats.totalFunctions} functions</text>
+
+          {/* Cross-cluster edges */}
+          {positions.map((a, ai) =>
+            positions.slice(ai + 1).map(b => {
+              const key = [a.name, b.name].sort().join('::');
+              const count = crossEdges.get(key) || 0;
+              if (count === 0) return null;
+              return (
+                <line key={key} x1={a.cx} y1={a.cy} x2={b.cx} y2={b.cy}
+                  stroke="#ffffff" strokeWidth={Math.min(count * 0.3, 3)} opacity={0.06}
+                />
+              );
+            })
+          )}
+
+          {/* Package nodes */}
+          {positions.map(p => (
+            <g key={p.name} onClick={() => setExpanded(p.name)} style={{ cursor: 'pointer' }}>
+              {/* Glow */}
+              <circle cx={p.cx} cy={p.cy} r={p.r + 16} fill={p.color} opacity={0.04} />
+              {/* Ring */}
+              <circle cx={p.cx} cy={p.cy} r={p.r} fill={p.color + '15'} stroke={p.color} strokeWidth={1.5} opacity={0.7} />
+              {/* Name */}
+              <text x={p.cx} y={p.cy - 4} textAnchor="middle" fill="#e5e7eb" fontSize={13} fontWeight={700} fontFamily="system-ui">
+                {p.name}
+              </text>
+              {/* Stats */}
+              <text x={p.cx} y={p.cy + 12} textAnchor="middle" fill={p.color} fontSize={10} fontFamily="system-ui">
+                {p.modules} files · {p.funcs} fn
+              </text>
+            </g>
+          ))}
+        </svg>
+
+        {/* Breadcrumb */}
+        <div style={{ position: 'absolute', top: 12, left: 16, fontSize: 12, color: '#6b7280', fontFamily: 'ui-monospace, monospace' }}>
+          <span style={{ color: '#10b981' }}>corpus</span>
+          <span style={{ color: '#333', margin: '0 6px' }}>/</span>
+          <span>click a package to drill in</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── LAYER 2: Files within a package ──
+  const clusterNodes = clusters.find(([n]) => n === expanded)?.[1] || [];
+  const clusterColor = COLORS[expanded] || '#64748b';
+  const files = clusterNodes.filter(n => n.type === 'module');
+  const funcs = clusterNodes.filter(n => n.type === 'function');
+
+  if (!expandedFile) {
+    const fileOrbit = Math.min(W, H) * 0.3;
+    const filePositions = files.map((f, i) => {
+      const angle = (i / files.length) * Math.PI * 2 - Math.PI / 2;
+      const fileFuncs = funcs.filter(fn => fn.file === f.file);
+      const r = Math.max(18, Math.sqrt(fileFuncs.length + 1) * 8);
+      return {
+        ...f, fileFuncs, r,
+        cx: centerX + Math.cos(angle) * fileOrbit,
+        cy: centerY + Math.sin(angle) * fileOrbit,
+      };
+    });
+
+    // Intra-cluster edges between files
+    const fileEdges: { from: typeof filePositions[0]; to: typeof filePositions[0] }[] = [];
+    data.edges.forEach(e => {
+      const sf = filePositions.find(f => f.id === e.source || funcs.find(fn => fn.id === e.source && fn.file === f.file));
+      const tf = filePositions.find(f => f.id === e.target || funcs.find(fn => fn.id === e.target && fn.file === f.file));
+      if (sf && tf && sf.id !== tf.id && !fileEdges.some(fe => (fe.from.id === sf.id && fe.to.id === tf.id) || (fe.from.id === tf.id && fe.to.id === sf.id))) {
+        fileEdges.push({ from: sf, to: tf });
+      }
+    });
+
+    return (
+      <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
+        <svg width={W} height={H} style={{ background: '#050505' }}>
+          {/* Center label */}
+          <text x={centerX} y={centerY - 8} textAnchor="middle" fill={clusterColor} fontSize={16} fontWeight={700} fontFamily="system-ui">{expanded}</text>
+          <text x={centerX} y={centerY + 10} textAnchor="middle" fill="#ffffff15" fontSize={11} fontFamily="system-ui">{files.length} files · {funcs.length} functions</text>
+
+          {/* File-to-file edges */}
+          {fileEdges.map((e, i) => (
+            <line key={i} x1={e.from.cx} y1={e.from.cy} x2={e.to.cx} y2={e.to.cy}
+              stroke={clusterColor} strokeWidth={0.5} opacity={0.15}
+            />
+          ))}
+
+          {/* File nodes */}
+          {filePositions.map(f => {
+            const isMatch = search && f.name.toLowerCase().includes(search);
+            return (
+              <g key={f.id} onClick={() => setExpandedFile(f.file)} style={{ cursor: 'pointer' }}
+                opacity={search && !isMatch ? 0.2 : 1}>
+                <circle cx={f.cx} cy={f.cy} r={f.r + 8} fill={clusterColor} opacity={0.03} />
+                <circle cx={f.cx} cy={f.cy} r={f.r} fill={clusterColor + '18'} stroke={clusterColor} strokeWidth={1} opacity={0.6} />
+                {isMatch && <circle cx={f.cx} cy={f.cy} r={f.r + 4} stroke="#10b981" strokeWidth={1.5} fill="none" />}
+                <text x={f.cx} y={f.cy - 2} textAnchor="middle" fill="#e5e7eb" fontSize={10} fontWeight={600} fontFamily="ui-monospace, monospace">
+                  {f.name}
+                </text>
+                <text x={f.cx} y={f.cy + 10} textAnchor="middle" fill={clusterColor} fontSize={9} fontFamily="system-ui">
+                  {f.fileFuncs.length} fn
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Breadcrumb */}
+        <div style={{ position: 'absolute', top: 12, left: 16, fontSize: 12, fontFamily: 'ui-monospace, monospace' }}>
+          <span onClick={() => setExpanded(null)} style={{ color: '#10b981', cursor: 'pointer' }}>corpus</span>
+          <span style={{ color: '#333', margin: '0 6px' }}>/</span>
+          <span style={{ color: clusterColor }}>{expanded}</span>
+          <span style={{ color: '#333', margin: '0 6px' }}>/</span>
+          <span style={{ color: '#6b7280' }}>click a file</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ── LAYER 3: Functions within a file ──
+  const fileFuncs = funcs.filter(f => f.file === expandedFile);
+  const fileModule = files.find(f => f.file === expandedFile);
+  const fileName = expandedFile.split('/').pop() || expandedFile;
+  const funcOrbit = Math.min(W, H) * 0.28;
+
+  const funcPositions = fileFuncs.map((f, i) => {
+    const angle = (i / Math.max(fileFuncs.length, 1)) * Math.PI * 2 - Math.PI / 2;
+    const r = f.exported ? 22 : 16;
+    return {
+      ...f, r,
+      cx: centerX + Math.cos(angle) * funcOrbit,
+      cy: centerY + Math.sin(angle) * funcOrbit,
+    };
+  });
+
+  // Edges between functions in this file
+  const funcEdges: { from: typeof funcPositions[0]; to: typeof funcPositions[0]; type: string }[] = [];
+  data.edges.forEach(e => {
+    const sf = funcPositions.find(f => f.id === e.source);
+    const tf = funcPositions.find(f => f.id === e.target);
+    if (sf && tf) funcEdges.push({ from: sf, to: tf, type: e.type });
+  });
 
   return (
     <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
       <svg width={W} height={H} style={{ background: '#050505' }}>
-        {/* Cluster backgrounds */}
-        {clusters.map(([name]) => {
-          const cp = clusterPositions.get(name);
-          if (!cp) return null;
-          const color = COLORS[name] || '#64748b';
-          return (
-            <g key={`cluster-${name}`}>
-              <circle cx={cp.cx} cy={cp.cy} r={cp.r + 20} fill={color} opacity={0.03} />
-              <circle cx={cp.cx} cy={cp.cy} r={cp.r + 20} stroke={color} strokeWidth={0.5} fill="none" opacity={0.15} />
-              <text x={cp.cx} y={cp.cy - cp.r - 8} textAnchor="middle" fill={color} fontSize={11} fontWeight={600} fontFamily="system-ui">{name}</text>
-            </g>
-          );
-        })}
+        {/* Center: file name */}
+        <text x={centerX} y={centerY - 8} textAnchor="middle" fill={clusterColor} fontSize={14} fontWeight={700} fontFamily="ui-monospace, monospace">{fileName}</text>
+        <text x={centerX} y={centerY + 10} textAnchor="middle" fill="#ffffff15" fontSize={11} fontFamily="system-ui">{fileFuncs.length} functions</text>
 
-        {/* Edges */}
-        {data.edges.map((e, i) => {
-          const s = nodePositions.get(e.source);
-          const t = nodePositions.get(e.target);
-          if (!s || !t) return null;
-          const isHighlighted = selected && (e.source === selected.id || e.target === selected.id);
-          return (
-            <line key={i} x1={s.x} y1={s.y} x2={t.x} y2={t.y}
-              stroke={e.color || '#6366f1'} strokeWidth={isHighlighted ? 1 : 0.3}
-              opacity={isHighlighted ? 0.6 : 0.08}
-            />
-          );
-        })}
+        {/* Function edges */}
+        {funcEdges.map((e, i) => (
+          <line key={i} x1={e.from.cx} y1={e.from.cy} x2={e.to.cx} y2={e.to.cy}
+            stroke={e.type === 'calls' ? '#6366f1' : clusterColor} strokeWidth={1} opacity={0.2}
+          />
+        ))}
 
-        {/* Nodes */}
-        {data.nodes.map(n => {
-          const p = nodePositions.get(n.id);
-          if (!p) return null;
-          const cluster = getCluster(n.file);
-          const color = COLORS[cluster] || '#64748b';
-          const r = n.type === 'module' ? 5 : n.exported ? 2.5 : 1.2;
-          const isSelected = selected?.id === n.id;
-          const isMatch = search && (n.name.toLowerCase().includes(search) || n.file.toLowerCase().includes(search));
-          const isDimmed = search && !isMatch;
-
+        {/* Function nodes */}
+        {funcPositions.map(f => {
+          const isSelected = selected?.id === f.id;
+          const isMatch = search && f.name.toLowerCase().includes(search);
+          const hasGuards = f.guards?.length > 0;
           return (
-            <g key={n.id} onClick={() => onSelect(isSelected ? null : n)} style={{ cursor: 'pointer' }}
-              opacity={isDimmed ? 0.1 : 1}>
-              {isSelected && <circle cx={p.x} cy={p.y} r={r + 6} fill={color} opacity={0.2} />}
-              {isMatch && <circle cx={p.x} cy={p.y} r={r + 4} stroke="#10b981" strokeWidth={1} fill="none" />}
-              <circle cx={p.x} cy={p.y} r={r} fill={color} />
-              {(n.type === 'module' || isSelected || isMatch) && (
-                <text x={p.x} y={p.y + r + 10} textAnchor="middle"
-                  fill={isSelected ? '#fff' : '#ffffff88'} fontSize={isSelected ? 10 : 8}
-                  fontFamily="system-ui" fontWeight={isSelected ? 600 : 400}>
-                  {n.name}
-                </text>
+            <g key={f.id} onClick={() => onSelect(isSelected ? null : f)} style={{ cursor: 'pointer' }}
+              opacity={search && !isMatch ? 0.2 : 1}>
+              {isSelected && <circle cx={f.cx} cy={f.cy} r={f.r + 10} fill={clusterColor} opacity={0.1} />}
+              {isMatch && <circle cx={f.cx} cy={f.cy} r={f.r + 6} stroke="#10b981" strokeWidth={1.5} fill="none" />}
+              <circle cx={f.cx} cy={f.cy} r={f.r}
+                fill={isSelected ? clusterColor + '30' : clusterColor + '12'}
+                stroke={hasGuards ? '#10b981' : f.exported ? clusterColor : '#333'}
+                strokeWidth={isSelected ? 2 : 1}
+              />
+              <text x={f.cx} y={f.cy + 1} textAnchor="middle" fill="#e5e7eb" fontSize={10} fontWeight={600} fontFamily="ui-monospace, monospace">
+                {f.name}
+              </text>
+              {f.exported && (
+                <text x={f.cx} y={f.cy + 12} textAnchor="middle" fill="#10b981" fontSize={8} fontFamily="system-ui">exported</text>
+              )}
+              {hasGuards && (
+                <text x={f.cx} y={f.cy - f.r - 4} textAnchor="middle" fill="#10b981" fontSize={8} fontFamily="system-ui">guarded</text>
               )}
             </g>
           );
         })}
+
+        {/* If no functions, show the module info */}
+        {fileFuncs.length === 0 && fileModule && (
+          <text x={centerX} y={centerY + 30} textAnchor="middle" fill="#6b7280" fontSize={12} fontFamily="system-ui">
+            Module node only — no extracted functions
+          </text>
+        )}
       </svg>
 
-      {/* Selected detail overlay */}
+      {/* Breadcrumb */}
+      <div style={{ position: 'absolute', top: 12, left: 16, fontSize: 12, fontFamily: 'ui-monospace, monospace' }}>
+        <span onClick={() => { setExpanded(null); setExpandedFile(null); }} style={{ color: '#10b981', cursor: 'pointer' }}>corpus</span>
+        <span style={{ color: '#333', margin: '0 6px' }}>/</span>
+        <span onClick={() => setExpandedFile(null)} style={{ color: clusterColor, cursor: 'pointer' }}>{expanded}</span>
+        <span style={{ color: '#333', margin: '0 6px' }}>/</span>
+        <span style={{ color: '#e5e7eb' }}>{fileName}</span>
+      </div>
+
+      {/* Selected function detail overlay */}
       {selected && (
         <div style={{
-          position: 'absolute', top: 16, right: 16, width: 300,
+          position: 'absolute', top: 12, right: 16, width: 280,
           background: '#0a0a0aee', backdropFilter: 'blur(8px)',
-          border: '1px solid #1f2937', borderRadius: 12, padding: 20,
+          border: '1px solid #1f2937', borderRadius: 12, padding: 16,
           fontSize: 13, color: '#e5e7eb',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-            <strong style={{ fontSize: 15 }}>{selected.name}</strong>
-            <button onClick={() => onSelect(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}>x</button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <strong style={{ fontSize: 14 }}>{selected.name}</strong>
+            <button onClick={() => onSelect(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 14 }}>x</button>
           </div>
-          <div style={{ color: '#6b7280', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 11, marginBottom: 8 }}>{selected.file}</div>
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 12 }}>
-            <Tag color={COLORS[getCluster(selected.file)] || '#64748b'}>{getCluster(selected.file)}</Tag>
+          <div style={{ color: '#6b7280', fontFamily: 'ui-monospace, monospace', fontSize: 10, marginBottom: 8 }}>
+            {selected.file}:{selected.line}
+          </div>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 10 }}>
             <Tag color="#374151">{selected.type}</Tag>
             {selected.exported && <Tag color="#10b981">exported</Tag>}
           </div>
-          {selected.guards?.length > 0 && (
+          {selected.params?.length > 0 && (
             <div style={{ marginBottom: 8 }}>
-              <div style={{ color: '#6b7280', fontSize: 10, marginBottom: 4 }}>GUARDS</div>
-              {selected.guards.map((g, i) => (
-                <div key={i} style={{ fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 10, color: '#6ee7b7', borderLeft: '2px solid #10b98140', paddingLeft: 6, marginBottom: 2 }}>{g}</div>
+              <div style={{ color: '#6b7280', fontSize: 9, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>params</div>
+              {selected.params.map((p, i) => (
+                <div key={i} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#a5b4fc', marginBottom: 1 }}>{p}</div>
               ))}
             </div>
           )}
-          <div style={{ color: '#10b981', fontSize: 20, fontWeight: 700 }}>{selected.trustScore}<span style={{ color: '#6b7280', fontSize: 12, fontWeight: 400 }}>/100</span></div>
+          {selected.guards?.length > 0 && (
+            <div style={{ marginBottom: 8 }}>
+              <div style={{ color: '#6b7280', fontSize: 9, marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>guards</div>
+              {selected.guards.map((g, i) => (
+                <div key={i} style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: '#6ee7b7', borderLeft: '2px solid #10b98140', paddingLeft: 6, marginBottom: 2 }}>{g}</div>
+              ))}
+            </div>
+          )}
+          <div style={{ color: '#10b981', fontSize: 18, fontWeight: 700 }}>{selected.trustScore}<span style={{ color: '#6b7280', fontSize: 11, fontWeight: 400 }}>/100</span></div>
         </div>
       )}
     </div>
