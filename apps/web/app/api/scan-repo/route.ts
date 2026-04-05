@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     // 2. Run graph engine
     let graph;
     try {
-      const graphEngine = require(path.resolve('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/graph-engine.js'));
+      const graphEngine = await import('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/graph-engine.js');
       const buildGraph = graphEngine.buildGraph || graphEngine.default?.buildGraph;
       graph = buildGraph(cloneTarget);
     } catch (graphErr: unknown) {
@@ -115,12 +115,12 @@ export async function POST(request: Request) {
     let codeSafety: ((content: string, filepath: string) => unknown[]) | null = null;
 
     try {
-      const secretMod = require(path.resolve('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/scanners/secret-detector.js'));
+      const secretMod = await import('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/scanners/secret-detector.js');
       secretDetect = secretMod.detectSecrets || secretMod.default?.detectSecrets;
     } catch { /* scanner not available */ }
 
     try {
-      const safetyMod = require(path.resolve('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/scanners/code-safety.js'));
+      const safetyMod = await import('/Users/anirudhmanjesh/hackathons/corpus/packages/core/dist/scanners/code-safety.js');
       codeSafety = safetyMod.checkCodeSafety || safetyMod.default?.checkCodeSafety;
     } catch { /* scanner not available */ }
 
