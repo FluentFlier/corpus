@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { execSync } from 'child_process';
-import { mkdtempSync, rmSync, readFileSync, readdirSync, statSync } from 'fs';
+import { mkdtempSync, rmSync, readFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import path from 'path';
 
