@@ -4793,5 +4793,415 @@
         "message": "Private key detected"
       }
     ]
+  },
+  {
+    "repo": "tc39/proposal-pattern-matching",
+    "url": "https://github.com/tc39/proposal-pattern-matching",
+    "totalFindings": 11,
+    "critical": 0,
+    "warning": 11,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "assets/ecmarkup.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "tc39/ecma262",
+    "url": "https://github.com/tc39/ecma262",
+    "totalFindings": 7,
+    "critical": 2,
+    "warning": 5,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "scripts/check-commit.js",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "scripts/check-commit.js",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "scripts/check-form.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "scripts/check-form.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "scripts/check-form.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "scripts/check-form.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "scripts/insert-snapshot-warning.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "FreeTubeApp/FreeTube",
+    "url": "https://github.com/FreeTubeApp/FreeTube",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "_scripts/getInstances.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/main/index.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/renderer/directives/vSaferHtml.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/renderer/directives/vSaferHtml.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/renderer/store/modules/invidious.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/renderer/store/modules/settings.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "docsifyjs/docsify",
+    "url": "https://github.com/docsifyjs/docsify",
+    "totalFindings": 9,
+    "critical": 1,
+    "warning": 8,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/_media/example.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "server.configs.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/core/render/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/core/util/dom.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/plugins/search/component.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/plugins/search/component.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "test/config/jest.setup-tests.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "test/consume-types/prism.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "test/helpers/docsify-init.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "mkdocs/mkdocs",
+    "url": "https://github.com/mkdocs/mkdocs",
+    "totalFindings": 18,
+    "critical": 0,
+    "warning": 18,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/base.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/base.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/base.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/base.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/bootstrap.bundle.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/bootstrap.bundle.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/mkdocs/js/bootstrap.bundle.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/readthedocs/js/html5shiv.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/readthedocs/js/html5shiv.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "mkdocs/themes/readthedocs/js/jquery-3.6.0.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "readthedocs/readthedocs.org",
+    "url": "https://github.com/readthedocs/readthedocs.org",
+    "totalFindings": 8,
+    "critical": 0,
+    "warning": 8,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "media/javascript/jquery/jquery-2.0.3.min.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "readthedocs/core/static/core/js/readthedocs-doc-embed.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
   }
 ]
