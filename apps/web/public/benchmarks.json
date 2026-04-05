@@ -811,14 +811,47 @@
       "edges": 4992,
       "scanTimeMs": 150,
       "healthScore": 100
+    },
+    {
+      "repo": "denoland/deno_std",
+      "files": 1230,
+      "functions": 3161,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 4647,
+      "edges": 13689,
+      "scanTimeMs": 267,
+      "healthScore": 100
+    },
+    {
+      "repo": "oven-sh/bun",
+      "files": 6742,
+      "functions": 21331,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 29819,
+      "edges": 215647,
+      "scanTimeMs": 5899,
+      "healthScore": 100
+    },
+    {
+      "repo": "pnpm/pnpm",
+      "files": 1291,
+      "functions": 2222,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 3605,
+      "edges": 7128,
+      "scanTimeMs": 265,
+      "healthScore": 100
     }
   ],
-  "totalReposScanned": 70,
-  "totalFilesScanned": 85234,
+  "totalReposScanned": 73,
+  "totalFilesScanned": 94497,
   "totalFunctionsFound": 32529,
-  "totalNodes": 293878,
-  "totalEdges": 1728888,
-  "totalScanTimeMs": 52034,
+  "totalNodes": 331949,
+  "totalEdges": 1965352,
+  "totalScanTimeMs": 58465,
   "autofixSummary": {
     "reposTested": 4,
     "totalViolationsCaught": 49,

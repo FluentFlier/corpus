@@ -2907,5 +2907,119 @@
         "message": "eval() usage detected. This enables arbitrary code execution."
       }
     ]
+  },
+  {
+    "repo": "denoland/deno_std",
+    "url": "https://github.com/denoland/deno_std",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "_tools/check_circular_package_dependencies.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "oven-sh/bun",
+    "url": "https://github.com/oven-sh/bun",
+    "totalFindings": 15,
+    "critical": 0,
+    "warning": 15,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "bench/react-hello-world/react-hello-world.node.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "bench/react-hello-world/react-hello-world.workerd.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "pnpm/pnpm",
+    "url": "https://github.com/pnpm/pnpm",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Password Assignment",
+        "file": "auth/commands/src/login.ts",
+        "line": 0,
+        "message": "Hardcoded password detected"
+      }
+    ]
   }
 ]
