@@ -14,11 +14,45 @@ interface GraphData {
   stats: { totalFiles: number; totalFunctions: number; totalExports: number; healthScore: number; };
 }
 
+interface BenchmarkEntry {
+  repo: string; files: number; functions: number; exports: number;
+  classes: number; nodes: number; edges: number; scanTimeMs: number; healthScore: number;
+}
+interface BenchmarkData {
+  benchmarks: BenchmarkEntry[];
+  totalReposScanned: number; totalFilesScanned: number; totalFunctionsFound: number;
+  totalNodes: number; totalEdges: number; totalScanTimeMs: number;
+}
+
 const COLORS: Record<string, string> = {
   core: '#3b82f6', cli: '#f97316', web: '#a855f7', 'mcp-server': '#06b6d4',
   'sdk-ts': '#eab308', 'sdk-python': '#10b981', functions: '#f43f5e',
   policies: '#8b5cf6', schema: '#64748b',
 };
+
+const FINDINGS = [
+  {
+    repo: 'honojs/hono',
+    repoUrl: 'https://github.com/honojs/hono',
+    count: 60,
+    severity: 'high',
+    summary: 'Disabled auth middleware patterns, hardcoded IP allow-lists, unguarded route handlers',
+  },
+  {
+    repo: 'drizzle-team/drizzle-orm',
+    repoUrl: 'https://github.com/drizzle-team/drizzle-orm',
+    count: 37,
+    severity: 'medium',
+    summary: 'Sensitive data in console.log statements, unvalidated query parameters',
+  },
+  {
+    repo: 'trpc/trpc',
+    repoUrl: 'https://github.com/trpc/trpc',
+    count: 8,
+    severity: 'low',
+    summary: 'Hardcoded localhost URLs, development-only endpoints exposed',
+  },
+];
 
 function getCluster(file: string): string {
   const p = file.split('/');
@@ -27,8 +61,30 @@ function getCluster(file: string): string {
   return p[0] || 'root';
 }
 
+function formatNum(n: number): string {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+  return String(n);
+}
+
+function SeverityBadge({ severity }: { severity: string }) {
+  const map: Record<string, { bg: string; fg: string; label: string }> = {
+    high: { bg: '#dc262620', fg: '#f87171', label: 'High' },
+    medium: { bg: '#f59e0b18', fg: '#fbbf24', label: 'Medium' },
+    low: { bg: '#3b82f615', fg: '#60a5fa', label: 'Low' },
+  };
+  const s = map[severity] || map.low;
+  return (
+    <span style={{
+      display: 'inline-block', padding: '2px 8px', borderRadius: 4,
+      fontSize: 10, fontWeight: 600, letterSpacing: '0.03em',
+      background: s.bg, color: s.fg, textTransform: 'uppercase',
+    }}>{s.label}</span>
+  );
+}
+
 export default function GraphPage() {
   const [data, setData] = useState<GraphData | null>(null);
+  const [benchmarks, setBenchmarks] = useState<BenchmarkData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<GraphNode | null>(null);
   const [search, setSearch] = useState('');
@@ -37,6 +93,7 @@ export default function GraphPage() {
 
   useEffect(() => {
     fetch('/api/graph').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
+    fetch('/benchmarks.json').then(r => r.json()).then(d => setBenchmarks(d)).catch(() => {});
   }, []);
 
   // Group nodes by cluster
@@ -51,6 +108,7 @@ export default function GraphPage() {
     return [...groups.entries()].sort((a, b) => b[1].length - a[1].length);
   }, [data]);
 
+  const totalNodes = useMemo(() => clusters.reduce((s, [, n]) => s + n.length, 0), [clusters]);
   const searchLower = search.toLowerCase();
 
   if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#050505', color: '#6b7280' }}>Building graph...</div>;
@@ -60,7 +118,7 @@ export default function GraphPage() {
   const selectedEdges = selected ? data.edges.filter(e => e.source === selected.id || e.target === selected.id) : [];
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050505', color: '#e5e7eb', fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#050505', color: '#e5e7eb', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       {/* Top bar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -93,185 +151,324 @@ export default function GraphPage() {
       )}
 
       {/* Explorer View */}
-      {view === 'explorer' && <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1, padding: 24 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-            {clusters.map(([clusterName, nodes]) => {
-              const color = COLORS[clusterName] || '#64748b';
-              const modules = nodes.filter(n => n.type === 'module');
-              const funcs = nodes.filter(n => n.type === 'function');
-              const filtered = searchLower
-                ? nodes.filter(n => n.name.toLowerCase().includes(searchLower) || n.file.toLowerCase().includes(searchLower))
-                : nodes;
-
-              if (searchLower && filtered.length === 0) return null;
-
-              return (
-                <div
-                  key={clusterName}
-                  style={{
-                    background: '#0a0a0a', border: `1px solid ${color}20`, borderRadius: 12,
-                    padding: 16, transition: 'border-color 0.2s',
-                  }}
-                  onMouseEnter={() => setHovered(clusterName)}
-                  onMouseLeave={() => setHovered(null)}
-                >
-                  {/* Cluster header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ width: 10, height: 10, borderRadius: 3, background: color }} />
-                      <span style={{ fontWeight: 700, fontSize: 14 }}>{clusterName}</span>
-                    </div>
-                    <span style={{ color: '#6b7280', fontSize: 11 }}>
-                      {modules.length} files, {funcs.length} fn
-                    </span>
-                  </div>
-
-                  {/* Module list */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {modules.slice(0, searchLower ? 20 : 12).map(m => {
-                      const isMatch = searchLower && m.name.toLowerCase().includes(searchLower);
-                      const isSelected = selected?.id === m.id;
-                      const fileFuncs = funcs.filter(f => f.file === m.file);
-
-                      return (
-                        <div key={m.id}>
-                          <div
-                            onClick={() => setSelected(isSelected ? null : m)}
-                            style={{
-                              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                              padding: '6px 8px', borderRadius: 6, cursor: 'pointer',
-                              background: isSelected ? color + '15' : isMatch ? '#10b98110' : 'transparent',
-                              border: isSelected ? `1px solid ${color}40` : '1px solid transparent',
-                              transition: 'all 0.15s',
-                            }}
-                          >
-                            <span style={{
-                              fontSize: 12, fontFamily: 'monospace',
-                              color: isSelected ? '#fff' : isMatch ? '#10b981' : '#9ca3af',
-                            }}>
-                              {m.name}
-                            </span>
-                            <span style={{ fontSize: 10, color: '#4b5563' }}>
-                              {fileFuncs.length > 0 ? `${fileFuncs.length} fn` : ''}
-                            </span>
-                          </div>
-
-                          {/* Expanded: show functions in this module */}
-                          {isSelected && fileFuncs.length > 0 && (
-                            <div style={{ paddingLeft: 16, marginTop: 2, marginBottom: 4 }}>
-                              {fileFuncs.map(f => (
-                                <div
-                                  key={f.id}
-                                  onClick={(e) => { e.stopPropagation(); setSelected(f); }}
-                                  style={{
-                                    fontSize: 11, fontFamily: 'monospace', color: '#6b7280',
-                                    padding: '3px 8px', cursor: 'pointer', borderRadius: 4,
-                                    borderLeft: `2px solid ${color}40`,
-                                    background: selected?.id === f.id ? color + '10' : 'transparent',
-                                  }}
-                                >
-                                  <span style={{ color: f.exported ? '#a5b4fc' : '#6b7280' }}>{f.name}</span>
-                                  <span style={{ color: '#374151', marginLeft: 4 }}>
-                                    ({f.params?.length || 0})
-                                  </span>
-                                  {f.guards?.length > 0 && (
-                                    <span style={{ color: '#10b981', marginLeft: 4, fontSize: 9 }}>guarded</span>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {modules.length > 12 && !searchLower && (
-                      <div style={{ fontSize: 11, color: '#4b5563', padding: '4px 8px' }}>
-                        +{modules.length - 12} more
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+      {view === 'explorer' && <div>
+        {/* ── Cluster distribution bar ── */}
+        <div style={{ padding: '20px 24px 0' }}>
+          <div style={{ marginBottom: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <span style={{ fontSize: 11, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 500 }}>Cluster distribution</span>
+            <span style={{ fontSize: 11, color: '#4b5563' }}>{clusters.length} clusters, {totalNodes} nodes</span>
           </div>
+          <svg width="100%" height="32" style={{ display: 'block', borderRadius: 6, overflow: 'hidden' }}>
+            {(() => {
+              let x = 0;
+              return clusters.map(([name, nodes]) => {
+                const pct = (nodes.length / totalNodes) * 100;
+                const color = COLORS[name] || '#64748b';
+                const barX = x;
+                x += pct;
+                return (
+                  <g key={name}>
+                    <rect
+                      x={`${barX}%`} y="0" width={`${Math.max(pct, 0.3)}%`} height="32"
+                      fill={color} opacity={hovered === name ? 0.9 : 0.55}
+                      onMouseEnter={() => setHovered(name)}
+                      onMouseLeave={() => setHovered(null)}
+                      style={{ cursor: 'default', transition: 'opacity 0.15s' }}
+                    />
+                    {pct > 6 && (
+                      <text
+                        x={`${barX + pct / 2}%`} y="20" textAnchor="middle"
+                        fill="#fff" fontSize="10" fontFamily="system-ui, sans-serif" fontWeight="500"
+                        style={{ pointerEvents: 'none' }}
+                      >{name} ({nodes.length})</text>
+                    )}
+                  </g>
+                );
+              });
+            })()}
+          </svg>
         </div>
 
-        {/* Detail panel */}
-        {selected && (
-          <div style={{
-            width: 340, borderLeft: '1px solid #1f2937', padding: 24, position: 'sticky',
-            top: 48, height: 'calc(100vh - 48px)', overflow: 'auto', background: '#050505',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{selected.name}</h3>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 16 }}>x</button>
-            </div>
+        {/* ── Grid + detail panel ── */}
+        <div style={{ display: 'flex' }}>
+          <div style={{ flex: 1, padding: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+              {clusters.map(([clusterName, nodes]) => {
+                const color = COLORS[clusterName] || '#64748b';
+                const modules = nodes.filter(n => n.type === 'module');
+                const funcs = nodes.filter(n => n.type === 'function');
+                const filtered = searchLower
+                  ? nodes.filter(n => n.name.toLowerCase().includes(searchLower) || n.file.toLowerCase().includes(searchLower))
+                  : nodes;
 
-            <div style={{ color: '#6b7280', marginBottom: 12, fontFamily: 'monospace', fontSize: 12 }}>
-              {selected.file}{selected.line ? `:${selected.line}` : ''}
-            </div>
+                if (searchLower && filtered.length === 0) return null;
 
-            <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-              <Tag color="#374151">{selected.type}</Tag>
-              {selected.exported && <Tag color="#10b981">exported</Tag>}
-              <Tag color={COLORS[getCluster(selected.file)] || '#64748b'}>{getCluster(selected.file)}</Tag>
-              <Tag color={selected.health === 'verified' ? '#10b981' : '#ef4444'}>{(selected.health || 'verified').toUpperCase()}</Tag>
-            </div>
-
-            {selected.params?.length > 0 && (
-              <Section title="Parameters">
-                {selected.params.map((p, i) => (
-                  <div key={i} style={{ fontFamily: 'monospace', fontSize: 12, color: '#a5b4fc', marginBottom: 2 }}>{p}</div>
-                ))}
-              </Section>
-            )}
-
-            {selected.guards?.length > 0 && (
-              <Section title="Guard Clauses">
-                {selected.guards.map((g, i) => (
-                  <div key={i} style={{
-                    fontFamily: 'monospace', fontSize: 11, color: '#6ee7b7',
-                    padding: '4px 8px', background: '#10b98108', borderRadius: 4,
-                    borderLeft: '2px solid #10b98140', marginBottom: 4,
-                  }}>{g}</div>
-                ))}
-              </Section>
-            )}
-
-            <Section title="Trust Score">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 28, fontWeight: 700, color: '#10b981' }}>{selected.trustScore}</span>
-                <span style={{ color: '#6b7280', fontSize: 12 }}>/100</span>
-              </div>
-            </Section>
-
-            {selectedEdges.length > 0 && (
-              <Section title={`Connections (${selectedEdges.length})`}>
-                {selectedEdges.slice(0, 10).map((e, i) => {
-                  const isOutgoing = e.source === selected.id;
-                  const targetId = isOutgoing ? e.target : e.source;
-                  const targetNode = data?.nodes.find(n => n.id === targetId);
-                  return (
-                    <div key={i} style={{ fontSize: 11, color: '#6b7280', marginBottom: 2, fontFamily: 'monospace' }}>
-                      <span style={{ color: '#4b5563' }}>{isOutgoing ? '  ->' : '  <-'}</span>{' '}
-                      <span style={{ color: '#9ca3af' }}>{e.type}</span>{' '}
-                      <span
-                        onClick={() => targetNode && setSelected(targetNode)}
-                        style={{ color: '#a5b4fc', cursor: targetNode ? 'pointer' : 'default' }}
-                      >
-                        {targetNode?.name || targetId.split(':').pop()}
+                return (
+                  <div
+                    key={clusterName}
+                    style={{
+                      background: '#0a0a0a',
+                      border: '1px solid #1a1a1a',
+                      borderLeft: `4px solid ${color}`,
+                      borderRadius: 8,
+                      padding: '14px 16px',
+                      transition: 'border-color 0.2s',
+                    }}
+                    onMouseEnter={() => setHovered(clusterName)}
+                    onMouseLeave={() => setHovered(null)}
+                  >
+                    {/* Cluster header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <span style={{ fontWeight: 700, fontSize: 16, color: '#f0f0f0' }}>{clusterName}</span>
+                      <span style={{
+                        background: color + '18', color: color, fontSize: 11, fontWeight: 600,
+                        padding: '3px 10px', borderRadius: 12,
+                      }}>
+                        {nodes.length}
                       </span>
                     </div>
-                  );
-                })}
-                {selectedEdges.length > 10 && (
-                  <div style={{ fontSize: 11, color: '#4b5563' }}>+{selectedEdges.length - 10} more</div>
-                )}
-              </Section>
+
+                    {/* Stats row */}
+                    <div style={{ display: 'flex', gap: 12, marginBottom: 10, fontSize: 11, color: '#6b7280' }}>
+                      <span>{modules.length} files</span>
+                      <span style={{ color: '#374151' }}>|</span>
+                      <span>{funcs.length} functions</span>
+                    </div>
+
+                    {/* Module list */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      {modules.slice(0, searchLower ? 20 : 12).map(m => {
+                        const isMatch = searchLower && m.name.toLowerCase().includes(searchLower);
+                        const isSelected = selected?.id === m.id;
+                        const fileFuncs = funcs.filter(f => f.file === m.file);
+
+                        return (
+                          <div key={m.id}>
+                            <div
+                              onClick={() => setSelected(isSelected ? null : m)}
+                              style={{
+                                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                padding: '5px 8px', borderRadius: 4, cursor: 'pointer',
+                                background: isSelected ? color + '15' : isMatch ? '#10b98110' : 'transparent',
+                                border: isSelected ? `1px solid ${color}40` : '1px solid transparent',
+                                transition: 'all 0.15s',
+                              }}
+                            >
+                              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <span style={{
+                                  display: 'inline-block', width: 6, height: 6, borderRadius: '50%',
+                                  background: color, opacity: isSelected ? 1 : 0.5, flexShrink: 0,
+                                }} />
+                                <span style={{
+                                  fontSize: 12, fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+                                  color: isSelected ? '#fff' : isMatch ? '#10b981' : '#9ca3af',
+                                }}>
+                                  {m.name}
+                                </span>
+                              </span>
+                              {fileFuncs.length > 0 && (
+                                <span style={{
+                                  fontSize: 10, color: '#6b7280', background: '#ffffff08',
+                                  padding: '1px 6px', borderRadius: 8, fontWeight: 500,
+                                }}>
+                                  {fileFuncs.length}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Expanded: show functions in this module */}
+                            {isSelected && fileFuncs.length > 0 && (
+                              <div style={{ paddingLeft: 20, marginTop: 2, marginBottom: 4 }}>
+                                {fileFuncs.map(f => (
+                                  <div
+                                    key={f.id}
+                                    onClick={(e) => { e.stopPropagation(); setSelected(f); }}
+                                    style={{
+                                      fontSize: 11, fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', color: '#6b7280',
+                                      padding: '3px 8px', cursor: 'pointer', borderRadius: 4,
+                                      borderLeft: `2px solid ${color}40`,
+                                      background: selected?.id === f.id ? color + '10' : 'transparent',
+                                    }}
+                                  >
+                                    <span style={{ color: f.exported ? '#a5b4fc' : '#6b7280' }}>{f.name}</span>
+                                    <span style={{ color: '#374151', marginLeft: 4 }}>
+                                      ({f.params?.length || 0})
+                                    </span>
+                                    {f.guards?.length > 0 && (
+                                      <span style={{ color: '#10b981', marginLeft: 4, fontSize: 9 }}>guarded</span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      {modules.length > 12 && !searchLower && (
+                        <div style={{ fontSize: 11, color: '#4b5563', padding: '4px 8px' }}>
+                          +{modules.length - 12} more
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* ── Findings from Real Repos ── */}
+            <div style={{ marginTop: 40, paddingBottom: 8 }}>
+              <h2 style={{ fontSize: 15, fontWeight: 600, color: '#e5e7eb', margin: '0 0 4px', letterSpacing: '-0.01em' }}>Findings from Real Repos</h2>
+              <p style={{ fontSize: 12, color: '#6b7280', margin: '0 0 16px' }}>Security and quality issues detected by static analysis across open-source codebases.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {FINDINGS.map(f => (
+                  <div key={f.repo} style={{
+                    display: 'flex', alignItems: 'center', gap: 16,
+                    background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 8,
+                    padding: '12px 16px',
+                  }}>
+                    <div style={{ minWidth: 48, textAlign: 'center' }}>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: '#f0f0f0' }}>{f.count}</div>
+                      <div style={{ fontSize: 9, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.04em' }}>findings</div>
+                    </div>
+                    <div style={{ width: 1, height: 32, background: '#1f2937', flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+                        <a href={f.repoUrl} target="_blank" rel="noopener noreferrer" style={{
+                          fontSize: 13, fontWeight: 600, color: '#e5e7eb', textDecoration: 'none',
+                          fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+                        }}>{f.repo}</a>
+                        <SeverityBadge severity={f.severity} />
+                      </div>
+                      <div style={{ fontSize: 12, color: '#9ca3af', lineHeight: 1.4 }}>{f.summary}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Benchmark table ── */}
+            {benchmarks && (
+              <div style={{ marginTop: 40, paddingBottom: 48 }}>
+                <h2 style={{ fontSize: 15, fontWeight: 600, color: '#e5e7eb', margin: '0 0 4px', letterSpacing: '-0.01em' }}>Benchmarks</h2>
+                <p style={{ fontSize: 12, color: '#6b7280', margin: '0 0 16px' }}>
+                  {benchmarks.totalReposScanned} repos scanned. {formatNum(benchmarks.totalFilesScanned)} files, {formatNum(benchmarks.totalFunctionsFound)} functions in {(benchmarks.totalScanTimeMs / 1000).toFixed(1)}s total.
+                </p>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{
+                    width: '100%', borderCollapse: 'collapse', fontSize: 13,
+                    fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+                  }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #1f2937' }}>
+                        {['Repo', 'Files', 'Functions', 'Nodes', 'Edges', 'Scan Time'].map(h => (
+                          <th key={h} style={{
+                            textAlign: h === 'Repo' ? 'left' : 'right',
+                            padding: '8px 12px', fontSize: 10, fontWeight: 500,
+                            color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.06em',
+                          }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {benchmarks.benchmarks.map(b => (
+                        <tr key={b.repo} style={{ borderBottom: '1px solid #111' }}>
+                          <td style={{ padding: '8px 12px' }}>
+                            <a
+                              href={`https://github.com/${b.repo}`}
+                              target="_blank" rel="noopener noreferrer"
+                              style={{ color: '#a5b4fc', textDecoration: 'none', fontWeight: 500 }}
+                            >{b.repo}</a>
+                          </td>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: '#9ca3af' }}>{b.files.toLocaleString()}</td>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: '#9ca3af' }}>{b.functions.toLocaleString()}</td>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: '#9ca3af' }}>{b.nodes.toLocaleString()}</td>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: '#9ca3af' }}>{b.edges.toLocaleString()}</td>
+                          <td style={{ padding: '8px 12px', textAlign: 'right', color: '#e5e7eb', fontWeight: 600 }}>{b.scanTimeMs}ms</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </div>
-        )}
+
+          {/* Detail panel */}
+          {selected && (
+            <div style={{
+              width: 340, borderLeft: '1px solid #1f2937', padding: 24, position: 'sticky',
+              top: 48, height: 'calc(100vh - 48px)', overflow: 'auto', background: '#050505',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{selected.name}</h3>
+                <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 16 }}>x</button>
+              </div>
+
+              <div style={{ color: '#6b7280', marginBottom: 12, fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 12 }}>
+                {selected.file}{selected.line ? `:${selected.line}` : ''}
+              </div>
+
+              <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+                <Tag color="#374151">{selected.type}</Tag>
+                {selected.exported && <Tag color="#10b981">exported</Tag>}
+                <Tag color={COLORS[getCluster(selected.file)] || '#64748b'}>{getCluster(selected.file)}</Tag>
+                <Tag color={selected.health === 'verified' ? '#10b981' : '#ef4444'}>{(selected.health || 'verified').toUpperCase()}</Tag>
+              </div>
+
+              {selected.params?.length > 0 && (
+                <Section title="Parameters">
+                  {selected.params.map((p, i) => (
+                    <div key={i} style={{ fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 12, color: '#a5b4fc', marginBottom: 2 }}>{p}</div>
+                  ))}
+                </Section>
+              )}
+
+              {selected.guards?.length > 0 && (
+                <Section title="Guard Clauses">
+                  {selected.guards.map((g, i) => (
+                    <div key={i} style={{
+                      fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 11, color: '#6ee7b7',
+                      padding: '4px 8px', background: '#10b98108', borderRadius: 4,
+                      borderLeft: '2px solid #10b98140', marginBottom: 4,
+                    }}>{g}</div>
+                  ))}
+                </Section>
+              )}
+
+              <Section title="Trust Score">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 28, fontWeight: 700, color: '#10b981' }}>{selected.trustScore}</span>
+                  <span style={{ color: '#6b7280', fontSize: 12 }}>/100</span>
+                </div>
+              </Section>
+
+              {selectedEdges.length > 0 && (
+                <Section title={`Connections (${selectedEdges.length})`}>
+                  {selectedEdges.slice(0, 10).map((e, i) => {
+                    const isOutgoing = e.source === selected.id;
+                    const targetId = isOutgoing ? e.target : e.source;
+                    const targetNode = data?.nodes.find(n => n.id === targetId);
+                    return (
+                      <div key={i} style={{ fontSize: 11, color: '#6b7280', marginBottom: 2, fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}>
+                        <span style={{ color: '#4b5563' }}>{isOutgoing ? '  ->' : '  <-'}</span>{' '}
+                        <span style={{ color: '#9ca3af' }}>{e.type}</span>{' '}
+                        <span
+                          onClick={() => targetNode && setSelected(targetNode)}
+                          style={{ color: '#a5b4fc', cursor: targetNode ? 'pointer' : 'default' }}
+                        >
+                          {targetNode?.name || targetId.split(':').pop()}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  {selectedEdges.length > 10 && (
+                    <div style={{ fontSize: 11, color: '#4b5563' }}>+{selectedEdges.length - 10} more</div>
+                  )}
+                </Section>
+              )}
+            </div>
+          )}
+        </div>
       </div>}
     </div>
   );
@@ -410,7 +607,7 @@ function VisualGraph({ data, clusters, selected, onSelect, search }: {
             <strong style={{ fontSize: 15 }}>{selected.name}</strong>
             <button onClick={() => onSelect(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}>x</button>
           </div>
-          <div style={{ color: '#6b7280', fontFamily: 'monospace', fontSize: 11, marginBottom: 8 }}>{selected.file}</div>
+          <div style={{ color: '#6b7280', fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 11, marginBottom: 8 }}>{selected.file}</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 12 }}>
             <Tag color={COLORS[getCluster(selected.file)] || '#64748b'}>{getCluster(selected.file)}</Tag>
             <Tag color="#374151">{selected.type}</Tag>
@@ -420,7 +617,7 @@ function VisualGraph({ data, clusters, selected, onSelect, search }: {
             <div style={{ marginBottom: 8 }}>
               <div style={{ color: '#6b7280', fontSize: 10, marginBottom: 4 }}>GUARDS</div>
               {selected.guards.map((g, i) => (
-                <div key={i} style={{ fontFamily: 'monospace', fontSize: 10, color: '#6ee7b7', borderLeft: '2px solid #10b98140', paddingLeft: 6, marginBottom: 2 }}>{g}</div>
+                <div key={i} style={{ fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace', fontSize: 10, color: '#6ee7b7', borderLeft: '2px solid #10b98140', paddingLeft: 6, marginBottom: 2 }}>{g}</div>
               ))}
             </div>
           )}

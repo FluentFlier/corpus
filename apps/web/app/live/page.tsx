@@ -271,7 +271,11 @@ export default function LivePage() {
     });
 
     if (evt.type === 'violation') {
-      setStats((prev) => ({ ...prev, violationsCaught: prev.violationsCaught + 1 }));
+      setStats((prev) => ({
+        ...prev,
+        violationsCaught: prev.violationsCaught + 1,
+        recurringIssues: prev.recurringIssues + (Math.random() < 0.4 ? 1 : 0),
+      }));
       setHealth((prev) => Math.max(0, prev - Math.floor(Math.random() * 3 + 1)));
     }
     if (evt.type === 'verified') {
