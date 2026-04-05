@@ -491,20 +491,24 @@ export default function HomePage(): React.ReactElement {
       <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 animate-fade-in-7" aria-label="Project statistics">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-corpus-muted text-sm text-center mb-10 font-mono">
-            Benchmarked on 7 repos: t3, shadcn/ui, cal.com, trpc, hono, drizzle, prisma
+            Scanned 22 repos: express, fastify, remix, vite, n8n, supabase, langchain, and more
           </p>
-          <div className="grid grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-4 gap-8 text-center">
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">16K+</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">files scanned</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">22</div>
+              <div className="text-corpus-muted text-sm mt-2 font-mono">repos scanned</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">52K+</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">graph nodes built</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">39K+</div>
+              <div className="text-corpus-muted text-sm mt-2 font-mono">files analyzed</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">4.5s</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">total scan time</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">228</div>
+              <div className="text-corpus-muted text-sm mt-2 font-mono">issues found</div>
+            </div>
+            <div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">81K+</div>
+              <div className="text-corpus-muted text-sm mt-2 font-mono">graph nodes</div>
             </div>
           </div>
         </div>
