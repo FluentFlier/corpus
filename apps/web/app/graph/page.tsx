@@ -486,16 +486,18 @@ function ForceGraph({
 
         ctx.globalAlpha = nodeOpacity;
 
-        // Outer glow halo (health color) -- only prominent for modules/active
+        // Outer glow halo -- ONLY for active/selected nodes, not all
         const healthColor = getHealthColor(node.health);
-        const glowRadius = radius + (isActive ? 14 : node.type === 'module' ? 6 : 2);
-        const glow = ctx.createRadialGradient(node.x, node.y, radius, node.x, node.y, glowRadius);
-        glow.addColorStop(0, healthColor + (isActive ? '50' : '20'));
-        glow.addColorStop(1, healthColor + '00');
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
-        ctx.fillStyle = glow;
-        ctx.fill();
+        if (isActive || isSelected) {
+          const glowRadius = radius + 14;
+          const glow = ctx.createRadialGradient(node.x, node.y, radius, node.x, node.y, glowRadius);
+          glow.addColorStop(0, healthColor + '40');
+          glow.addColorStop(1, healthColor + '00');
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
+          ctx.fillStyle = glow;
+          ctx.fill();
+        }
 
         // Connected nodes pulse
         if (isConnected && activeId) {
@@ -509,24 +511,20 @@ function ForceGraph({
           ctx.fill();
         }
 
-        // Node body - cluster color with health tint
-        const bodyGrad = ctx.createRadialGradient(
-          node.x - radius * 0.3, node.y - radius * 0.3, 0,
-          node.x, node.y, radius,
-        );
-        bodyGrad.addColorStop(0, node.clusterColor + 'ee');
-        bodyGrad.addColorStop(1, node.clusterColor + '99');
+        // Node body - flat color, no gradient (cleaner)
         ctx.beginPath();
         ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = bodyGrad;
+        ctx.fillStyle = node.clusterColor + (isActive ? 'ff' : node.type === 'module' ? 'cc' : '88');
         ctx.fill();
 
-        // Health ring
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = healthColor;
-        ctx.lineWidth = isActive ? 2.5 : 1.5;
-        ctx.stroke();
+        // Health ring -- only on module nodes and active/hovered
+        if (isActive || isConnected || node.type === 'module') {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+          ctx.strokeStyle = healthColor;
+          ctx.lineWidth = isActive ? 2 : 0.8;
+          ctx.stroke();
+        }
 
         // Selected ring
         if (isSelected) {
@@ -539,8 +537,9 @@ function ForceGraph({
           ctx.setLineDash([]);
         }
 
-        // Labels: only show for module nodes by default; others only on hover/select
-        if (isActive || (isConnected && activeId) || node.type === 'module') {
+        // Labels: only on hover/select, or for the LARGEST module nodes (top ~15)
+        const isLargeModule = node.type === 'module' && radius >= 10;
+        if (isActive || (isConnected && activeId) || isLargeModule) {
           const fontSize = isActive ? 12 : isConnected ? 10 : 8;
           ctx.font = `${isActive ? '600' : '400'} ${fontSize}px 'JetBrains Mono', monospace`;
           ctx.textAlign = 'center';
