@@ -136,34 +136,43 @@ export async function GET(request: Request): Promise<Response> {
   // Strategy 2: Fall back to local .corpus/graph.json
   const graphPath = findGraphFile(projectRoot);
 
-  if (!graphPath) {
-    return NextResponse.json({
-      error: 'No corpus graph found. Run `corpus init` to build the immune system.',
-      nodes: [],
-      edges: [],
-      stats: { totalFiles: 0, totalFunctions: 0, totalExports: 0, healthScore: 0 },
-    }, { status: 404 });
+  if (graphPath) {
+    try {
+      const graph = JSON.parse(readFileSync(graphPath, 'utf-8'));
+      const visualNodes = transformNodes(graph.nodes);
+      const visualEdges = transformEdges(graph.edges, visualNodes);
+
+      return NextResponse.json({
+        nodes: visualNodes,
+        edges: visualEdges,
+        stats: graph.stats,
+        created: graph.created,
+        updated: graph.updated,
+        source: 'local',
+      });
+    } catch {
+      // Fall through to static
+    }
   }
 
-  try {
-    const graph = JSON.parse(readFileSync(graphPath, 'utf-8'));
-    const visualNodes = transformNodes(graph.nodes);
-    const visualEdges = transformEdges(graph.edges, visualNodes);
-
-    return NextResponse.json({
-      nodes: visualNodes,
-      edges: visualEdges,
-      stats: graph.stats,
-      created: graph.created,
-      updated: graph.updated,
-      source: 'local',
-    });
-  } catch (e) {
-    return NextResponse.json({
-      error: 'Failed to parse graph',
-      nodes: [],
-      edges: [],
-      stats: { totalFiles: 0, totalFunctions: 0, totalExports: 0, healthScore: 0 },
-    }, { status: 500 });
+  // Strategy 3: Fall back to pre-built static graph.json in public/
+  const staticGraphPath = path.join(process.cwd(), 'public', 'graph.json');
+  if (existsSync(staticGraphPath)) {
+    try {
+      const graph = JSON.parse(readFileSync(staticGraphPath, 'utf-8'));
+      return NextResponse.json({
+        ...graph,
+        source: 'static',
+      });
+    } catch {
+      // Fall through to error
+    }
   }
+
+  return NextResponse.json({
+    error: 'No corpus graph found. Run `corpus init` to build the immune system.',
+    nodes: [],
+    edges: [],
+    stats: { totalFiles: 0, totalFunctions: 0, totalExports: 0, healthScore: 0 },
+  }, { status: 404 });
 }

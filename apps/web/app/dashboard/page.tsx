@@ -99,6 +99,8 @@ export default function DashboardPage() {
   const [memoryData, setMemoryData] = useState<MemoryData | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
+  const [backboardData, setBackboardData] = useState<{ totalCount: number; byCategory: Record<string, number> } | null>(null);
+  const [autoSynced, setAutoSynced] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -127,6 +129,18 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const fetchBackboard = useCallback(async () => {
+    try {
+      const res = await fetch('/api/memory/sync', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        setBackboardData({ totalCount: json.totalCount || 0, byCategory: json.byCategory || {} });
+      }
+    } catch {
+      // Backboard may not be reachable
+    }
+  }, []);
+
   const handleSync = useCallback(async () => {
     setSyncing(true);
     setSyncResult(null);
@@ -134,7 +148,10 @@ export default function DashboardPage() {
       const res = await fetch('/api/memory/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
       const json = await res.json();
       if (res.ok) {
-        setSyncResult(`Synced ${json.synced} memories to Backboard.io${json.errors > 0 ? ` (${json.errors} errors)` : ''}`);
+        const cats = json.categories ? Object.entries(json.categories).filter(([, v]) => v === 'synced').map(([k]) => k) : [];
+        setSyncResult(`Synced ${json.synced} items to Backboard.io (${cats.join(', ')})${json.errors > 0 ? ` — ${json.errors} errors` : ''}`);
+        // Refresh backboard data after sync
+        fetchBackboard();
       } else {
         setSyncResult(json.error || 'Sync failed');
       }
@@ -143,15 +160,21 @@ export default function DashboardPage() {
     } finally {
       setSyncing(false);
     }
-  }, []);
+  }, [fetchBackboard]);
 
   useEffect(() => {
     fetchData();
     fetchMemory();
+    fetchBackboard();
+    // Auto-sync all learnings to Backboard on first load
+    if (!autoSynced) {
+      setAutoSynced(true);
+      handleSync();
+    }
     const interval = setInterval(fetchData, 2000);
     const memInterval = setInterval(fetchMemory, 5000);
     return () => { clearInterval(interval); clearInterval(memInterval); };
-  }, [fetchData, fetchMemory]);
+  }, [fetchData, fetchMemory, fetchBackboard, autoSynced, handleSync]);
 
   const waiting = !data || data.status === 'waiting';
 
@@ -222,6 +245,27 @@ export default function DashboardPage() {
               )}
             </div>
 
+            {/* Backboard.io Status */}
+            {backboardData && (
+              <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden mt-8">
+                <div className="flex items-center justify-between px-5 py-3 border-b border-[#222]">
+                  <span className="text-xs text-[#888] font-mono uppercase tracking-wider flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
+                    Backboard.io — Persistent Memory
+                  </span>
+                  <span className="text-[10px] text-[#16A34A] font-mono font-bold">{backboardData.totalCount} memories stored</span>
+                </div>
+                <div className="flex flex-wrap gap-3 p-5">
+                  {Object.entries(backboardData.byCategory).map(([cat, count]) => (
+                    <div key={cat} className="text-center px-4 py-2 rounded-lg bg-[#0a0a0a] border border-[#1a1a1a]">
+                      <div className="text-sm font-mono font-bold text-[#EDEDEA]">{count}</div>
+                      <div className="text-[9px] text-[#888] mt-0.5 uppercase tracking-wider">{cat}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Immune Memory */}
             <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden mt-8">
               <div className="flex items-center justify-between px-5 py-3 border-b border-[#222]">
@@ -235,7 +279,7 @@ export default function DashboardPage() {
                     disabled={syncing}
                     className="text-[10px] font-mono font-bold px-3 py-1.5 rounded border border-[#333] hover:border-[#16A34A] hover:text-[#16A34A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {syncing ? 'Syncing...' : 'Sync to Backboard'}
+                    {syncing ? 'Syncing...' : 'Sync All to Backboard'}
                   </button>
                 </div>
               </div>

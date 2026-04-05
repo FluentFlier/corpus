@@ -92,7 +92,19 @@ export default function GraphPage() {
   const [view, setView] = useState<'explorer' | 'visual'>('explorer');
 
   useEffect(() => {
-    fetch('/api/graph').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
+    // Try API first, fall back to static graph.json
+    fetch('/api/graph')
+      .then(r => r.json())
+      .then(d => {
+        if (d.nodes?.length) { setData(d); setLoading(false); }
+        else throw new Error('empty');
+      })
+      .catch(() => {
+        fetch('/graph.json')
+          .then(r => r.json())
+          .then(d => { setData(d); setLoading(false); })
+          .catch(() => setLoading(false));
+      });
     fetch('/benchmarks.json').then(r => r.json()).then(d => setBenchmarks(d)).catch(() => {});
   }, []);
 
