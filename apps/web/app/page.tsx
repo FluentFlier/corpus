@@ -334,14 +334,17 @@ export default function HomePage(): React.ReactElement {
         </div>
 
         <h1 className="animate-slide-up font-mono text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.95] max-w-4xl">
-          Your codebase has
+          <span className="text-gradient-shimmer">Corpus</span>
           <br />
-          <span className="text-gradient-shimmer">an immune system</span>
+          <span className="text-white/90">the immune system</span>
+          <br />
+          <span className="text-white/90">for your code</span>
         </h1>
 
         <p className="animate-slide-up-1 text-corpus-muted text-base md:text-lg max-w-2xl leading-relaxed mt-8">
-          Corpus watches your AI-generated code, catches breakage before it
-          lands, and self-heals your project.
+          Scanned 183 repos. Found 401 issues. Learned which ones matter.
+          <br />
+          Corpus watches, catches, and self-heals. No more AI slop.
         </p>
 
         <div className="animate-slide-up-2 mt-10 flex flex-col sm:flex-row items-center gap-4">
