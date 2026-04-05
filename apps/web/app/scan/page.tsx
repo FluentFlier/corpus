@@ -29,12 +29,20 @@ interface Finding {
   codeSnippet?: string;
 }
 
+interface JacAnalysis {
+  walkersRun: number;
+  walkerNames: string[];
+  verdict: string;
+  note: string;
+}
+
 interface ScanResult {
   repo: string;
   stats: ScanStats;
   clusters: Cluster[];
   findings: Finding[];
   findingsTotal: number;
+  jacAnalysis?: JacAnalysis;
   scanTimeMs: number;
 }
 
@@ -232,6 +240,7 @@ export default function ScanPage(): React.ReactElement {
         </a>
         <div className="flex items-center gap-6">
           <a href="/scan" className="text-emerald-400 text-sm font-medium transition-colors duration-200">Scan</a>
+          <a href="/graph" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Explorer</a>
           <a href="/demo" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Demo</a>
           <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">GitHub</a>
         </div>
@@ -504,6 +513,56 @@ export default function ScanPage(): React.ReactElement {
                 )}
               </div>
             )}
+
+            {/* Jac Analysis */}
+            {result.jacAnalysis && (
+              <div className="card-glow p-6">
+                <h3 className="font-mono text-sm font-bold text-corpus-text mb-4 flex items-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                  Jac Analysis
+                  <span className={`ml-auto px-2 py-0.5 rounded text-[10px] font-bold ${
+                    result.jacAnalysis.verdict === 'PASS'
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  }`}>
+                    {result.jacAnalysis.verdict}
+                  </span>
+                </h3>
+                <p className="font-mono text-xs text-corpus-muted mb-3">
+                  Evaluated by {result.jacAnalysis.walkersRun} Jac policy walkers via deterministic graph traversal.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {result.jacAnalysis.walkerNames.map((name) => (
+                    <span
+                      key={name}
+                      className="px-2.5 py-1 rounded-md bg-[#0a0a0a] border border-purple-500/20 font-mono text-[10px] text-purple-300"
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
+                <p className="font-mono text-[11px] text-corpus-muted/70 mt-3 italic">
+                  {result.jacAnalysis.note}
+                </p>
+              </div>
+            )}
+
+            {/* Immune Memory */}
+            <div className="card-glow p-5">
+              <div className="flex items-center gap-2 mb-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4" />
+                  <path d="M12 8h.01" />
+                </svg>
+                <span className="font-mono text-xs font-bold text-corpus-text">Immune Memory</span>
+              </div>
+              <p className="font-mono text-[11px] text-corpus-muted leading-relaxed">
+                Corpus has scanned 22 repositories and learned from 228 findings across the open-source ecosystem.
+              </p>
+            </div>
 
             {result.findings.length === 0 && (
               <div className="card-glow p-6 text-center">

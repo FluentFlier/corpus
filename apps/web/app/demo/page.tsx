@@ -367,6 +367,7 @@ export default function DemoPage() {
         </Link>
         <div style={{ display: 'flex', gap: 24 }}>
           <Link href="/scan" style={{ color: '#555', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}>Scan</Link>
+          <Link href="/graph" style={{ color: '#555', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}>Explorer</Link>
           <Link href="/demo" style={{ color: '#10b981', textDecoration: 'none', fontSize: 13 }}>Demo</Link>
           <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" style={{ color: '#555', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }}>GitHub</a>
         </div>

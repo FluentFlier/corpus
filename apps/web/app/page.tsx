@@ -317,6 +317,7 @@ export default function HomePage(): React.ReactElement {
         </a>
         <div className="flex items-center gap-6">
           <a href="/scan" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Scan</a>
+          <a href="/graph" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Explorer</a>
           <a href="/demo" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Demo</a>
           <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">GitHub</a>
         </div>
