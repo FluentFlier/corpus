@@ -1,28 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
-
-/* ---- Scroll reveal hook ---- */
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-    );
-    el.querySelectorAll('.reveal-on-scroll').forEach((child) => observer.observe(child));
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 /* ---- Floating dots component ---- */
 function FloatingDots() {
@@ -284,14 +262,35 @@ function useCardGlow() {
   return handleMouseMove;
 }
 
+/* ---- Jac Walker data (summary for landing page) ---- */
+const JAC_WALKERS = [
+  { name: 'Action Safety', icon: '\u26A1', color: 'red' as const, tagline: 'Blocks destructive actions universally' },
+  { name: 'Scope Guard', icon: '\uD83D\uDEE1\uFE0F', color: 'emerald' as const, tagline: 'Enforces action scope boundaries' },
+  { name: 'Rate Guard', icon: '\u23F1\uFE0F', color: 'amber' as const, tagline: 'Rate limiting for AI actions' },
+  { name: 'Confidence Calibrator', icon: '\uD83C\uDFAF', color: 'indigo' as const, tagline: 'Detects AI overconfidence & underconfidence' },
+  { name: 'Injection Firewall', icon: '\uD83D\uDD25', color: 'red' as const, tagline: 'Blocks prompt injection attacks' },
+  { name: 'Exfiltration Guard', icon: '\uD83D\uDD12', color: 'red' as const, tagline: 'Prevents PII data exfiltration' },
+  { name: 'Session Hijack', icon: '\uD83D\uDC7E', color: 'amber' as const, tagline: 'Detects automated session injection' },
+  { name: 'Cross-User Firewall', icon: '\uD83D\uDC65', color: 'red' as const, tagline: 'Prevents cross-user data access' },
+  { name: 'Context Poisoning', icon: '\u2620\uFE0F', color: 'amber' as const, tagline: 'Detects poisoned memory chunks' },
+  { name: 'Undo Integrity', icon: '\u21A9\uFE0F', color: 'indigo' as const, tagline: 'Validates undo capability before execution' },
+];
+
+const JAC_COLOR_MAP = {
+  emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-400' },
+  indigo: { bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
+  amber: { bg: 'bg-amber-500/10', text: 'text-amber-400' },
+  red: { bg: 'bg-red-500/10', text: 'text-red-400' },
+};
+
 /* ======== MAIN PAGE ======== */
 
 export default function HomePage(): React.ReactElement {
-  const scrollRef = useScrollReveal();
   const handleCardGlow = useCardGlow();
+  const [scanUrl, setScanUrl] = useState('');
 
   return (
-    <main ref={scrollRef} className="min-h-screen bg-corpus-bg bg-grid relative overflow-hidden">
+    <main className="min-h-screen bg-corpus-bg bg-grid relative overflow-hidden">
       {/* ---- Gradient mesh background ---- */}
       <div className="gradient-mesh">
         <div className="gradient-mesh-orb gradient-mesh-orb-1" />
@@ -317,14 +316,8 @@ export default function HomePage(): React.ReactElement {
           </span>
         </a>
         <div className="flex items-center gap-6">
-          <a href="/graph" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Graph</a>
-          <a href="/demo" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Demo</a>
           <a href="/scan" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Scan</a>
-          <a href="/dashboard" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Dashboard</a>
-          <a href="/live" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-glow-pulse" />
-            Live
-          </a>
+          <a href="/demo" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Demo</a>
           <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">GitHub</a>
         </div>
       </nav>
@@ -363,10 +356,10 @@ export default function HomePage(): React.ReactElement {
             </a>
           </div>
           <a
-            href="/graph"
+            href="/scan"
             className="text-corpus-muted text-sm font-mono hover:text-corpus-text transition-colors duration-200 flex items-center gap-1.5"
           >
-            View live graph
+            Scan a repo
             <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
@@ -385,8 +378,71 @@ export default function HomePage(): React.ReactElement {
         </div>
       </section>
 
+      {/* ======== SCAN ANY REPO CTA ======== */}
+      <section className="relative z-10 max-w-3xl mx-auto px-6 pb-24 animate-fade-in-5">
+        <div className="card-glow p-8 md:p-10 text-center">
+          <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight mb-3">
+            Try it now -- <span className="text-gradient">scan any GitHub repository</span>
+          </h2>
+          <p className="text-corpus-muted text-sm mb-8">
+            Paste a repo URL and Corpus builds the structural graph, runs security scanners, and shows findings.
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (scanUrl.trim()) {
+                window.location.href = `/scan?url=${encodeURIComponent(scanUrl.trim())}`;
+              } else {
+                window.location.href = '/scan';
+              }
+            }}
+            className="flex flex-col sm:flex-row items-center gap-3 max-w-xl mx-auto"
+          >
+            <div className="relative flex-1 w-full group">
+              <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-emerald-500/40 to-indigo-500/40 opacity-0 group-focus-within:opacity-100 blur-[1px] transition-opacity duration-300" />
+              <input
+                type="url"
+                value={scanUrl}
+                onChange={(e) => setScanUrl(e.target.value)}
+                placeholder="https://github.com/..."
+                className="relative w-full bg-[#111] rounded-xl border border-corpus-line/60 px-5 py-3.5 font-mono text-sm text-corpus-text placeholder:text-corpus-muted/40 outline-none focus:border-transparent transition-colors"
+                aria-label="GitHub repository URL"
+              />
+            </div>
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-mono text-sm font-medium bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-200"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              Scan
+            </button>
+          </form>
+          <div className="mt-6 flex items-center justify-center gap-2 text-xs font-mono text-corpus-muted">
+            <span>or try:</span>
+            {[
+              { label: 'hono', url: 'https://github.com/honojs/hono' },
+              { label: 'trpc', url: 'https://github.com/trpc/trpc' },
+              { label: 'drizzle-orm', url: 'https://github.com/drizzle-team/drizzle-orm' },
+            ].map((example, i) => (
+              <span key={example.label} className="flex items-center gap-2">
+                {i > 0 && <span className="text-corpus-line">|</span>}
+                <a
+                  href={`/scan?url=${encodeURIComponent(example.url)}`}
+                  className="text-emerald-400/80 hover:text-emerald-400 transition-colors"
+                >
+                  {example.label}
+                </a>
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ======== FEATURES (mouse-follow glow) ======== */}
-      <section className="relative z-10 max-w-6xl mx-auto px-6 pb-24 reveal-on-scroll" aria-labelledby="features-heading" onMouseMove={handleCardGlow}>
+      <section className="relative z-10 max-w-6xl mx-auto px-6 pb-24 animate-fade-in-5" aria-labelledby="features-heading" onMouseMove={handleCardGlow}>
         <h2 id="features-heading" className="sr-only">Features</h2>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="card-glow-interactive p-8 transition-transform duration-300 hover:-translate-y-1">
@@ -451,7 +507,7 @@ export default function HomePage(): React.ReactElement {
       </section>
 
       {/* ======== LIVE GRAPH PREVIEW ======== */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-24 reveal-on-scroll">
+      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-24 animate-fade-in-6">
         <div className="text-center mb-12">
           <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight mb-4">
             <span className="text-gradient">Live Graph Preview</span>
@@ -482,7 +538,7 @@ export default function HomePage(): React.ReactElement {
       </section>
 
       {/* ======== STATS ======== */}
-      <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 reveal-on-scroll" aria-label="Project statistics">
+      <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 animate-fade-in-7" aria-label="Project statistics">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-corpus-muted text-sm text-center mb-10 font-mono">
             Benchmarked on 7 repos: t3, shadcn/ui, cal.com, trpc, hono, drizzle, prisma
@@ -505,7 +561,7 @@ export default function HomePage(): React.ReactElement {
       </section>
 
       {/* ======== HOW IT WORKS ======== */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 py-24 reveal-on-scroll" aria-labelledby="how-heading">
+      <section className="relative z-10 max-w-4xl mx-auto px-6 py-24 animate-fade-in" aria-labelledby="how-heading">
         <h2 id="how-heading" className="font-mono text-2xl md:text-3xl font-bold text-center mb-16 tracking-tight">
           No more <span className="text-gradient">AI slop</span>
         </h2>
@@ -535,13 +591,85 @@ export default function HomePage(): React.ReactElement {
       </section>
 
       {/* ======== BOTTOM CTA ======== */}
-      <section className="relative z-10 text-center px-6 pb-16 reveal-on-scroll">
+      <section className="relative z-10 text-center px-6 pb-16 animate-fade-in">
         <p className="text-corpus-muted text-sm font-mono mb-6">
           Corpus watches so you don&apos;t have to.
         </p>
         <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl border border-corpus-line bg-[#0a0a0a]">
           <span className="text-emerald-400 font-mono text-sm">$</span>
           <code className="text-corpus-text font-mono text-sm">npm install -g corpus-cli</code>
+        </div>
+      </section>
+
+      {/* ======== JAC POLICIES SECTION ======== */}
+      <section className="relative z-10 max-w-6xl mx-auto px-6 py-24 animate-fade-in" aria-labelledby="jac-heading">
+        <div className="text-center mb-12">
+          <h2 id="jac-heading" className="font-mono text-2xl md:text-3xl font-bold tracking-tight mb-4">
+            <span className="text-gradient-shimmer">10 Jac Walkers</span> guarding your AI agent
+          </h2>
+          <p className="text-corpus-muted text-sm max-w-2xl mx-auto leading-relaxed">
+            Deterministic policy evaluation powered by{' '}
+            <a href="https://jaseci.org" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">Jac</a>.
+            No LLM opinions. No probabilistic guessing. Pure graph traversal that returns{' '}
+            <span className="text-emerald-400 font-mono">PASS</span>,{' '}
+            <span className="text-amber-400 font-mono">CONFIRM</span>, or{' '}
+            <span className="text-red-400 font-mono">BLOCK</span>.
+          </p>
+        </div>
+
+        {/* Why Jac pillars */}
+        <div className="card-glow p-8 mb-10">
+          <h3 className="font-mono text-lg font-bold text-corpus-text mb-5">
+            Why <a href="https://jaseci.org" target="_blank" rel="noopener noreferrer" className="text-gradient hover:underline">Jac</a> for Policy Evaluation?
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div>
+              <h4 className="font-mono text-sm font-bold text-emerald-400 mb-2">Deterministic</h4>
+              <p className="text-corpus-muted text-sm leading-relaxed">
+                LLMs are probabilistic -- ask the same question twice, get different answers. Safety policies must be deterministic. Jac walkers traverse a graph and return the same verdict every time.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-mono text-sm font-bold text-indigo-400 mb-2">Graph-Native</h4>
+              <p className="text-corpus-muted text-sm leading-relaxed">
+                Jac is built around graphs. Policy evaluation is graph traversal -- walkers visit nodes, check conditions, and report verdicts. No ORM, no SQL.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-mono text-sm font-bold text-amber-400 mb-2">Composable</h4>
+              <p className="text-corpus-muted text-sm leading-relaxed">
+                Each walker is independent. Stack 10 built-in policies, then add your own custom walkers. Each one checks a specific concern -- no tangled if-else chains.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Walker grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {JAC_WALKERS.map((w) => {
+            const c = JAC_COLOR_MAP[w.color];
+            return (
+              <div key={w.name} className="card-glow p-4 transition-transform duration-300 hover:-translate-y-0.5">
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className={`w-8 h-8 rounded-lg ${c.bg} flex items-center justify-center text-base flex-shrink-0`}>
+                    {w.icon}
+                  </div>
+                  <h4 className="font-mono text-xs font-bold text-corpus-text leading-tight">{w.name}</h4>
+                </div>
+                <p className={`text-[11px] font-mono ${c.text}`}>{w.tagline}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="text-center mt-8">
+          <a
+            href="/policies"
+            className="inline-flex items-center gap-2 text-sm font-mono text-corpus-muted hover:text-emerald-400 transition-colors duration-200"
+          >
+            See full policy details &amp; Jac source code
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
       </section>
 

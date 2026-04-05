@@ -15,5 +15,8 @@
     "publish:mcp": "cd packages/mcp-server && npm publish --access public",
     "publish:all": "pnpm run build && pnpm run publish:core && pnpm run publish:sdk && pnpm run publish:cli && pnpm run publish:mcp"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "agent-browser": "^0.24.1"
+  }
 }
