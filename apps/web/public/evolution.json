@@ -1,0 +1,76 @@
+{
+  "timeline": [
+    {
+      "reposScanned": 3,
+      "totalFindings": 0,
+      "patternsLearned": 0,
+      "suppressed": 0,
+      "note": "Initial scan: create-t3-app, shadcn/ui, cal.com"
+    },
+    {
+      "reposScanned": 7,
+      "totalFindings": 105,
+      "patternsLearned": 6,
+      "suppressed": 1,
+      "note": "Added trpc, hono, drizzle, prisma. First real findings."
+    },
+    {
+      "reposScanned": 12,
+      "totalFindings": 228,
+      "patternsLearned": 11,
+      "suppressed": 4,
+      "note": "Added express, fastify, vite, supabase-js. eval() pattern suppressed (89% test-only)."
+    },
+    {
+      "reposScanned": 22,
+      "totalFindings": 345,
+      "patternsLearned": 11,
+      "suppressed": 5,
+      "note": "Added n8n, vercel/ai, langchain, esbuild, etc. hardcoded_ip suppressed (86% test-only)."
+    },
+    {
+      "reposScanned": 29,
+      "totalFindings": 400,
+      "patternsLearned": 11,
+      "suppressed": 5,
+      "note": "Added koa, nestjs, vue, preact, solid, webpack. System stabilizing."
+    }
+  ],
+  "insights": [
+    {
+      "pattern": "eval_usage",
+      "insight": "eval() appears in 89% test files. Real production eval is rare and critical. Corpus suppresses test-only eval.",
+      "repos": "esbuild, preact, webpack"
+    },
+    {
+      "pattern": "hardcoded_ip",
+      "insight": "0.0.0.0 binding is 86% in test configurations. Only flag in production server files.",
+      "repos": "hono, drizzle, fastify"
+    },
+    {
+      "pattern": "console_log_sensitive",
+      "insight": "Most common real issue. 59% in production code. Cannot suppress -- genuine security concern.",
+      "repos": "fastify, drizzle, supabase-js"
+    },
+    {
+      "pattern": "disabled_auth",
+      "insight": "Authentication disabled in 80% test suites. Flag only in route handlers and middleware.",
+      "repos": "hono, socket.io, express"
+    },
+    {
+      "pattern": "wildcard_cors",
+      "insight": "CORS * is 70% intentional in dev/test. Flag in production config files only.",
+      "repos": "hono, fastify, express"
+    }
+  ],
+  "summary": {
+    "totalRepos": 29,
+    "totalFiles": 50418,
+    "totalNodes": 164295,
+    "totalFindings": 400,
+    "patternsLearned": 11,
+    "patternsSuppressed": 5,
+    "falsePositiveReduction": "45%",
+    "note": "Corpus reduces noise by 45% compared to a static scanner by learning which patterns are test-only."
+  }
+}
