@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { NavBar } from '../../components/NavBar';
 
 /* ------------------------------------------------------------------ */
 /*  Walker data — pulled from policies/builtin/*.jac                  */
@@ -535,55 +536,7 @@ export default function PoliciesPage() {
       {/* Ambient glow */}
       <div className="hero-glow top-[-200px] left-1/2 -translate-x-1/2" />
 
-      {/* ======== NAV ======== */}
-      <nav
-        aria-label="Main navigation"
-        className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 max-w-6xl mx-auto w-full"
-      >
-        <a href="/" className="flex items-center gap-2.5 group">
-          <div className="relative w-3 h-3">
-            <div className="absolute inset-0 rounded-full bg-emerald-500 animate-glow-pulse" />
-            <div className="absolute inset-[2px] rounded-full bg-emerald-400" />
-          </div>
-          <span className="font-mono text-base tracking-tight font-bold text-corpus-text">
-            corpus
-          </span>
-        </a>
-        <div className="flex items-center gap-6">
-          <a
-            href="/graph"
-            className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
-          >
-            Graph
-          </a>
-          <a
-            href="/demo"
-            className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
-          >
-            Demo
-          </a>
-          <a
-            href="/policies"
-            className="text-emerald-400 text-sm font-bold transition-colors duration-200"
-          >
-            Policies
-          </a>
-          <a
-            href="/dashboard"
-            className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
-          >
-            Dashboard
-          </a>
-          <a
-            href="https://github.com/FluentFlier/corpus"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
-          >
-            GitHub
-          </a>
-        </div>
-      </nav>
+      <NavBar />
 
       {/* ======== HERO ======== */}
       <section className="relative z-10 flex flex-col items-center text-center px-6 pt-16 md:pt-24 pb-12">

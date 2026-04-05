@@ -9,10 +9,10 @@ export function NavBar() {
     { href: '/scan', label: 'Scan' },
     { href: '/graph', label: 'Explorer' },
     { href: '/evolution', label: 'Evolution' },
-    { href: '/live', label: 'Live', pulse: true },
     { href: '/policies', label: 'Jac' },
     { href: '/demo', label: 'Demo' },
-    { href: 'https://github.com/FluentFlier/Corpus', label: 'GitHub', external: true },
+    { href: 'https://github.com/FluentFlier/corpus', label: 'GitHub', external: true },
+    { href: '/live', label: 'Live', pulse: true },
   ];
 
   return (
