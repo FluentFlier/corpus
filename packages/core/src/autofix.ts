@@ -10,6 +10,7 @@
  */
 
 import { diffFile, loadGraph, type CodebaseGraph, type GraphDiff } from './graph-engine.js';
+import { recordMemory, getFlagCount } from './memory.js';
 import path from 'path';
 
 export interface FixInstruction {
@@ -53,6 +54,13 @@ export function checkFile(
   const relPath = path.relative(projectRoot, filePath);
 
   if (diff.verdict === 'VERIFIED') {
+    // Record successful verification in memory
+    recordMemory(projectRoot, {
+      type: 'baseline',
+      file: relPath,
+      content: `File ${relPath} passed all contract checks.`,
+      metadata: { verdict: 'VERIFIED' },
+    }).catch(() => {}); // Fire and forget
     return {
       verdict: 'VERIFIED',
       file: relPath,
@@ -128,6 +136,23 @@ export function checkFile(
   }
 
   instructions += `Please regenerate this file with these fixes applied. The Corpus immune system will re-verify after your changes.`;
+
+  // Record violations in immune memory (fire and forget)
+  for (const v of violations) {
+    const prevFlags = getFlagCount(projectRoot, relPath, v.functionName);
+    recordMemory(projectRoot, {
+      type: 'violation',
+      file: relPath,
+      functionName: v.functionName,
+      content: `${v.severity}: ${v.message}`,
+      metadata: { fix: v.fix, violationType: v.type },
+      flagCount: prevFlags + 1,
+    }).catch(() => {});
+
+    if (prevFlags > 0) {
+      instructions += `\n\nNOTE: Function '${v.functionName}' has been flagged ${prevFlags + 1} times. This is a recurring issue.`;
+    }
+  }
 
   return {
     verdict: diff.verdict,
