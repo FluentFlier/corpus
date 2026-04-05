@@ -1,4 +1,4 @@
-import { watch, readFileSync, statSync, readdirSync } from 'fs';
+import { watch, readFileSync, writeFileSync, statSync, readdirSync, existsSync, mkdirSync } from 'fs';
 import path from 'path';
 import { green, amber, red, dim, bold, cyan } from '../utils/colors.js';
 import { detectSecrets } from '@corpus/core';
@@ -11,7 +11,7 @@ import { shouldSuppress } from '@corpus/core';
 const IGNORE_DIRS = new Set([
   'node_modules', '.git', 'dist', '.next', '__pycache__', '.venv',
   'venv', '.cache', '.turbo', 'coverage', '.nyc_output', '.claude',
-  '.swarm', '.claude-flow', '.insforge',
+  '.swarm', '.claude-flow', '.insforge', '.corpus',
 ]);
 
 const SCAN_EXTENSIONS = new Set([
@@ -125,6 +125,67 @@ function isScannable(filepath: string): boolean {
   return SCAN_EXTENSIONS.has(ext) || filepath.includes('.env');
 }
 
+// ── Disk persistence for web dashboard ───────────────────────────────────────
+
+const DASHBOARD_FILE = '/tmp/corpus-dashboard.json';
+let eventsFilePath = '';
+
+function ensureCorpusDir(projectRoot: string): void {
+  const corpusDir = path.join(projectRoot, '.corpus');
+  if (!existsSync(corpusDir)) mkdirSync(corpusDir, { recursive: true });
+  eventsFilePath = path.join(corpusDir, 'events.json');
+}
+
+function writeDashboardState(dir: string): void {
+  const passRate = stats.filesScanned > 0
+    ? Math.round((stats.passCount / stats.filesScanned) * 100)
+    : 100;
+
+  const dashboard = {
+    score: passRate,
+    filesScanned: stats.filesScanned,
+    issues: {
+      critical: stats.criticalCount,
+      warning: stats.warningCount,
+      info: 0,
+    },
+    events: stats.recentEvents.map(e => ({
+      time: e.time,
+      file: e.file,
+      severity: e.severity,
+      message: e.message,
+    })),
+    uptime: uptime(),
+    lastUpdate: formatTime(),
+    status: 'active',
+    cvesDetected: stats.cvesDetected,
+    contractViolations: stats.contractViolations,
+    depsChecked: stats.depsChecked,
+    autoHealed: stats.autoHealed,
+  };
+
+  try {
+    writeFileSync(DASHBOARD_FILE, JSON.stringify(dashboard));
+  } catch { /* /tmp write failed */ }
+}
+
+function writeEventToDisk(event: { type: string; file: string; verdict: string; details: string; fix?: string }): void {
+  if (!eventsFilePath) return;
+  try {
+    let events: unknown[] = [];
+    if (existsSync(eventsFilePath)) {
+      events = JSON.parse(readFileSync(eventsFilePath, 'utf-8'));
+    }
+    events.push({
+      ...event,
+      timestamp: new Date().toISOString(),
+    });
+    // Keep last 200 events
+    if (events.length > 200) events = events.slice(-200);
+    writeFileSync(eventsFilePath, JSON.stringify(events));
+  } catch { /* write failed */ }
+}
+
 function formatTime(): string {
   const now = new Date();
   return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
@@ -172,12 +233,16 @@ function renderDashboard(dir: string): void {
     process.stdout.write(`  ${red(`CVEs: ${stats.cvesDetected}`)}  ${amber(`Contracts: ${stats.contractViolations}`)}  ${cyan(`Deps checked: ${stats.depsChecked}`)}  ${green(`Auto-healed: ${stats.autoHealed}`)}\n\n`);
   }
 
-  // Recent events
+  // Recent events — prioritize findings over PASS
   process.stdout.write(dim('  Recent activity:\n'));
   if (stats.recentEvents.length === 0) {
     process.stdout.write(dim('  Waiting for file changes...\n'));
   } else {
-    for (const event of stats.recentEvents.slice(-12)) {
+    // Show findings first, then recent clean files
+    const findings = stats.recentEvents.filter(e => e.severity !== 'PASS');
+    const clean = stats.recentEvents.filter(e => e.severity === 'PASS');
+    const display = [...findings.slice(-10), ...clean.slice(-2)].slice(-12);
+    for (const event of display) {
       const sev = event.severity === 'CRIT' ? red('CRIT') :
                   event.severity === 'WARN' ? amber('WARN') :
                   event.severity === 'INFO' ? dim('INFO') :
@@ -237,9 +302,15 @@ export async function runWatch(): Promise<void> {
   const targetDir = process.argv[3] || '.';
   const resolvedDir = path.resolve(targetDir);
 
+  // Ensure .corpus dir exists for event writing
+  ensureCorpusDir(resolvedDir);
+
   // Initial scan
   process.stdout.write(dim('\n  Running initial scan...\n'));
   initialScan(resolvedDir);
+
+  // Write initial dashboard state
+  writeDashboardState(resolvedDir);
 
   // Render dashboard
   renderDashboard(resolvedDir);
@@ -275,6 +346,7 @@ export async function runWatch(): Promise<void> {
         if (findings.length === 0) {
           stats.passCount++;
           stats.recentEvents.push({ time, file: relPath, severity: 'PASS', message: 'Clean' });
+          writeEventToDisk({ type: 'verified', file: relPath, verdict: 'VERIFIED', details: 'All contracts satisfied' });
         } else {
           stats.issuesFound += findings.length;
           const hasCrit = findings.some((f) => f.severity === 'CRIT');
@@ -283,6 +355,12 @@ export async function runWatch(): Promise<void> {
 
           for (const f of findings) {
             stats.recentEvents.push({ time, file: relPath, severity: f.severity, message: f.message });
+            writeEventToDisk({
+              type: f.severity === 'CRIT' ? 'violation' : 'scan',
+              file: relPath,
+              verdict: f.severity === 'CRIT' ? 'VIOLATION' : 'WARNING',
+              details: f.message,
+            });
           }
         }
 
