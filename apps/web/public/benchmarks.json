@@ -50,12 +50,136 @@
       },
       "scanTimeMs": 2118,
       "healthScore": 100
+    },
+    {
+      "repo": "trpc/trpc",
+      "files": 909,
+      "functions": 1937,
+      "exports": 422,
+      "classes": 90,
+      "nodes": 2936,
+      "edges": 5792,
+      "edgesByType": {
+        "exports": 1937,
+        "imports": 637,
+        "extends": 44,
+        "calls": 3174
+      },
+      "scanTimeMs": 255,
+      "healthScore": 100
+    },
+    {
+      "repo": "honojs/hono",
+      "files": 362,
+      "functions": 1121,
+      "exports": 233,
+      "classes": 84,
+      "nodes": 1567,
+      "edges": 3458,
+      "edgesByType": {
+        "imports": 563,
+        "exports": 1121,
+        "extends": 30,
+        "calls": 1744
+      },
+      "scanTimeMs": 107,
+      "healthScore": 100
+    },
+    {
+      "repo": "drizzle-team/drizzle-orm",
+      "files": 966,
+      "functions": 2976,
+      "exports": 663,
+      "classes": 932,
+      "nodes": 4874,
+      "edges": 11016,
+      "edgesByType": {
+        "exports": 2976,
+        "imports": 1010,
+        "extends": 218,
+        "calls": 6812
+      },
+      "scanTimeMs": 334,
+      "healthScore": 100
+    },
+    {
+      "repo": "prisma/prisma",
+      "files": 2813,
+      "functions": 3592,
+      "exports": 773,
+      "classes": 377,
+      "nodes": 6782,
+      "edges": 18803,
+      "edgesByType": {
+        "exports": 3592,
+        "imports": 3451,
+        "extends": 120,
+        "calls": 11640
+      },
+      "scanTimeMs": 642,
+      "healthScore": 100
     }
   ],
-  "totalReposScanned": 3,
-  "totalFilesScanned": 11069,
-  "totalFunctionsFound": 22903,
-  "totalNodes": 35956,
-  "totalEdges": 72664,
-  "generatedAt": "2026-04-05T03:24:07.463Z"
+  "totalReposScanned": 7,
+  "totalFilesScanned": 16119,
+  "totalFunctionsFound": 32529,
+  "totalNodes": 52115,
+  "totalEdges": 111733,
+  "totalScanTimeMs": 4462,
+  "autofixSummary": {
+    "reposTested": 4,
+    "totalViolationsCaught": 49,
+    "violationTypes": [
+      "guard_removed",
+      "function_removed",
+      "params_changed"
+    ],
+    "details": [
+      {
+        "repo": "trpc/trpc",
+        "violationsCaught": 15,
+        "functionsWithGuards": 20,
+        "exportedFunctions": 422,
+        "violationTypes": [
+          "guard_removed",
+          "function_removed",
+          "params_changed"
+        ]
+      },
+      {
+        "repo": "honojs/hono",
+        "violationsCaught": 15,
+        "functionsWithGuards": 8,
+        "exportedFunctions": 233,
+        "violationTypes": [
+          "guard_removed",
+          "function_removed",
+          "params_changed"
+        ]
+      },
+      {
+        "repo": "drizzle-team/drizzle-orm",
+        "violationsCaught": 11,
+        "functionsWithGuards": 2,
+        "exportedFunctions": 663,
+        "violationTypes": [
+          "guard_removed",
+          "function_removed",
+          "params_changed"
+        ]
+      },
+      {
+        "repo": "prisma/prisma",
+        "violationsCaught": 8,
+        "functionsWithGuards": 39,
+        "exportedFunctions": 773,
+        "violationTypes": [
+          "guard_removed",
+          "function_removed",
+          "params_changed"
+        ]
+      }
+    ]
+  },
+  "generatedAt": "2026-04-05T03:49:08.213Z"
 }
