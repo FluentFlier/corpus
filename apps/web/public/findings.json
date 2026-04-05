@@ -1,319 +1,1450 @@
 [
   {
-    "repo": "trpc/trpc",
-    "filesScanned": 907,
-    "findings": 8,
-    "details": [
+    "repo": "evanw/esbuild",
+    "url": "https://github.com/evanw/esbuild",
+    "totalFindings": 50,
+    "critical": 21,
+    "warning": 1,
+    "info": 28,
+    "findings": [
       {
-        "file": "examples/bun/src/client.ts",
-        "type": "Inlined Environment Variable",
-        "severity": "WARNING",
-        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
-        "isAiPattern": true
-      },
-      {
-        "file": "examples/cloudflare-workers/src/client.ts",
-        "type": "Inlined Environment Variable",
-        "severity": "WARNING",
-        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
-        "isAiPattern": true
-      },
-      {
-        "file": "examples/deno-deploy/src/client.ts",
-        "type": "Inlined Environment Variable",
-        "severity": "WARNING",
-        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
-        "isAiPattern": true
-      },
-      {
-        "file": "examples/next-prisma-websockets-starter/src/pages/api/auth/[...nextauth].ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
-      },
-      {
-        "file": "examples/next-sse-chat/src/server/auth.tsx",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
-      },
-      {
-        "file": "examples/next-websockets-encoder/src/utils/trpc.ts",
-        "type": "Inlined Environment Variable",
-        "severity": "WARNING",
-        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
-        "isAiPattern": true
-      },
-      {
-        "file": "examples/vercel-edge-runtime/src/client.ts",
-        "type": "Inlined Environment Variable",
-        "severity": "WARNING",
-        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
-        "isAiPattern": true
-      },
-      {
-        "file": "packages/next/test/issue-4130-ssr-different-transformers.test.tsx",
-        "type": "eval_usage",
         "severity": "CRITICAL",
-        "message": "eval() usage detected. This enables arbitrary code execution."
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 34,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "  test(['--define:x=y', '--define:y=x', 'in.js', '--outfile=node.js'], {\n    'in.js': `eval('var x=\"x\",y=\"y\"'); if (x + y !== 'yx') throw 'fail'`,\n  }),"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 587,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'in.js': `\n      function foo() { 'use asm'; eval(\"/* not asm.js */\") }\n      let emitWarning = process.emitWarning"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 1952,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'in.js': `if (require('./eval').foo !== 123) throw 'fail'`,\n    'eval.js': `eval('exports.foo = 123')`,\n  }),"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 1956,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'in.js': `if (require('./eval').foo !== 123) throw 'fail'`,\n    'eval.js': `eval('module.exports = {foo: 123}')`,\n  }),"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2124,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'runner1.js': `\n      let data = eval('\"runner1\" + \".js\"')\n      export function run() { return data }"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2132,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'runner2.js': `\n      let data = eval('\"runner2\" + \".js\"')\n      export function run() { return data }"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2141,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner1.js:2:17:\n      2 │       let data = eval('\"runner1\" + \".js\"')\n        ╵                  ~~~~"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2149,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner2.js:2:17:\n      2 │       let data = eval('\"runner2\" + \".js\"')\n        ╵                  ~~~~"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2157,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner2.js:2:17:\n      2 │       let data = eval('\"runner2\" + \".js\"')\n        ╵                  ~~~~"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2165,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner1.js:2:17:\n      2 │       let data = eval('\"runner1\" + \".js\"')\n        ╵                  ~~~~"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2184,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'runner1.js': `\n      let data = eval('\"runner1\" + \".js\"')\n      export function run() { return data }"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2192,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    'runner2.js': `\n      let data = eval('\"runner2\" + \".js\"')\n      export function run() { return data }"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2209,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner1.js:2:17:\n      2 │       let data = eval('\"runner1\" + \".js\"')\n        ╵                  ~~~~"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2217,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner2.js:2:17:\n      2 │       let data = eval('\"runner2\" + \".js\"')\n        ╵                  ~~~~"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "scripts/end-to-end-tests.js",
+        "line": 2225,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "    runner2.js:2:17:\n      2 │       let data = eval('\"runner2\" + \".js\"')\n        ╵                  ~~~~"
       }
     ]
   },
   {
-    "repo": "honojs/hono",
-    "filesScanned": 366,
-    "findings": 60,
-    "details": [
+    "repo": "supabase/supabase-js",
+    "url": "https://github.com/supabase/supabase-js",
+    "totalFindings": 29,
+    "critical": 5,
+    "warning": 23,
+    "info": 1,
+    "findings": [
       {
-        "file": "runtime-tests/lambda/index.test.ts",
-        "type": "disabled_auth",
         "severity": "WARNING",
-        "message": "Authentication appears to be disabled."
+        "type": "Password Assignment",
+        "file": "packages/core/auth-js/src/GoTrueAdminApi.ts",
+        "line": 388,
+        "message": "Hardcoded password detected",
+        "snippet": "   *   email: 'user@email.com',\n   *   password: 'password',\n   *   user_metadata: { name: 'Yoda' }"
       },
       {
-        "file": "runtime-tests/lambda/stream.test.ts",
-        "type": "disabled_auth",
         "severity": "WARNING",
-        "message": "Authentication appears to be disabled."
+        "type": "Password Assignment",
+        "file": "packages/core/auth-js/src/GoTrueAdminApi.ts",
+        "line": 709,
+        "message": "Hardcoded password detected",
+        "snippet": "   *   '6aa5d0d4-2a9f-4483-b6c8-0cf4c6c98ac4',\n   *   { password: 'new_password' }\n   * )"
       },
       {
-        "file": "runtime-tests/node/index.test.ts",
-        "type": "hardcoded_ip",
-        "severity": "INFO",
-        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
-      },
-      {
-        "file": "src/adapter/aws-lambda/conninfo.test.ts",
-        "type": "disabled_auth",
         "severity": "WARNING",
-        "message": "Authentication appears to be disabled."
+        "type": "Password Assignment",
+        "file": "packages/core/auth-js/src/GoTrueClient.ts",
+        "line": 1029,
+        "message": "Hardcoded password detected",
+        "snippet": "   *   phone: '+13334445555',\n   *   password: 'some-password',\n   * })"
       },
       {
-        "file": "src/adapter/aws-lambda/handler.test.ts",
-        "type": "disabled_auth",
         "severity": "WARNING",
-        "message": "Authentication appears to be disabled."
+        "type": "Password Assignment",
+        "file": "packages/core/auth-js/src/GoTrueClient.ts",
+        "line": 3064,
+        "message": "Hardcoded password detected",
+        "snippet": "   * const { data, error } = await supabase.auth.updateUser({\n   *   password: 'new password'\n   * })"
       },
       {
-        "file": "src/adapter/aws-lambda/types.ts",
-        "type": "disabled_auth",
         "severity": "WARNING",
-        "message": "Authentication appears to be disabled."
+        "type": "Password Assignment",
+        "file": "packages/core/auth-js/src/GoTrueClient.ts",
+        "line": 3086,
+        "message": "Hardcoded password detected",
+        "snippet": "   * const { data, error } = await supabase.auth.updateUser({\n   *   password: 'new password',\n   *   nonce: '123456'"
       },
       {
-        "file": "src/adapter/lambda-edge/handler.test.ts",
-        "type": "debug_endpoint",
         "severity": "WARNING",
-        "message": "Debug/admin endpoint detected. May be accessible in production."
-      },
-      {
-        "file": "src/adapter/lambda-edge/handler.test.ts",
-        "type": "debug_endpoint",
-        "severity": "WARNING",
-        "message": "Debug/admin endpoint detected. May be accessible in production."
-      },
-      {
-        "file": "src/adapter/lambda-edge/handler.test.ts",
-        "type": "debug_endpoint",
-        "severity": "WARNING",
-        "message": "Debug/admin endpoint detected. May be accessible in production."
-      },
-      {
-        "file": "src/helper/proxy/index.ts",
-        "type": "hardcoded_ip",
-        "severity": "INFO",
-        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
-      },
-      {
-        "file": "src/helper/proxy/index.ts",
-        "type": "hardcoded_ip",
-        "severity": "INFO",
-        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
-      },
-      {
-        "file": "src/helper/proxy/index.ts",
-        "type": "debug_endpoint",
-        "severity": "WARNING",
-        "message": "Debug/admin endpoint detected. May be accessible in production."
-      },
-      {
-        "file": "src/helper/ssg/ssg.ts",
-        "type": "Inlined Environment Variable",
-        "severity": "WARNING",
-        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
-        "isAiPattern": true
-      },
-      {
-        "file": "src/jsx/dom/index.test.tsx",
-        "type": "innerHTML_assignment",
-        "severity": "WARNING",
-        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
-      },
-      {
-        "file": "src/jsx/dom/intrinsic-element/components.test.tsx",
-        "type": "innerHTML_assignment",
-        "severity": "WARNING",
-        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
-      },
-      {
-        "file": "src/jsx/dom/intrinsic-element/components.test.tsx",
-        "type": "innerHTML_assignment",
-        "severity": "WARNING",
-        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
-      },
-      {
-        "file": "src/jsx/dom/intrinsic-element/components.ts",
-        "type": "innerHTML_assignment",
-        "severity": "WARNING",
-        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
-      },
-      {
-        "file": "src/jsx/dom/render.ts",
-        "type": "innerHTML_assignment",
-        "severity": "WARNING",
-        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
-      },
-      {
-        "file": "src/middleware/basic-auth/index.ts",
         "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "file": "packages/core/auth-js/src/GoTrueClient.ts",
+        "line": 3938,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "   *   if (event === 'PASSWORD_RECOVERY') {\n   *     console.log('PASSWORD_RECOVERY', session)\n   *     // show screen to update user's password"
       },
       {
-        "file": "src/middleware/body-limit/index.test.ts",
-        "type": "debug_endpoint",
         "severity": "WARNING",
-        "message": "Debug/admin endpoint detected. May be accessible in production."
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/src/GoTrueClient.ts",
+        "line": 3955,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "   * supabase.auth.onAuthStateChange((event, session) => {\n   *   if (event === 'TOKEN_REFRESHED') console.log('TOKEN_REFRESHED', session)\n   * })"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/core/auth-js/src/lib/constants.ts",
+        "line": 15,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "\nexport const GOTRUE_URL = 'http://localhost:9999'\nexport const STORAGE_KEY = 'supabase.auth.token'"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/GoTrueClient.test.ts",
+        "line": 1231,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "      data: { subscription },\n    } = authSubscriptionClient.onAuthStateChange(() => console.log('onAuthStateChange was called'))\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/generate-jwt.js",
+        "line": 52,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\nconsole.log('Anon Token:');\nconsole.log(anonToken);"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/generate-jwt.js",
+        "line": 53,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "console.log('Anon Token:');\nconsole.log(anonToken);\nconsole.log('\\nService Role Token:');"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/generate-jwt.js",
+        "line": 54,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "console.log(anonToken);\nconsole.log('\\nService Role Token:');\nconsole.log(serviceRoleToken);"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/generate-jwt.js",
+        "line": 55,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "console.log('\\nService Role Token:');\nconsole.log(serviceRoleToken);\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/generate-signing-keys.js",
+        "line": 49,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\nconsole.log('✅ Generated new RSA-2048 signing keys for testing');\nconsole.log(`📁 Written to: ${outputPath}`);"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/auth-js/test/generate-signing-keys.js",
+        "line": 51,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "console.log(`📁 Written to: ${outputPath}`);\nconsole.log(`🔑 Key ID: ${signingKey.kid}`);\nconsole.log('');"
       }
     ]
   },
   {
     "repo": "drizzle-team/drizzle-orm",
-    "filesScanned": 941,
-    "findings": 37,
-    "details": [
+    "url": "https://github.com/drizzle-team/drizzle-orm",
+    "totalFindings": 39,
+    "critical": 3,
+    "warning": 22,
+    "info": 14,
+    "findings": [
       {
-        "file": "drizzle-kit/src/api.ts",
+        "severity": "INFO",
         "type": "hardcoded_ip",
-        "severity": "INFO",
-        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
-      },
-      {
         "file": "drizzle-kit/src/api.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 642,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n\tconst host = options?.host || '127.0.0.1';\n\tconst port = options?.port || 4983;"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "drizzle-kit/src/api.ts",
+        "line": 654,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\t\t} else {\n\t\t\t\tconsole.log(`Studio is running at ${key ? 'https' : 'http'}://${host}:${port}`);\n\t\t\t}"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/commands/mysqlPushUtils.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 247,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\t\t) {\n\t\t\t\tconsole.log(\n\t\t\t\t\t`${"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/commands/mysqlPushUtils.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 277,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\t\t) {\n\t\t\t\tconsole.log(\n\t\t\t\t\t`${"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/commands/singlestorePushUtils.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 269,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\t\t) {\n\t\t\t\tconsole.log(\n\t\t\t\t\t`${"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/commands/singlestorePushUtils.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 299,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\t\t) {\n\t\t\t\tconsole.log(\n\t\t\t\t\t`${"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/commands/utils.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 119,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\tconsole.log(wrapParam('database', config.out));\n\t\tconsole.log(wrapParam('secretArn', config.dialect));\n\t\tprocess.exit(1);"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/commands/utils.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 673,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\tif (!('dbCredentials' in config)) {\n\t\tconsole.log(outputs.studio.noCredentials());\n\t\tprocess.exit(1);"
       },
       {
+        "severity": "CRITICAL",
+        "type": "Database URL",
         "file": "drizzle-kit/src/cli/connections.ts",
-        "type": "Disabled SSL Verification",
-        "severity": "INFO",
-        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
-        "isAiPattern": true
+        "line": 728,
+        "message": "Database connection string with credentials detected",
+        "snippet": "\t\t\tconsole.error(\n\t\t\t\t'You should specify a database name in connection string (mysql://USER:PASSWORD@HOST:PORT/DATABASE)',\n\t\t\t);"
       },
       {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
         "file": "drizzle-kit/src/cli/connections.ts",
-        "type": "Disabled SSL Verification",
-        "severity": "INFO",
+        "line": 194,
         "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
-        "isAiPattern": true
+        "snippet": "\t\t\t\t\t|| credentials.ssl === 'allow'\n\t\t\t\t? { rejectUnauthorized: false }\n\t\t\t\t: credentials.ssl === 'verify-full'"
       },
       {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
         "file": "drizzle-kit/src/cli/connections.ts",
-        "type": "Disabled SSL Verification",
-        "severity": "INFO",
+        "line": 348,
         "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
-        "isAiPattern": true
+        "snippet": "\t\t\t\t\t|| credentials.ssl === 'allow'\n\t\t\t\t? { rejectUnauthorized: false }\n\t\t\t\t: credentials.ssl === 'verify-full'"
       },
       {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
+        "file": "drizzle-kit/src/cli/connections.ts",
+        "line": 449,
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
+        "snippet": "\t\t\t\t\t|| credentials.ssl === 'allow'\n\t\t\t\t? { rejectUnauthorized: false }\n\t\t\t\t: credentials.ssl === 'verify-full'"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
         "file": "drizzle-kit/src/cli/schema.ts",
-        "type": "hardcoded_ip",
-        "severity": "INFO",
-        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+        "line": 780,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n\t\t\t\t\t\tif (host !== '127.0.0.1') {\n\t\t\t\t\t\t\tqueryParams.host = host;"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/validations/gel.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "line": 68,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\tconsole.log(wrapParam('user', options.user, true));\n\t\tconsole.log(wrapParam('password', options.password, true, 'secret'));\n\t\tconsole.log(wrapParam('database', options.database));"
       },
       {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
         "file": "drizzle-kit/src/cli/validations/libsql.ts",
-        "type": "console_log_sensitive",
+        "line": 25,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\tconsole.log(wrapParam('url', options.url));\n\tconsole.log(wrapParam('authToken', options.authToken, true, 'secret'));\n\tprocess.exit(1);"
+      }
+    ]
+  },
+  {
+    "repo": "expressjs/express",
+    "url": "https://github.com/expressjs/express",
+    "totalFindings": 12,
+    "critical": 2,
+    "warning": 4,
+    "info": 6,
+    "findings": [
+      {
         "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "type": "console_log_sensitive",
+        "file": "examples/auth/index.js",
+        "line": 61,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "function authenticate(name, pass, fn) {\n  if (!module.parent) console.log('authenticating %s:%s', name, pass);\n  var user = users[name];"
       },
       {
-        "file": "drizzle-kit/src/cli/validations/mysql.ts",
-        "type": "console_log_sensitive",
         "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "type": "console_log_sensitive",
+        "file": "examples/route-map/index.js",
+        "line": 24,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "      case 'function':\n        if (verbose) console.log('%s %s', key, route);\n        app[key](route, a[key]);"
       },
       {
-        "file": "drizzle-kit/src/cli/validations/postgres.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/app.listen.js",
+        "line": 29,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "    const app = express();\n    const server = app.listen(0, '127.0.0.1', 5, function () {\n      const { address, port } = server.address();"
       },
       {
-        "file": "drizzle-kit/src/cli/validations/postgres.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/app.listen.js",
+        "line": 31,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "      const { address, port } = server.address();\n      assert.strictEqual(address, '127.0.0.1');\n      assert(Number.isInteger(port) && port > 0);"
       },
       {
-        "file": "drizzle-kit/src/cli/validations/postgres.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/req.ip.js",
+        "line": 112,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "    ? '::ffff:127.0.0.1'\n    : '127.0.0.1';\n}"
       },
       {
-        "file": "drizzle-kit/src/cli/validations/singlestore.ts",
-        "type": "console_log_sensitive",
-        "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/req.subdomains.js",
+        "line": 31,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "        .get('/')\n        .set('Host', '127.0.0.1')\n        .expect(200, [], done);"
       },
       {
-        "file": "drizzle-kit/src/cli/validations/sqlite.ts",
-        "type": "console_log_sensitive",
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/req.subdomains.js",
+        "line": 121,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "          .get('/')\n          .set('Host', '127.0.0.1')\n          .expect(200, ['127.0.0.1'], done);"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/req.subdomains.js",
+        "line": 122,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "          .set('Host', '127.0.0.1')\n          .expect(200, ['127.0.0.1'], done);\n        })"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "test/res.redirect.js",
+        "line": 115,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "      var app = express();\n      var xss = 'javascript:eval(document.body.innerHTML=`<p>XSS</p>`);';\n      var encodedXss = 'javascript:eval(document.body.innerHTML=%60%3Cp%3EXSS%3C/p%3E%60);';"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "test/res.redirect.js",
+        "line": 116,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "      var xss = 'javascript:eval(document.body.innerHTML=`<p>XSS</p>`);';\n      var encodedXss = 'javascript:eval(document.body.innerHTML=%60%3Cp%3EXSS%3C/p%3E%60);';\n"
+      },
+      {
         "severity": "WARNING",
-        "message": "console.log may be logging sensitive data."
+        "type": "innerHTML_assignment",
+        "file": "test/res.redirect.js",
+        "line": 115,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled.",
+        "suggestion": "Use textContent for text, or sanitize HTML with DOMPurify before insertion.",
+        "snippet": "      var app = express();\n      var xss = 'javascript:eval(document.body.innerHTML=`<p>XSS</p>`);';\n      var encodedXss = 'javascript:eval(document.body.innerHTML=%60%3Cp%3EXSS%3C/p%3E%60);';"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "test/res.redirect.js",
+        "line": 116,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled.",
+        "suggestion": "Use textContent for text, or sanitize HTML with DOMPurify before insertion.",
+        "snippet": "      var xss = 'javascript:eval(document.body.innerHTML=`<p>XSS</p>`);';\n      var encodedXss = 'javascript:eval(document.body.innerHTML=%60%3Cp%3EXSS%3C/p%3E%60);';\n"
+      }
+    ]
+  },
+  {
+    "repo": "n8n-io/n8n",
+    "url": "https://github.com/n8n-io/n8n",
+    "totalFindings": 9,
+    "critical": 2,
+    "warning": 4,
+    "info": 3,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/@n8n/agents/examples/basic-agent.ts",
+        "line": 126,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\tconsole.log(`   Result: ${text.slice(0, 100)}...`);\n\t\tconsole.log(\n\t\t\t`   Usage: ${result.usage?.promptTokens} in, ${result.usage?.completionTokens} out`,"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/@n8n/agents/examples/basic-agent.ts",
+        "line": 131,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\t\tconsole.log(`   (Expected) Error: ${(error as Error).message}`);\n\t\tconsole.log('   (Set ANTHROPIC_API_KEY to run with real LLM calls)');\n\t}"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/@n8n/agents/src/__tests__/integration/mcp-server-helpers.ts",
+        "line": 126,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n\tawait new Promise<void>((resolve) => httpServer.listen(0, '127.0.0.1', resolve));\n\tconst { port } = httpServer.address() as { port: number };"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/@n8n/agents/src/__tests__/integration/mcp-server-helpers.ts",
+        "line": 154,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n\tawait new Promise<void>((resolve) => httpServer.listen(0, '127.0.0.1', resolve));\n\tconst { port } = httpServer.address() as { port: number };"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/@n8n/agents/src/sdk/agent.ts",
+        "line": 202,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "\t/** Add an eval to run after each agent response. Accepts an Eval builder or BuiltEval. */\n\teval(e: Eval | BuiltEval | { ensureBuilt(): BuiltEval }): this {\n\t\tconst built = '_run' in e ? e : (e as Eval).ensureBuilt();"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/@n8n/agents/src/sdk/catalog.ts",
+        "line": 1,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const MODELS_DEV_URL = 'https://models.dev/api.json';\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/@n8n/agents/src/sdk/catalog.ts",
+        "line": 78,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": " * const catalog = await fetchProviderCatalog();\n * console.log(Object.keys(catalog)); // ['anthropic', 'openai', ...]\n * console.log(catalog.anthropic.models['claude-sonnet-4-5'].reasoning); // true"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/@n8n/agents/src/types/sdk/eval.ts",
+        "line": 36,
+        "message": "eval() usage detected. This enables arbitrary code execution.",
+        "suggestion": "Use JSON.parse() for data, or Function() constructor if dynamic code is unavoidable.",
+        "snippet": "\n/** Opaque handle for a built eval (internal). */\nexport interface BuiltEval {"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/@n8n/ai-workflow-builder.ee/evaluations/cli/webhook.ts",
+        "line": 122,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\t\thostname === 'localhost' ||\n\t\thostname === '127.0.0.1' ||\n\t\thostname === '::1' ||"
+      }
+    ]
+  },
+  {
+    "repo": "honojs/hono",
+    "url": "https://github.com/honojs/hono",
+    "totalFindings": 65,
+    "critical": 1,
+    "warning": 54,
+    "info": 10,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "runtime-tests/lambda/index.test.ts",
+        "line": 37,
+        "message": "Authentication appears to be disabled.",
+        "suggestion": "Ensure this is intentional and only in development/test environments.",
+        "snippet": "  apiId: 'urlid',\n  authentication: null,\n  authorizer: {"
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "runtime-tests/lambda/stream.test.ts",
+        "line": 20,
+        "message": "Authentication appears to be disabled.",
+        "suggestion": "Ensure this is intentional and only in development/test environments.",
+        "snippet": "  apiId: 'urlid',\n  authentication: null,\n  authorizer: {"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "runtime-tests/node/index.test.ts",
+        "line": 229,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "        port: 0,\n        hostname: '0.0.0.0',\n      },"
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "src/adapter/aws-lambda/conninfo.test.ts",
+        "line": 54,
+        "message": "Authentication appears to be disabled.",
+        "suggestion": "Ensure this is intentional and only in development/test environments.",
+        "snippet": "            apiId: 'abc',\n            authentication: null,\n            authorizer: {},"
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "src/adapter/aws-lambda/handler.test.ts",
+        "line": 60,
+        "message": "Authentication appears to be disabled.",
+        "suggestion": "Ensure this is intentional and only in development/test environments.",
+        "snippet": "    apiId: 'api-id',\n    authentication: null,\n    authorizer: {},"
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "src/adapter/aws-lambda/types.ts",
+        "line": 122,
+        "message": "Authentication appears to be disabled.",
+        "suggestion": "Ensure this is intentional and only in development/test environments.",
+        "snippet": "  apiId: string\n  authentication: null\n  authorizer: Authorizer"
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "src/adapter/lambda-edge/handler.test.ts",
+        "line": 82,
+        "message": "Debug/admin endpoint detected. May be accessible in production.",
+        "suggestion": "Gate behind authentication or remove before deployment.",
+        "snippet": "    const app = new Hono()\n    app.get('/test-path', (c) => {\n      return c.text(c.req.url)"
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "src/adapter/lambda-edge/handler.test.ts",
+        "line": 104,
+        "message": "Debug/admin endpoint detected. May be accessible in production.",
+        "suggestion": "Gate behind authentication or remove before deployment.",
+        "snippet": "\n    app.get('/test-path', (c) => {\n      c.env.callback?.(null, {"
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "src/adapter/lambda-edge/handler.test.ts",
+        "line": 127,
+        "message": "Debug/admin endpoint detected. May be accessible in production.",
+        "suggestion": "Gate behind authentication or remove before deployment.",
+        "snippet": "    const app = new Hono()\n    app.get('/test-path', (c) => {\n      setCookie(c, 'cookie1', 'value1')"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/helper/proxy/index.ts",
+        "line": 129,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": " *       ...c.req.header(), // optional, specify only when forwarding all the request data (including credentials) is necessary.\n *       'X-Forwarded-For': '127.0.0.1',\n *       'X-Forwarded-Host': c.req.header('host'),"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/helper/proxy/index.ts",
+        "line": 144,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": " *       ...c.req.header(),\n *       'X-Forwarded-For': '127.0.0.1',\n *       'X-Forwarded-Host': c.req.header('host'),"
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "src/helper/proxy/index.ts",
+        "line": 152,
+        "message": "Debug/admin endpoint detected. May be accessible in production.",
+        "suggestion": "Gate behind authentication or remove before deployment.",
+        "snippet": " * // Strict RFC compliance mode (use only in trusted environments)\n * app.get('/internal-proxy/:path', (c) => {\n *   return proxy(`http://${internalServer}/${c.req.param('path')}`, {"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/helper/ssg/ssg.ts",
+        "line": 211,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "> {\n  const baseURL = 'http://localhost'\n  const pool = createPool({ concurrency })"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/jsx/dom/index.test.tsx",
+        "line": 109,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled.",
+        "suggestion": "Use textContent for text, or sanitize HTML with DOMPurify before insertion.",
+        "snippet": "  it('replace', () => {\n    dom.window.document.body.innerHTML = '<div id=\"root\">Existing content</div>'\n    root = document.getElementById('root') as HTMLElement"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/jsx/dom/intrinsic-element/components.test.tsx",
+        "line": 99,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled.",
+        "suggestion": "Use textContent for text, or sanitize HTML with DOMPurify before insertion.",
+        "snippet": "      it('should be inserted bottom of head if existing element is removed', async () => {\n        document.head.innerHTML = '<title>Existing Title</title>'\n"
+      }
+    ]
+  },
+  {
+    "repo": "fastify/fastify",
+    "url": "https://github.com/fastify/fastify",
+    "totalFindings": 33,
+    "critical": 0,
+    "warning": 3,
+    "info": 30,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "lib/server.js",
+        "line": 364,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "function getAddresses (address) {\n  if (address.address === '0.0.0.0') {\n    return Object.values(os.networkInterfaces()).flatMap((iface) => {"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/fastify-instance.test.js",
+        "line": 260,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  const port = 3000\n  const host = '127.0.0.1'\n  const fastify = Fastify()"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/fastify-instance.test.js",
+        "line": 270,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  const port = 3000\n  const host = '127.0.0.1'\n  const fastify = Fastify({ https: {} })"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/internals/server.test.js",
+        "line": 78,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "          { address: '::1', family: 6 },\n          { address: '127.0.0.1', family: 4 },\n          { address: '0.0.0.0', family: 4 }"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/internals/server.test.js",
+        "line": 79,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "          { address: '127.0.0.1', family: 4 },\n          { address: '0.0.0.0', family: 4 }\n        ])"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/listen.1.test.js",
+        "line": 43,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  })\n  const addr = await fastify.listen({ port: 0, host: '0.0.0.0' })\n  const address = fastify.server.address()"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/listen.1.test.js",
+        "line": 54,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  t.assert.deepEqual(address, {\n    address: '0.0.0.0',\n    family: 'IPv4',"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/listen.5.test.js",
+        "line": 20,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  const server = net.createServer()\n  server.listen({ port: 0, host: '127.0.0.1' })\n  await once(server, 'listening')"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/listen.5.test.js",
+        "line": 61,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  const server = net.createServer()\n  server.listen({ port: 0, host: '127.0.0.1' })\n  await once(server, 'listening')"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/logger/instantiation.test.js",
+        "line": 133,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "    await fastify.ready()\n    await fastify.listen({ port: 0, host: '127.0.0.1' })\n"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/reply-error.test.js",
+        "line": 116,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "  t.after(() => fastify.close())\n  fastify.listen({ port: 0, host: '127.0.0.1' }, err => {\n    t.assert.ifError(err)"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/reply-error.test.js",
+        "line": 119,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n    const client = net.connect(fastify.server.address().port, '127.0.0.1')\n    client.end('oooops!')"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/reply-error.test.js",
+        "line": 165,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n  fastify.listen({ port: 0, host: '127.0.0.1' }, err => {\n    t.assert.ifError(err)"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/reply-error.test.js",
+        "line": 169,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "\n    const client = net.connect(fastify.server.address().port, '127.0.0.1')\n    client.end('oooops!')"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/schema-validation.test.js",
+        "line": 742,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production.",
+        "suggestion": "Use environment variable for host binding. 0.0.0.0 exposes the service to all network interfaces.",
+        "snippet": "    url: '/',\n    payload: { host: { ip: '127.0.0.1' } }\n  }, (err, res) => {"
+      }
+    ]
+  },
+  {
+    "repo": "remix-run/remix",
+    "url": "https://github.com/remix-run/remix",
+    "totalFindings": 24,
+    "critical": 0,
+    "warning": 23,
+    "info": 1,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "demos/bookstore/server.ts",
+        "line": 29,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  console.log('  Admin:    admin@bookstore.com / admin123')\n  console.log('  Customer: customer@example.com / password123')\n  console.log('')"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "demos/frame-navigation/app/assets/entry.tsx",
+        "line": 98,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled.",
+        "suggestion": "Use textContent for text, or sanitize HTML with DOMPurify before insertion.",
+        "snippet": "  await animation.finished\n  document.body.innerHTML = ''\n}"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "demos/social-auth/app/data/setup.ts",
+        "line": 12,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "\nconst DEMO_ADMIN_AVATAR_URL = 'https://randomuser.me/api/portraits/women/44.jpg'\nconst DEMO_USER_AVATAR_URL = 'https://randomuser.me/api/portraits/men/32.jpg'"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "demos/social-auth/app/data/setup.ts",
+        "line": 13,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const DEMO_ADMIN_AVATAR_URL = 'https://randomuser.me/api/portraits/women/44.jpg'\nconst DEMO_USER_AVATAR_URL = 'https://randomuser.me/api/portraits/men/32.jpg'\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "demos/social-auth/server.ts",
+        "line": 33,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\n  console.log(`social-auth demo is running on ${demoUrl}`)\n  console.log('')"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "demos/social-auth/server.ts",
+        "line": 36,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  console.log('Demo accounts:')\n  console.log('  admin@example.com / password123')\n  console.log('  user@example.com / password123')"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "demos/social-auth/server.ts",
+        "line": 37,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  console.log('  admin@example.com / password123')\n  console.log('  user@example.com / password123')\n  console.log('')"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "demos/social-auth/server.ts",
+        "line": 39,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  console.log('')\n  console.log('Social auth providers:')\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "demos/unpkg/app/utils/npm.ts",
+        "line": 7,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "\nconst NPM_REGISTRY = 'https://registry.npmjs.org'\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth/src/lib/providers/facebook.ts",
+        "line": 11,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "\nconst FACEBOOK_AUTHORIZATION_ENDPOINT = 'https://www.facebook.com/dialog/oauth'\nconst FACEBOOK_TOKEN_ENDPOINT = 'https://graph.facebook.com/oauth/access_token'"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth/src/lib/providers/facebook.ts",
+        "line": 12,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const FACEBOOK_AUTHORIZATION_ENDPOINT = 'https://www.facebook.com/dialog/oauth'\nconst FACEBOOK_TOKEN_ENDPOINT = 'https://graph.facebook.com/oauth/access_token'\nconst FACEBOOK_PROFILE_ENDPOINT = 'https://graph.facebook.com/me?fields=id,name,email,picture'"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth/src/lib/providers/facebook.ts",
+        "line": 13,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const FACEBOOK_TOKEN_ENDPOINT = 'https://graph.facebook.com/oauth/access_token'\nconst FACEBOOK_PROFILE_ENDPOINT = 'https://graph.facebook.com/me?fields=id,name,email,picture'\nconst DEFAULT_FACEBOOK_SCOPES = ['public_profile', 'email']"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth/src/lib/providers/github.ts",
+        "line": 11,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "\nconst GITHUB_AUTHORIZATION_ENDPOINT = 'https://github.com/login/oauth/authorize'\nconst GITHUB_TOKEN_ENDPOINT = 'https://github.com/login/oauth/access_token'"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth/src/lib/providers/github.ts",
+        "line": 12,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const GITHUB_AUTHORIZATION_ENDPOINT = 'https://github.com/login/oauth/authorize'\nconst GITHUB_TOKEN_ENDPOINT = 'https://github.com/login/oauth/access_token'\nconst GITHUB_USER_ENDPOINT = 'https://api.github.com/user'"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth/src/lib/providers/github.ts",
+        "line": 13,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const GITHUB_TOKEN_ENDPOINT = 'https://github.com/login/oauth/access_token'\nconst GITHUB_USER_ENDPOINT = 'https://api.github.com/user'\nconst GITHUB_USER_EMAILS_ENDPOINT = 'https://api.github.com/user/emails'"
+      }
+    ]
+  },
+  {
+    "repo": "socketio/socket.io",
+    "url": "https://github.com/socketio/socket.io",
+    "totalFindings": 22,
+    "critical": 0,
+    "warning": 20,
+    "info": 2,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Password Assignment",
+        "file": "examples/basic-crud-application/server-postgres-cluster/lib/index.js",
+        "line": 17,
+        "message": "Hardcoded password detected",
+        "snippet": "  database: \"postgres\",\n  password: \"changeit\",\n  port: 5432,"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-example/cjs/index.js",
+        "line": 59,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    if (username === \"john\" && password === \"changeit\") {\n      console.log(\"authentication OK\");\n      return done(null, { id: 1, username });"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-example/cjs/index.js",
+        "line": 62,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    } else {\n      console.log(\"wrong credentials\");\n      return done(null, false);"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-example/esm/index.js",
+        "line": 62,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    if (username === \"john\" && password === \"changeit\") {\n      console.log(\"authentication OK\");\n      return done(null, { id: 1, username });"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-example/esm/index.js",
+        "line": 65,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    } else {\n      console.log(\"wrong credentials\");\n      return done(null, false);"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-example/ts/index.ts",
+        "line": 73,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    if (username === \"john\" && password === \"changeit\") {\n      console.log(\"authentication OK\");\n      return done(null, { id: 1, username });"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-example/ts/index.ts",
+        "line": 76,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    } else {\n      console.log(\"wrong credentials\");\n      return done(null, false);"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-jwt-example/cjs/index.js",
+        "line": 38,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  if (req.body.username === \"john\" && req.body.password === \"changeit\") {\n    console.log(\"authentication OK\");\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-jwt-example/cjs/index.js",
+        "line": 59,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  } else {\n    console.log(\"wrong credentials\");\n    res.status(401).end();"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-jwt-example/esm/index.js",
+        "line": 39,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  if (req.body.username === \"john\" && req.body.password === \"changeit\") {\n    console.log(\"authentication OK\");\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-jwt-example/esm/index.js",
+        "line": 60,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  } else {\n    console.log(\"wrong credentials\");\n    res.status(401).end();"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-jwt-example/ts/index.ts",
+        "line": 49,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  if (req.body.username === \"john\" && req.body.password === \"changeit\") {\n    console.log(\"authentication OK\");\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/passport-jwt-example/ts/index.ts",
+        "line": 70,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  } else {\n    console.log(\"wrong credentials\");\n    res.status(401).end();"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Password Assignment",
+        "file": "examples/postgres-adapter-example/server.js",
+        "line": 12,
+        "message": "Hardcoded password detected",
+        "snippet": "  database: \"postgres\",\n  password: \"changeit\",\n  port: 5432,"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/private-messaging/src/socket.js",
+        "line": 3,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "\nconst URL = \"http://localhost:3000\";\nconst socket = io(URL, { autoConnect: false });"
+      }
+    ]
+  },
+  {
+    "repo": "langchain-ai/langchainjs",
+    "url": "https://github.com/langchain-ai/langchainjs",
+    "totalFindings": 14,
+    "critical": 0,
+    "warning": 14,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "environment_tests/test-exports-vercel/src/pages/index.tsx",
+        "line": 24,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "        handleLLMNewToken: async (token) =>\n          console.log(\"handleLLMNewToken\", token),\n      }),"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "environment_tests/test-exports-vercel/src/pages/index.tsx",
+        "line": 30,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    const n = await llm.getNumTokens(\"Hello\");\n    console.log(\"getNumTokens\", n);\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "environment_tests/test-exports-vite/src/main.ts",
+        "line": 9,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled.",
+        "suggestion": "Use textContent for text, or sanitize HTML with DOMPurify before insertion.",
+        "snippet": "\ndocument.querySelector<HTMLDivElement>(\"#app\")!.innerHTML = `\n  <div>"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/accessExternalContextInTools.ts",
+        "line": 200,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": " */\nconsole.log(\"\\n=== Unauthenticated Request ===\");\nawait handleUserRequest(\"\", \"Show me my purchases\");"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/middleware/contextEditing.ts",
+        "line": 176,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "} else {\n  console.log(\n    \"\\nNote: No tool results were cleared. Try lowering triggerTokens or adding more turns.\""
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/middleware/summarization.ts",
+        "line": 45,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "console.log(\"\\nThis example demonstrates automatic conversation summarization\");\nconsole.log(\"when token limits are approached.\\n\");\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/middleware/summarization.ts",
+        "line": 92,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "const totalTokensBefore = countTokensApproximately(messages);\nconsole.log(\n  `📊 Token count before summarization: ~${totalTokensBefore} tokens`"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/middleware/summarization.ts",
+        "line": 125,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  const totalTokensAfter = countTokensApproximately(resultMessages);\n  console.log(\n    `📊 Token count after summarization: ~${totalTokensAfter} tokens`"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/middleware/summarization.ts",
+        "line": 128,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  );\n  console.log(\n    `💾 Token reduction: ${Math.round("
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/createAgent/middleware/summarization.ts",
+        "line": 150,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "} else {\n  console.log(\n    \"❌ Summarization was not triggered (message count or token threshold not reached)\""
+      },
+      {
+        "severity": "WARNING",
+        "type": "Bearer Token",
+        "file": "examples/src/langchain-classic/chains/openai_functions_openapi_customization.ts",
+        "line": 9,
+        "message": "Bearer token detected",
+        "snippet": "  headers: {\n    authorization: \"Bearer SOME_TOKEN\",\n  },"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/langchain-classic/chains/summarization_separate_output_llm.ts",
+        "line": 17,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "      handleLLMNewToken(token: string): Promise<void> | void {\n        console.log(\"token\", token);\n        /*"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/langchain-classic/guides/evaluation/string/constitutional_criteria.ts",
+        "line": 5,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\nconsole.log(`${Object.keys(PRINCIPLES).length} available principles`);\nconsole.log(Object.entries(PRINCIPLES).slice(0, 5));"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/src/langchain-classic/models/chat/chat_streaming.ts",
+        "line": 14,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "      handleLLMNewToken(token: string) {\n        console.log({ token });\n      },"
+      }
+    ]
+  },
+  {
+    "repo": "trpc/trpc",
+    "url": "https://github.com/trpc/trpc",
+    "totalFindings": 7,
+    "critical": 0,
+    "warning": 7,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/bun/src/client.ts",
+        "line": 11,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "async function main() {\n  const url = 'http://127.0.0.1:3000/trpc';\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/cloudflare-workers/src/client.ts",
+        "line": 7,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "async function main() {\n  const url = 'http://127.0.0.1:8787/trpc';\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/deno-deploy/src/client.ts",
+        "line": 6,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "async function main() {\n  const url = 'http://127.0.0.1:8000/trpc';\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/next-prisma-websockets-starter/src/pages/api/auth/[...nextauth].ts",
+        "line": 15,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": ") {\n  console.log('⚠️ Using mocked GitHub auth correct credentials were not added');\n  useMockProvider = true;"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/next-sse-chat/src/server/auth.tsx",
+        "line": 21,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": ") {\n  console.log('⚠️ Using mocked GitHub auth correct credentials were not added');\n  useMockProvider = true;"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/next-websockets-encoder/src/utils/trpc.ts",
+        "line": 15,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "const WS_URL = 'ws://localhost:3001';\nconst APP_URL = 'http://localhost:3000';\n"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/vercel-edge-runtime/src/client.ts",
+        "line": 7,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "snippet": "async function main() {\n  const url = 'http://127.0.0.1:3000/trpc';\n"
+      }
+    ]
+  },
+  {
+    "repo": "vercel/ai",
+    "url": "https://github.com/vercel/ai",
+    "totalFindings": 4,
+    "critical": 0,
+    "warning": 4,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/ai-e2e-next/app/api/chat/mcp-elicitation/elicitation-store.ts",
+        "line": 57,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  console.log('[store] Creating pending elicitation:', id);\n  console.log(\n    '[store] Current pending IDs:',"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/ai-e2e-next/app/api/chat/mcp-elicitation/elicitation-store.ts",
+        "line": 97,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "  console.log('[store] Attempting to resolve:', response.id);\n  console.log(\n    '[store] Current pending IDs:',"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/ai-e2e-next/app/api/chat/mcp-with-auth/route.ts",
+        "line": 190,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "    server.listen(port, () => {\n      console.log(`OAuth callback server: http://localhost:${port}/callback`);\n    });"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/ai-e2e-next/app/api/files/route.ts",
+        "line": 42,
+        "message": "console.log may be logging sensitive data.",
+        "suggestion": "Remove or redact sensitive values before logging.",
+        "snippet": "\n        console.log('file upload completed', blob, tokenPayload);\n"
       }
     ]
   }

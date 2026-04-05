@@ -582,6 +582,9 @@ export default function ScanPage(): React.ReactElement {
         )}
       </div>
 
+      {/* ---- PRE-SCANNED REPOS ---- */}
+      <PreScannedRepos />
+
       {/* ---- FOOTER ---- */}
       <footer className="relative z-10 border-t border-corpus-line/20 py-8">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -602,5 +605,118 @@ export default function ScanPage(): React.ReactElement {
         </div>
       </footer>
     </main>
+  );
+}
+
+/* ---- Pre-Scanned Repos Section ---- */
+
+interface RepoFinding {
+  repo: string;
+  url: string;
+  totalFindings: number;
+  critical: number;
+  warning: number;
+  info: number;
+  findings: Array<{
+    severity: string;
+    type: string;
+    file: string;
+    line: number;
+    message: string;
+    suggestion?: string;
+    snippet?: string;
+  }>;
+}
+
+function PreScannedRepos() {
+  const [repos, setRepos] = useState<RepoFinding[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/findings.json')
+      .then(r => r.json())
+      .then(d => setRepos(d))
+      .catch(() => {});
+  }, []);
+
+  if (repos.length === 0) return null;
+
+  const totalFindings = repos.reduce((s, r) => s + r.totalFindings, 0);
+  const totalCritical = repos.reduce((s, r) => s + r.critical, 0);
+
+  return (
+    <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
+      <div className="flex items-baseline justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-corpus-text">Scanned Repositories</h2>
+          <p className="text-corpus-muted text-sm mt-1">
+            {repos.length} repos analyzed. {totalFindings} findings. {totalCritical} critical.
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {repos.map(repo => (
+          <div key={repo.repo} className="border border-corpus-line/20 rounded-lg overflow-hidden">
+            <button
+              onClick={() => setExpanded(expanded === repo.repo ? null : repo.repo)}
+              className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors text-left"
+            >
+              <div className="flex items-center gap-4">
+                <a
+                  href={repo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="font-mono text-sm text-indigo-400 hover:text-indigo-300"
+                >
+                  {repo.repo}
+                </a>
+                <span className="text-corpus-muted text-xs">{repo.totalFindings} findings</span>
+              </div>
+              <div className="flex items-center gap-3">
+                {repo.critical > 0 && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-500/10 text-red-400">
+                    {repo.critical} CRITICAL
+                  </span>
+                )}
+                {repo.warning > 0 && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400">
+                    {repo.warning} WARNING
+                  </span>
+                )}
+                {repo.info > 0 && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400">
+                    {repo.info} INFO
+                  </span>
+                )}
+                <span className="text-corpus-muted text-xs">{expanded === repo.repo ? '▲' : '▼'}</span>
+              </div>
+            </button>
+
+            {expanded === repo.repo && (
+              <div className="border-t border-corpus-line/10 px-4 py-3 space-y-2">
+                {repo.findings.map((f, i) => (
+                  <div key={i} className="flex items-start gap-3 py-2 border-b border-corpus-line/5 last:border-0">
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold shrink-0 ${
+                      f.severity === 'CRITICAL' ? 'bg-red-500/15 text-red-400' :
+                      f.severity === 'WARNING' ? 'bg-amber-500/15 text-amber-400' :
+                      'bg-blue-500/15 text-blue-400'
+                    }`}>{f.severity}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs text-corpus-text">{f.message}</div>
+                      <div className="text-[11px] text-corpus-muted font-mono mt-0.5">{f.file}:{f.line}</div>
+                      {f.snippet && (
+                        <pre className="mt-1.5 p-2 bg-black/40 rounded text-[10px] text-corpus-muted font-mono overflow-x-auto leading-relaxed">{f.snippet}</pre>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
