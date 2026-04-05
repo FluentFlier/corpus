@@ -141,15 +141,15 @@ function LiveStats() {
       </div>
       <div>
         <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">{fmt(animated.vulnsBlocked)}</div>
-        <div className="text-corpus-muted text-sm mt-2 font-mono">vulnerabilities caught</div>
+        <div className="text-corpus-muted text-sm mt-2 font-mono">findings detected</div>
       </div>
       <div>
         <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">{fmt(animated.packagesVerified)}</div>
         <div className="text-corpus-muted text-sm mt-2 font-mono">packages verified</div>
       </div>
       <div>
-        <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">{animated.autoFixes}/{animated.autoFixes}</div>
-        <div className="text-corpus-muted text-sm mt-2 font-mono">violations auto-healed</div>
+        <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">15</div>
+        <div className="text-corpus-muted text-sm mt-2 font-mono">defense layers</div>
       </div>
     </div>
   );
@@ -535,6 +535,75 @@ export default function HomePage(): React.ReactElement {
                 /graph &rarr; live view
               </span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======== 15 DEFENSE LAYERS ======== */}
+      <section className="relative z-10 max-w-6xl mx-auto px-6 pb-24 animate-fade-in" aria-labelledby="layers-heading">
+        <div className="text-center mb-12">
+          <h2 id="layers-heading" className="font-mono text-2xl md:text-3xl font-bold tracking-tight mb-4">
+            <span className="text-gradient">15 Defense Layers</span>
+          </h2>
+          <p className="text-corpus-muted text-sm max-w-2xl mx-auto">
+            Two tiers of protection. Code scanners catch file-level issues. Agent guardrails enforce behavioral safety.
+          </p>
+        </div>
+
+        {/* Tier 1: Code Scanners */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="font-mono text-sm font-bold text-corpus-text">CODE SCANNERS</span>
+            <span className="text-corpus-muted text-xs font-mono">File-level analysis in milliseconds</span>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { name: 'Graph Contracts', desc: 'Diffs against structural graph. Catches removed functions, deleted guards, broken exports.', color: '#10b981' },
+              { name: 'CVE Patterns', desc: '30 vulnerability patterns mapped to real CVE IDs. SQL injection, SSRF, prototype pollution.', color: '#ef4444' },
+              { name: 'Secret Detection', desc: 'API keys, tokens, private keys, database URLs, webhook secrets in source code.', color: '#ef4444' },
+              { name: 'Code Safety', desc: 'eval(), exec(), innerHTML, disabled SSL, SQL concatenation, wildcard CORS.', color: '#f59e0b' },
+              { name: 'Dependency Check', desc: 'Hallucinated npm packages, typosquats, non-existent imports. Checks against 12K+ known packages.', color: '#6366f1' },
+              { name: 'Pattern Intelligence', desc: 'Learned from 280 repos. Context-aware: eval() in webpack = suppress, eval() in route = critical.', color: '#10b981' },
+              { name: 'Trust Scoring', desc: 'Per-file and codebase-wide trust scores. 0-100 based on finding density and severity.', color: '#8b5cf6' },
+            ].map(s => (
+              <div key={s.name} className="card-glow p-4 transition-transform duration-200 hover:-translate-y-0.5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.color }} />
+                  <h4 className="font-mono text-xs font-bold text-corpus-text">{s.name}</h4>
+                </div>
+                <p className="text-[11px] leading-relaxed" style={{ color: s.color + 'cc' }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tier 2: Agent Guardrails */}
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 rounded-full bg-indigo-500" />
+            <span className="font-mono text-sm font-bold text-corpus-text">AGENT GUARDRAILS</span>
+            <span className="text-corpus-muted text-xs font-mono">Behavioral safety via Jac walkers</span>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { name: 'Injection Firewall', desc: 'Scans external content for prompt injection before it enters LLM context.', color: '#ef4444' },
+              { name: 'Exfiltration Guard', desc: 'Detects PII in outbound payloads — emails, SSNs, credit cards — and redacts.', color: '#ef4444' },
+              { name: 'Context Poisoning', desc: 'Scans stored memory for poisoning signatures like "ignore previous instructions."', color: '#f59e0b' },
+              { name: 'Cross-User Firewall', desc: 'Enforces user context isolation. Prevents data from user A bleeding into user B.', color: '#ef4444' },
+              { name: 'Session Hijack', desc: 'Detects rapid-fire events and timing anomalies that indicate automated injection.', color: '#f59e0b' },
+              { name: 'Confidence Calibrator', desc: 'Audits action logs for overconfidence and underconfidence per intent category.', color: '#6366f1' },
+              { name: 'Scope Enforcer', desc: 'Checks if proposed action falls within developer-declared scope boundaries.', color: '#10b981' },
+              { name: 'Undo Integrity', desc: 'Classifies actions as reversible, best-effort, or irreversible before execution.', color: '#6366f1' },
+            ].map(s => (
+              <div key={s.name} className="card-glow p-4 transition-transform duration-200 hover:-translate-y-0.5">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: s.color }} />
+                  <h4 className="font-mono text-xs font-bold text-corpus-text">{s.name}</h4>
+                </div>
+                <p className="text-[11px] leading-relaxed" style={{ color: s.color + 'cc' }}>{s.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
