@@ -293,6 +293,20 @@
       "patternsLearned": 16,
       "suppressed": 1,
       "note": "Auto-scan batch at 2:55:49 AM"
+    },
+    {
+      "reposScanned": 213,
+      "totalFindings": 124,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 2:56:17 AM"
+    },
+    {
+      "reposScanned": 214,
+      "totalFindings": 148,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 2:59:38 AM"
     }
   ],
   "insights": [
@@ -323,10 +337,10 @@
     }
   ],
   "summary": {
-    "totalRepos": 208,
+    "totalRepos": 214,
     "totalFiles": 50418,
     "totalNodes": 164295,
-    "totalFindings": 105,
+    "totalFindings": 148,
     "patternsLearned": 16,
     "patternsSuppressed": 1,
     "falsePositiveReduction": "45%",

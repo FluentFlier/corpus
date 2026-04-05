@@ -6051,5 +6051,189 @@
         "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
       }
     ]
+  },
+  {
+    "repo": "partykit/partykit",
+    "url": "https://github.com/partykit/partykit",
+    "totalFindings": 2,
+    "critical": 0,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "apps/site/scripts/fetch-blog-entries.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "apps/site/src/interactive/RoomContainer.jsx",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "aws-amplify/amplify-js",
+    "url": "https://github.com/aws-amplify/amplify-js",
+    "totalFindings": 12,
+    "critical": 0,
+    "warning": 12,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/icons.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/api/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "firebase/firebase-js-sdk",
+    "url": "https://github.com/firebase/firebase-js-sdk",
+    "totalFindings": 20,
+    "critical": 0,
+    "warning": 20,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Bearer Token",
+        "file": "config/functions/index.js",
+        "line": 0,
+        "message": "Bearer token detected"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/compat.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/compat.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/compat.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/modular.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/modular.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/modular.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/smoke-tests/sample-apps/modular.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "integration/messaging/test/static/app.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "integration/messaging/test/static/app.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
   }
 ]

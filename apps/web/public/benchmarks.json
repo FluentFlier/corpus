@@ -2351,14 +2351,58 @@
       "edges": 226,
       "scanTimeMs": 27,
       "healthScore": 100
+    },
+    {
+      "repo": "liveblocks/liveblocks",
+      "files": 2681,
+      "functions": 5292,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 8094,
+      "edges": 19820,
+      "scanTimeMs": 743,
+      "healthScore": 100
+    },
+    {
+      "repo": "partykit/partykit",
+      "files": 210,
+      "functions": 702,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 1001,
+      "edges": 2739,
+      "scanTimeMs": 82,
+      "healthScore": 100
+    },
+    {
+      "repo": "aws-amplify/amplify-js",
+      "files": 1832,
+      "functions": 2188,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 4299,
+      "edges": 11678,
+      "scanTimeMs": 445,
+      "healthScore": 100
+    },
+    {
+      "repo": "firebase/firebase-js-sdk",
+      "files": 1925,
+      "functions": 7876,
+      "exports": 0,
+      "classes": 0,
+      "nodes": 11145,
+      "edges": 47521,
+      "scanTimeMs": 1072,
+      "healthScore": 100
     }
   ],
-  "totalReposScanned": 210,
-  "totalFilesScanned": 180266,
+  "totalReposScanned": 214,
+  "totalFilesScanned": 186914,
   "totalFunctionsFound": 32529,
-  "totalNodes": 592608,
-  "totalEdges": 2987955,
-  "totalScanTimeMs": 92470,
+  "totalNodes": 617147,
+  "totalEdges": 3069713,
+  "totalScanTimeMs": 94812,
   "autofixSummary": {
     "reposTested": 4,
     "totalViolationsCaught": 49,
