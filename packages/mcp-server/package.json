@@ -14,7 +14,7 @@
     "build": "tsc && tsc src/standalone.ts --outDir dist --target ES2022 --module CommonJS --moduleResolution node --esModuleInterop --skipLibCheck"
   },
   "dependencies": {
-    "@corpus/core": "0.1.0"
+    "corpus-core": "0.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
