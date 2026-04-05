@@ -1800,5 +1800,1112 @@
         "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
       }
     ]
+  },
+  {
+    "repo": "testing-library/react-testing-library",
+    "url": "https://github.com/testing-library/react-testing-library",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/__tests__/error-handlers.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/__tests__/render.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/__tests__/render.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/__tests__/render.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/__tests__/render.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "src/pure.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "panva/jose",
+    "url": "https://github.com/panva/jose",
+    "totalFindings": 15,
+    "critical": 6,
+    "warning": 9,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/jwe/flattened/decrypt.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/jwe/general/decrypt.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "Private Key",
+        "file": "src/jwt/sign.ts",
+        "line": 0,
+        "message": "Private key detected"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/key/generate_key_pair.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/key/generate_key_pair.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/key/generate_key_pair.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/key/generate_key_pair.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/key/generate_secret.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "Private Key",
+        "file": "src/key/import.ts",
+        "line": 0,
+        "message": "Private key detected"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "Private Key",
+        "file": "src/key/import.ts",
+        "line": 0,
+        "message": "Private key detected"
+      }
+    ]
+  },
+  {
+    "repo": "auth0/node-auth0",
+    "url": "https://github.com/auth0/node-auth0",
+    "totalFindings": 33,
+    "critical": 0,
+    "warning": 33,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/icons.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/assets/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "kysely-org/kysely",
+    "url": "https://github.com/kysely-org/kysely",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Password Assignment",
+        "file": "site/docs/getting-started/Instantiation.tsx",
+        "line": 0,
+        "message": "Hardcoded password detected"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Generic API Key Assignment",
+        "file": "site/docusaurus.config.ts",
+        "line": 0,
+        "message": "Possible API key or secret in assignment"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "site/src/pages/index.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "mikro-orm/mikro-orm",
+    "url": "https://github.com/mikro-orm/mikro-orm",
+    "totalFindings": 3,
+    "critical": 1,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Generic API Key Assignment",
+        "file": "docs/docusaurus.config.js",
+        "line": 0,
+        "message": "Possible API key or secret in assignment"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/cli/src/commands/CompileCommand.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/core/src/EntityManager.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "honojs/node-server",
+    "url": "https://github.com/honojs/node-server",
+    "totalFindings": 12,
+    "critical": 0,
+    "warning": 12,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/conninfo.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server-socket.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/server.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "elysiajs/elysia",
+    "url": "https://github.com/elysiajs/elysia",
+    "totalFindings": 5,
+    "critical": 0,
+    "warning": 5,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/universal/server.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/universal/server.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/utils.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/ws/bun.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "src/ws/bun.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "lerna/lerna",
+    "url": "https://github.com/lerna/lerna",
+    "totalFindings": 32,
+    "critical": 32,
+    "warning": 0,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/custom-publish-directories.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/from-git-recover-from-error.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "e2e/publish/src/from-git-recover-from-error.spec.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      }
+    ]
+  },
+  {
+    "repo": "huggingface/transformers.js",
+    "url": "https://github.com/huggingface/transformers.js",
+    "totalFindings": 5,
+    "critical": 0,
+    "warning": 5,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/transformers/src/generation/logits_process.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/transformers/src/generation/logits_process.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/transformers/src/models/donut_swin/modeling_donut_swin.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/transformers/src/models/donut_swin/modeling_donut_swin.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/transformers/src/models/dpt/modeling_dpt.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "sinclairzx81/typebox",
+    "url": "https://github.com/sinclairzx81/typebox",
+    "totalFindings": 10,
+    "critical": 0,
+    "warning": 10,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "design/website/app/frontend/frontend.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "docs/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "tailwindlabs/tailwindcss",
+    "url": "https://github.com/tailwindlabs/tailwindcss",
+    "totalFindings": 16,
+    "critical": 14,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "integrations/cli/index.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      }
+    ]
+  },
+  {
+    "repo": "framer/motion",
+    "url": "https://github.com/framer/motion",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "dev/html/main.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "greensock/GSAP",
+    "url": "https://github.com/greensock/GSAP",
+    "totalFindings": 35,
+    "critical": 0,
+    "warning": 35,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "esm/GSDevTools.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "formatjs/formatjs",
+    "url": "https://github.com/formatjs/formatjs",
+    "totalFindings": 29,
+    "critical": 26,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "docs/scripts/build-typesense-index.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "docs/scripts/extract-metadata.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Generic API Key Assignment",
+        "file": "docs/src/components/SearchBar.tsx",
+        "line": 0,
+        "message": "Possible API key or secret in assignment"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/cli/integration-tests/compile/integration.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      }
+    ]
+  },
+  {
+    "repo": "immerjs/immer",
+    "url": "https://github.com/immerjs/immer",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "perf-testing/read-cpuprofile.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "davidkpiano/xstate",
+    "url": "https://github.com/davidkpiano/xstate",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/counter/src/main.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/counter/src/main.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/mongodb-credit-check-api/services/actorService.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "examples/mongodb-credit-check-api/services/machineLogicService.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/stopwatch/src/main.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/stopwatch/src/main.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "pmndrs/valtio",
+    "url": "https://github.com/pmndrs/valtio",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "website/lib/remarkCodeSandboxURLUpdater.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "sindresorhus/got",
+    "url": "https://github.com/sindresorhus/got",
+    "totalFindings": 32,
+    "critical": 2,
+    "warning": 30,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
+        "file": "benchmark/index.ts",
+        "line": 0,
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship "
+      },
+      {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
+        "file": "benchmark/index.ts",
+        "line": 0,
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship "
+      },
+      {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
+        "file": "benchmark/index.ts",
+        "line": 0,
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship "
+      },
+      {
+        "severity": "INFO",
+        "type": "Disabled SSL Verification",
+        "file": "benchmark/index.ts",
+        "line": 0,
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship "
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "documentation/examples/runkit-example.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "source/core/options.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "source/core/options.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "source/core/utils/is-unix-socket-url.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/arguments.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/arguments.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      }
+    ]
+  },
+  {
+    "repo": "puppeteer/puppeteer",
+    "url": "https://github.com/puppeteer/puppeteer",
+    "totalFindings": 21,
+    "critical": 18,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/browsers/src/browser-data/chrome.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/browsers/src/browser-data/firefox.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/ElementHandle.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/ElementHandle.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/ElementHandle.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/puppeteer-core/src/api/ElementHandle.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/Frame.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/Frame.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/Frame.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/puppeteer-core/src/api/Frame.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      }
+    ]
   }
 ]

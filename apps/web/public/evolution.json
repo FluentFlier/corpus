@@ -48,6 +48,48 @@
       "patternsLearned": 12,
       "suppressed": 6,
       "note": "Auto-scan batch at 2:09:37 AM"
+    },
+    {
+      "reposScanned": 44,
+      "totalFindings": 60,
+      "patternsLearned": 12,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:10:39 AM"
+    },
+    {
+      "reposScanned": 49,
+      "totalFindings": 126,
+      "patternsLearned": 14,
+      "suppressed": 5,
+      "note": "Auto-scan batch at 2:10:50 AM"
+    },
+    {
+      "reposScanned": 54,
+      "totalFindings": 178,
+      "patternsLearned": 15,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:11:16 AM"
+    },
+    {
+      "reposScanned": 59,
+      "totalFindings": 230,
+      "patternsLearned": 15,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:12:05 AM"
+    },
+    {
+      "reposScanned": 64,
+      "totalFindings": 267,
+      "patternsLearned": 15,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:12:11 AM"
+    },
+    {
+      "reposScanned": 69,
+      "totalFindings": 299,
+      "patternsLearned": 15,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:12:13 AM"
     }
   ],
   "insights": [
@@ -78,11 +120,11 @@
     }
   ],
   "summary": {
-    "totalRepos": 39,
+    "totalRepos": 69,
     "totalFiles": 50418,
     "totalNodes": 164295,
-    "totalFindings": 46,
-    "patternsLearned": 12,
+    "totalFindings": 299,
+    "patternsLearned": 15,
     "patternsSuppressed": 6,
     "falsePositiveReduction": "45%",
     "note": "Corpus reduces noise by 45% compared to a static scanner by learning which patterns are test-only."
