@@ -2,19 +2,19 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Corpus - Runtime Safety for AI Agents',
-  description: 'Define what your AI agent is allowed to do. Enforce at runtime. Prove compliance with a public trust page. Zero user data stored.',
+  title: 'Corpus - The Immune System for Vibe-Coded Software',
+  description: 'Corpus watches your AI-generated code, catches breakage before it lands, and self-heals your project. No more AI slop.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://corpus.run'),
   openGraph: {
-    title: 'Corpus - Runtime Safety for AI Agents',
-    description: 'Define what your AI agent is allowed to do. Enforce at runtime. Prove compliance publicly.',
+    title: 'Corpus - The Immune System for Vibe-Coded Software',
+    description: 'Corpus watches your AI-generated code, catches breakage before it lands, and self-heals your project. No more AI slop.',
     siteName: 'Corpus',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Corpus - Runtime Safety for AI Agents',
-    description: 'The safety layer between your AI agent and the real world.',
+    title: 'Corpus - The Immune System for Vibe-Coded Software',
+    description: 'Corpus watches your AI-generated code, catches breakage before it lands, and self-heals your project.',
   },
 };
 

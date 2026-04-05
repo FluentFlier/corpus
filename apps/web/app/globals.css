@@ -82,6 +82,96 @@ body {
   from { --val: 0; }
 }
 
+/* ---- NEW: Gradient mesh animation ---- */
+
+@keyframes mesh-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(60px, -40px) scale(1.1); }
+  50% { transform: translate(-30px, 50px) scale(0.95); }
+  75% { transform: translate(40px, 20px) scale(1.05); }
+}
+
+@keyframes mesh-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-50px, 30px) scale(1.08); }
+  50% { transform: translate(40px, -60px) scale(0.92); }
+  75% { transform: translate(-20px, -30px) scale(1.03); }
+}
+
+@keyframes mesh-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, 50px) scale(1.06); }
+  66% { transform: translate(-50px, -20px) scale(0.97); }
+}
+
+@keyframes graph-node-pulse {
+  0%, 100% { r: 4; opacity: 0.7; }
+  50% { r: 6; opacity: 1; }
+}
+
+@keyframes graph-line-draw {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes graph-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Demo-specific animations */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
+}
+
+@keyframes flash-red {
+  0% { background-color: rgba(239, 68, 68, 0.3); }
+  50% { background-color: rgba(239, 68, 68, 0.08); }
+  100% { background-color: rgba(239, 68, 68, 0.04); }
+}
+
+@keyframes green-burst {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  50% { box-shadow: 0 0 40px 20px rgba(16, 185, 129, 0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes screen-flash-red {
+  0%, 100% { opacity: 0; }
+  15% { opacity: 1; }
+}
+
+@keyframes screen-flash-green {
+  0%, 100% { opacity: 0; }
+  15% { opacity: 1; }
+}
+
+@keyframes progress-fill {
+  from { width: 0%; }
+  to { width: var(--progress-width); }
+}
+
+/* Scroll-triggered reveal */
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ---- Animation utilities ---- */
 
 .animate-fade-in { animation: fade-in 0.8s ease-out both; }
@@ -110,6 +200,59 @@ body {
     linear-gradient(rgba(26, 26, 26, 0.5) 1px, transparent 1px),
     linear-gradient(90deg, rgba(26, 26, 26, 0.5) 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+/* ---- Gradient mesh background ---- */
+
+.gradient-mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.gradient-mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  will-change: transform;
+}
+
+.gradient-mesh-orb-1 {
+  width: 600px;
+  height: 600px;
+  top: -200px;
+  left: 20%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  animation: mesh-drift-1 20s ease-in-out infinite;
+}
+
+.gradient-mesh-orb-2 {
+  width: 500px;
+  height: 500px;
+  top: 100px;
+  right: 10%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  animation: mesh-drift-2 25s ease-in-out infinite;
+}
+
+.gradient-mesh-orb-3 {
+  width: 400px;
+  height: 400px;
+  bottom: 20%;
+  left: 40%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, rgba(99, 102, 241, 0.04) 50%, transparent 70%);
+  animation: mesh-drift-3 18s ease-in-out infinite;
+}
+
+/* ---- Floating grid dots ---- */
+
+.floating-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* ---- Gradient text ---- */
@@ -150,10 +293,58 @@ body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+  transition: background 0.3s ease;
 }
 
 .card-glow:hover::before {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(99, 102, 241, 0.6));
+}
+
+/* Card mouse-follow glow */
+.card-glow-interactive {
+  position: relative;
+  background: #111111;
+  border-radius: 16px;
+  overflow: hidden;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+
+.card-glow-interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 16px;
+  background: radial-gradient(
+    300px circle at var(--mouse-x) var(--mouse-y),
+    rgba(16, 185, 129, 0.5),
+    rgba(99, 102, 241, 0.3) 40%,
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.card-glow-interactive:hover::before {
+  opacity: 1;
+}
+
+.card-glow-interactive::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(99, 102, 241, 0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* ---- Hero glow orb ---- */
@@ -179,8 +370,108 @@ body {
   box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(16, 185, 129, 0.05);
 }
 
+/* Terminal typing animation */
+.terminal-line {
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+}
+
 /* ---- Stat counter ---- */
 
 .stat-glow {
   text-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+/* ---- App sidebar nav ---- */
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 220px;
+  background: #0a0a0a;
+  border-right: 1px solid #1a1a1a;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.app-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #888;
+  text-decoration: none;
+  transition: color 0.2s, background 0.2s;
+  border-left: 2px solid transparent;
+}
+
+.app-sidebar-link:hover {
+  color: #EDEDEA;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.app-sidebar-link.active {
+  color: #10b981;
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.app-content-with-sidebar {
+  margin-left: 220px;
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    display: none;
+  }
+  .app-content-with-sidebar {
+    margin-left: 0;
+  }
+}
+
+/* ---- Demo syntax highlighting ---- */
+
+.syntax-keyword { color: #c084fc; }
+.syntax-string { color: #34d399; }
+.syntax-comment { color: #555; font-style: italic; }
+.syntax-function { color: #60a5fa; }
+.syntax-type { color: #fbbf24; }
+.syntax-operator { color: #f472b6; }
+.syntax-number { color: #fb923c; }
+.syntax-property { color: #EDEDEA; }
+
+/* Demo violation shake */
+.demo-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.demo-flash-red {
+  animation: flash-red 0.8s ease-out;
+}
+
+.demo-green-burst {
+  animation: green-burst 1s ease-out;
+}
+
+/* Demo progress bar */
+.demo-progress-bar {
+  height: 3px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.demo-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #6366f1);
+  border-radius: 2px;
+  transition: width 0.5s ease-out;
 }

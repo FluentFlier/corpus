@@ -20,6 +20,29 @@ interface DashboardData {
   status?: string;
 }
 
+interface MemoryStats {
+  totalEntries: number;
+  totalViolations: number;
+  totalFixes: number;
+  sessionsTracked: number;
+  lastUpdated: string | null;
+}
+
+interface MemoryViolation {
+  file: string;
+  functionName?: string;
+  content: string;
+  timestamp: string;
+  severity?: string;
+  rule?: string;
+}
+
+interface MemoryData {
+  stats: MemoryStats;
+  recentViolations: MemoryViolation[];
+  flagCounts: Record<string, number>;
+}
+
 function ScoreRing({ score }: { score: number }) {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
@@ -73,6 +96,9 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState(false);
+  const [memoryData, setMemoryData] = useState<MemoryData | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncResult, setSyncResult] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -89,11 +115,43 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const fetchMemory = useCallback(async () => {
+    try {
+      const res = await fetch('/api/memory', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        setMemoryData(json);
+      }
+    } catch {
+      // Memory endpoint may not have data yet
+    }
+  }, []);
+
+  const handleSync = useCallback(async () => {
+    setSyncing(true);
+    setSyncResult(null);
+    try {
+      const res = await fetch('/api/memory/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+      const json = await res.json();
+      if (res.ok) {
+        setSyncResult(`Synced ${json.synced} memories to Backboard.io${json.errors > 0 ? ` (${json.errors} errors)` : ''}`);
+      } else {
+        setSyncResult(json.error || 'Sync failed');
+      }
+    } catch {
+      setSyncResult('Sync request failed');
+    } finally {
+      setSyncing(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchData();
+    fetchMemory();
     const interval = setInterval(fetchData, 2000);
-    return () => clearInterval(interval);
-  }, [fetchData]);
+    const memInterval = setInterval(fetchMemory, 5000);
+    return () => { clearInterval(interval); clearInterval(memInterval); };
+  }, [fetchData, fetchMemory]);
 
   const waiting = !data || data.status === 'waiting';
 
@@ -168,6 +226,103 @@ export default function DashboardPage() {
                       <span className="text-[10px] text-[#555] truncate max-w-[200px]">{event.message}</span>
                     </div>
                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Immune Memory */}
+            <div className="bg-[#111] border border-[#222] rounded-xl overflow-hidden mt-8">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-[#222]">
+                <span className="text-xs text-[#888] font-mono uppercase tracking-wider">Immune Memory</span>
+                <div className="flex items-center gap-3">
+                  {syncResult && (
+                    <span className="text-[10px] text-[#888] font-mono">{syncResult}</span>
+                  )}
+                  <button
+                    onClick={handleSync}
+                    disabled={syncing}
+                    className="text-[10px] font-mono font-bold px-3 py-1.5 rounded border border-[#333] hover:border-[#16A34A] hover:text-[#16A34A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {syncing ? 'Syncing...' : 'Sync to Backboard'}
+                  </button>
+                </div>
+              </div>
+
+              {memoryData ? (
+                <>
+                  {/* Memory Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5">
+                    <div className="text-center">
+                      <div className="text-xl font-mono font-bold text-[#EDEDEA]">{memoryData.stats.totalEntries || 0}</div>
+                      <div className="text-[10px] text-[#888] mt-0.5 uppercase tracking-wider">Total Memories</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-mono font-bold" style={{ color: (memoryData.stats.totalViolations || 0) > 0 ? '#DC2626' : '#16A34A' }}>
+                        {memoryData.stats.totalViolations || 0}
+                      </div>
+                      <div className="text-[10px] text-[#888] mt-0.5 uppercase tracking-wider">Violations</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-mono font-bold text-[#16A34A]">{memoryData.stats.totalFixes || 0}</div>
+                      <div className="text-[10px] text-[#888] mt-0.5 uppercase tracking-wider">Fixes</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-mono font-bold text-[#888]">{memoryData.stats.sessionsTracked || 0}</div>
+                      <div className="text-[10px] text-[#888] mt-0.5 uppercase tracking-wider">Sessions</div>
+                    </div>
+                  </div>
+
+                  {/* Flag Counts */}
+                  {Object.keys(memoryData.flagCounts).length > 0 && (
+                    <div className="px-5 pb-4">
+                      <div className="text-[10px] text-[#555] font-mono uppercase tracking-wider mb-2">Flag Counts by Function</div>
+                      <div className="flex flex-wrap gap-2">
+                        {Object.entries(memoryData.flagCounts).map(([key, count]) => (
+                          <span key={key} className="text-[10px] font-mono px-2 py-1 rounded bg-[#1a1a1a] border border-[#222]">
+                            <span className="text-[#888]">{key}:</span>{' '}
+                            <span className="text-[#D97706] font-bold">{count}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Recent Violations */}
+                  {memoryData.recentViolations.length > 0 && (
+                    <div className="border-t border-[#222]">
+                      <div className="px-5 py-2 text-[10px] text-[#555] font-mono uppercase tracking-wider">
+                        Recent Violations
+                      </div>
+                      <div className="divide-y divide-[#1a1a1a]">
+                        {memoryData.recentViolations.slice(0, 10).map((v, i) => (
+                          <div key={`violation-${v.timestamp}-${i}`} className="flex items-center gap-4 px-5 py-2 hover:bg-[#1a1a1a] transition-colors">
+                            <span className="text-[10px] text-[#555] font-mono w-32 shrink-0">
+                              {v.timestamp ? new Date(v.timestamp).toLocaleString() : '--'}
+                            </span>
+                            <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded text-[#DC2626] bg-[#DC262615]">
+                              {v.severity || 'WARN'}
+                            </span>
+                            <span className="text-xs text-[#EDEDEA] font-mono truncate flex-1">
+                              {v.file}{v.functionName ? ` > ${v.functionName}` : ''}
+                            </span>
+                            <span className="text-[10px] text-[#555] truncate max-w-[250px]">
+                              {v.content || v.rule || ''}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {memoryData.recentViolations.length === 0 && Object.keys(memoryData.flagCounts).length === 0 && (
+                    <div className="px-5 pb-5 text-center text-[#555] text-xs">
+                      No violations recorded yet. Memory builds over time as Corpus scans your codebase.
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="px-5 py-8 text-center text-[#555] text-sm">
+                  No memory data available. Run <code className="text-[#16A34A]">corpus watch</code> to start tracking.
                 </div>
               )}
             </div>

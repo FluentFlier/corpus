@@ -18,6 +18,15 @@ const ActionLogSchema = z.object({
   blockReason: z.string().max(64).nullable().optional(),
   durationMs: z.number().int().min(0),
   timestamp: z.string(),
+  // Optional violations array for InsForge corpus_violations ingestion
+  violations: z.array(z.object({
+    filePath: z.string().min(1),
+    functionName: z.string().optional(),
+    violationType: z.string().min(1),
+    severity: z.enum(['error', 'warning', 'info']),
+    message: z.string().min(1),
+    fixSuggestion: z.string().optional(),
+  })).optional(),
 });
 
 function safeCompare(a: string, b: string): boolean {
@@ -122,7 +131,30 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ ok: false, error: 'insert_failed' });
     }
 
-    return NextResponse.json({ ok: true });
+    // Insert violations into corpus_violations table if provided
+    let violationsInserted = 0;
+    if (parsed.violations && parsed.violations.length > 0) {
+      const violationRows = parsed.violations.map((v) => ({
+        project_slug: parsed.projectSlug,
+        file_path: v.filePath,
+        function_name: v.functionName ?? null,
+        violation_type: v.violationType,
+        severity: v.severity,
+        message: v.message,
+        fix_suggestion: v.fixSuggestion ?? null,
+        resolved: false,
+      }));
+
+      const { error: violationsError } = await supabaseAdmin
+        .from('corpus_violations')
+        .insert(violationRows);
+
+      if (!violationsError) {
+        violationsInserted = violationRows.length;
+      }
+    }
+
+    return NextResponse.json({ ok: true, violationsInserted });
   } catch {
     return NextResponse.json({ ok: false, error: 'invalid_body' });
   }

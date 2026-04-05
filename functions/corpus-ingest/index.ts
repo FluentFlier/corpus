@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@insforge/sdk";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, x-corpus-key",
 };
 
-Deno.serve(async (req: Request) => {
+export default async function (req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -19,9 +19,10 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const client = createClient({
+      baseUrl: Deno.env.get("INSFORGE_BASE_URL")!,
+      anonKey: Deno.env.get("ANON_KEY")!,
+    });
 
     const body = await req.json();
     const {
@@ -44,7 +45,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Insert scan record
-    const { data: scan, error: scanError } = await supabase
+    const { data: scan, error: scanError } = await client.database
       .from("corpus_scans")
       .insert({
         project_slug: projectSlug,
@@ -82,7 +83,7 @@ Deno.serve(async (req: Request) => {
         resolved: false,
       }));
 
-      const { error: violationsError } = await supabase
+      const { error: violationsError } = await client.database
         .from("corpus_violations")
         .insert(violationRows);
 
@@ -108,7 +109,7 @@ Deno.serve(async (req: Request) => {
         },
       }));
 
-      const { error: memoryError } = await supabase
+      const { error: memoryError } = await client.database
         .from("corpus_memory")
         .insert(memoryRows);
 
@@ -139,4 +140,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-});
+}
