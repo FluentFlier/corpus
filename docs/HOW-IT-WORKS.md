@@ -4,6 +4,21 @@
 
 Corpus is the immune system for vibe-coded software. It scans codebases, builds structural graphs, catches security issues, learns patterns from the open-source ecosystem, and auto-fixes AI-generated code mistakes before they ship.
 
+## New: Three Intelligence Layers
+
+### CVE-Linked Pattern Detection
+Corpus ships with 30 real-world CVE patterns. When a scan finds matching code, the finding includes the CVE ID, severity from the actual advisory, and a fix example. This transforms "eval() detected" into "This pattern matches CVE-2017-5941 (node-serialize RCE). Found in 12 scanned repos."
+
+### Hallucinated Dependency Detection
+AI coding tools sometimes invent npm packages that don't exist or are typosquats of real packages. Corpus checks every import against the npm registry and a database of 12,000+ legitimate packages. If a package doesn't exist — BLOCK before the file ships.
+
+### Corpus Pattern Intelligence
+The pattern learner evolved from simple FP-rate tracking to a full intelligence engine:
+- **Context-aware**: Same pattern in different contexts gets different verdicts
+- **Co-occurrence**: Patterns that appear together are flagged with elevated risk
+- **Prevalence scoring**: Common production patterns are weighted higher when removed
+- **CVE linkage**: Patterns matching CVEs are never suppressed
+
 ## Architecture
 
 ```

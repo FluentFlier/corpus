@@ -22,6 +22,9 @@ import { checkCodeSafety } from '@corpus/core';
 import { scanForInjection } from '@corpus/core';
 import { scanPayload } from '@corpus/core';
 import { computeFileTrust } from '@corpus/core';
+import { checkForCVEs } from '@corpus/core';
+import { checkDependencies } from '@corpus/core';
+import { getPatternIntelligence, shouldSuppress } from '@corpus/core';
 
 // ── MCP Protocol Types ───────────────────────────────────────────────────────
 
@@ -115,6 +118,19 @@ const TOOLS = [
     },
   },
   {
+    name: 'check_dependencies',
+    description: 'CORPUS IMMUNE SYSTEM: Check imports for hallucinated or typosquatted npm packages. AI coding tools sometimes invent package names that do not exist. Call this before writing any file with new imports. If CRITICAL findings are returned, the imports MUST be fixed.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        content: { type: 'string', description: 'The code content to check for dependency issues' },
+        filename: { type: 'string', description: 'The filename' },
+        project_root: { type: 'string', description: 'The project root directory (to read package.json)' },
+      },
+      required: ['content', 'filename'],
+    },
+  },
+  {
     name: 'corpus_health',
     description: 'Get the current health status of the codebase immune system. Returns overall health score, verified/violating/uncertain counts, and recent changes.',
     inputSchema: {
@@ -162,6 +178,20 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
           isAiPattern: false,
         })) : []),
       ];
+
+      // CVE pattern detection
+      try {
+        const cveFindings = checkForCVEs(content, filename);
+        for (const cve of cveFindings) {
+          issues.push({
+            severity: cve.severity === 'HIGH' ? 'CRITICAL' as const : cve.severity === 'MEDIUM' ? 'WARNING' as const : cve.severity as 'CRITICAL',
+            type: `CVE: ${cve.cveId}`,
+            line: cve.line,
+            message: `${cve.name}: ${cve.description}`,
+            isAiPattern: false,
+          });
+        }
+      } catch {}
 
       const clean = issues.length === 0;
       const text = clean
@@ -223,7 +253,16 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
       const filename = String(args.filename ?? 'unknown');
       const result = computeFileTrust(content, filename);
 
-      if (result.findings.length === 0) {
+      // Also check for dependency issues
+      let depWarning = '';
+      try {
+        const depFindings = await checkDependencies(content, filename, { projectRoot: process.cwd() });
+        if (depFindings.length > 0) {
+          depWarning = `\n\nDEPENDENCY WARNINGS:\n${depFindings.map(f => `  [${f.severity}] Package '${f.package}': ${f.suggestion}`).join('\n')}`;
+        }
+      } catch {}
+
+      if (result.findings.length === 0 && !depWarning) {
         return {
           content: [{
             type: 'text',
@@ -245,7 +284,7 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
       return {
         content: [{
           type: 'text',
-          text: `TRUST SCORE: ${result.score}/100 for ${filename}\n${recommendation}\n\n${result.findings.length} finding(s):\n${findingsText}`,
+          text: `TRUST SCORE: ${result.score}/100 for ${filename}\n${recommendation}\n\n${result.findings.length} finding(s):\n${findingsText}${depWarning}`,
         }],
       };
     }
@@ -316,6 +355,30 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
             text: `CORPUS: No immune system found. Run \`corpus init\` to build the codebase graph.`,
           }],
         };
+      }
+    }
+
+    case 'check_dependencies': {
+      const content = String(args.content ?? '');
+      const filename = String(args.filename ?? 'unknown');
+      const projectRoot = String(args.project_root ?? process.cwd());
+
+      try {
+        const findings = await checkDependencies(content, filename, { projectRoot });
+        if (findings.length === 0) {
+          return { content: [{ type: 'text', text: 'CORPUS VERIFIED: All imported packages are legitimate. No hallucinated dependencies detected.' }] };
+        }
+
+        const text = findings.map(f => {
+          let msg = `[${f.severity}] Package '${f.package}': ${f.reason === 'nonexistent' ? 'DOES NOT EXIST on npm' : f.reason === 'typosquat' ? 'Possible typosquat' : 'Suspiciously unpopular'}`;
+          if (f.similarPackages?.length) msg += `\n    Did you mean: ${f.similarPackages.join(', ')}?`;
+          msg += `\n    ${f.suggestion}`;
+          return msg;
+        }).join('\n');
+
+        return { content: [{ type: 'text', text: `CORPUS ALERT: ${findings.length} suspicious dependency(ies) found:\n${text}\n\nFix these imports before writing the file.` }] };
+      } catch (e) {
+        return { content: [{ type: 'text', text: `CORPUS: Dependency check unavailable. ${e instanceof Error ? e.message : 'Unknown error'}` }] };
       }
     }
 

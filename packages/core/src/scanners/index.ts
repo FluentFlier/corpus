@@ -9,3 +9,4 @@ export { checkSessionIntegrity, type SessionEvent, type SessionCheckResult } fro
 export { detectSecrets, scanFiles, type SecretFinding, type SecretSeverity } from './secret-detector.js';
 export { checkCodeSafety, type SafetyFinding, type SafetySeverity } from './code-safety.js';
 export { computeFileTrust, computeCodebaseTrust, type FileTrustResult, type CodebaseTrustResult, type TrustFinding } from './trust-score.js';
+export { checkDependencies, extractImportedPackages, type DependencyFinding } from './dependency-checker.js';

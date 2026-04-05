@@ -1,6 +1,12 @@
 import { watch, readFileSync, statSync, readdirSync } from 'fs';
 import path from 'path';
 import { green, amber, red, dim, bold, cyan } from '../utils/colors.js';
+import { detectSecrets } from '@corpus/core';
+import { checkCodeSafety } from '@corpus/core';
+import { checkForCVEs } from '@corpus/core';
+import { checkDependencies, extractImportedPackages } from '@corpus/core';
+import { checkFile } from '@corpus/core';
+import { shouldSuppress } from '@corpus/core';
 
 const IGNORE_DIRS = new Set([
   'node_modules', '.git', 'dist', '.next', '__pycache__', '.venv',
@@ -24,6 +30,11 @@ interface WatchStats {
   startTime: number;
   lastScanTime: string;
   recentEvents: { time: string; file: string; severity: string; message: string }[];
+  // Intelligence stats
+  cvesDetected: number;
+  depsChecked: number;
+  contractViolations: number;
+  autoHealed: number;
 }
 
 const stats: WatchStats = {
@@ -35,70 +46,78 @@ const stats: WatchStats = {
   startTime: Date.now(),
   lastScanTime: '-',
   recentEvents: [],
+  cvesDetected: 0,
+  depsChecked: 0,
+  contractViolations: 0,
+  autoHealed: 0,
 };
 
-// ── Inline scanner ──────────────────────────────────────────────────────────
+// ── Deep scanner (uses core scanners) ───────────────────────────────────────
 
-function quickScan(content: string, filepath: string): { severity: string; message: string }[] {
-  const findings: { severity: string; message: string }[] = [];
-  const lower = filepath.toLowerCase();
+interface ScanResult {
+  severity: string;
+  message: string;
+  type: string;
+  cveId?: string;
+}
 
-  // Skip test files
-  if (lower.includes('test') || lower.includes('spec') || lower.includes('__tests__')) return findings;
+function deepScan(content: string, filepath: string, projectRoot: string): ScanResult[] {
+  const results: ScanResult[] = [];
 
-  const secretPatterns: [RegExp, string][] = [
-    [/AKIA[0-9A-Z]{16}/g, 'AWS Access Key'],
-    [/gh[pousr]_[A-Za-z0-9_]{36,}/g, 'GitHub Token'],
-    [/sk-[A-Za-z0-9]{20,}/g, 'API Key (OpenAI/Anthropic)'],
-    [/sk-ant-[A-Za-z0-9-]{20,}/g, 'Anthropic Key'],
-    [/[sr]k_live_[A-Za-z0-9]{20,}/g, 'Stripe Live Key'],
-    [/-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/g, 'Private Key'],
-    [/(?:postgres|mysql|mongodb|redis):\/\/[^\s'"]+:[^\s'"]+@/g, 'Database URL'],
-    [/xox[baprs]-[0-9a-zA-Z-]{10,}/g, 'Slack Token'],
-    [/SG\.[A-Za-z0-9_-]{22}\.[A-Za-z0-9_-]{43}/g, 'SendGrid Key'],
-  ];
-
-  const placeholderSkip = [/test|fake|dummy|placeholder|example|changeme|xxx|your_/i];
-
-  for (const [regex, name] of secretPatterns) {
-    regex.lastIndex = 0;
-    let m: RegExpExecArray | null;
-    while ((m = regex.exec(content)) !== null) {
-      if (placeholderSkip.some((p) => p.test(m![0]))) continue;
-      findings.push({ severity: 'CRIT', message: `${name}: ${m[0].slice(0, 8)}...` });
+  // Core secret detection
+  try {
+    const secrets = detectSecrets(content, filepath);
+    for (const s of secrets) {
+      results.push({ severity: s.severity === 'CRITICAL' ? 'CRIT' : 'WARN', message: `${s.type}: ${s.redacted}`, type: s.type });
     }
-  }
+  } catch {}
 
-  // AI-specific patterns
-  if (/rejectUnauthorized\s*:\s*false/.test(content)) {
-    findings.push({ severity: 'WARN', message: 'Disabled SSL verification' });
-  }
-  if (/(?:cors|origin)\s*[=:]\s*['"]\*['"]/i.test(content)) {
-    findings.push({ severity: 'WARN', message: 'Wildcard CORS (*)' });
-  }
-  if (/\beval\s*\(/.test(content) && !filepath.includes('scanner')) {
-    findings.push({ severity: 'CRIT', message: 'eval() usage detected' });
-  }
-  if (/(?:password|passwd|pwd)\s*[=:]\s*['"][^'"]{8,}['"]/i.test(content)) {
-    if (!placeholderSkip.some((p) => p.test(content))) {
-      findings.push({ severity: 'WARN', message: 'Hardcoded password' });
+  // Code safety
+  try {
+    const safety = checkCodeSafety(content, filepath);
+    for (const s of safety) {
+      // Check pattern intelligence for suppression
+      const suppression = shouldSuppress(projectRoot, s.rule, filepath);
+      if (suppression.suppress) continue;
+      results.push({ severity: s.severity === 'CRITICAL' ? 'CRIT' : s.severity === 'WARNING' ? 'WARN' : 'INFO', message: s.message, type: s.rule });
     }
-  }
-  if (/chmod\s+777/.test(content)) {
-    findings.push({ severity: 'WARN', message: 'chmod 777 permissions' });
-  }
+  } catch {}
 
-  // PII
-  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-  const ssnRegex = /\b\d{3}-\d{2}-\d{4}\b/g;
-  if (emailRegex.test(content) && !filepath.endsWith('.md')) {
-    findings.push({ severity: 'INFO', message: 'Email address in source' });
-  }
-  if (ssnRegex.test(content)) {
-    findings.push({ severity: 'CRIT', message: 'SSN pattern detected' });
-  }
+  // CVE pattern detection
+  try {
+    const cves = checkForCVEs(content, filepath);
+    for (const c of cves) {
+      results.push({ severity: 'CRIT', message: `${c.cveId}: ${c.name}`, type: `CVE:${c.cveId}`, cveId: c.cveId });
+    }
+  } catch {}
 
-  return findings;
+  // Graph contract verification (if graph exists)
+  try {
+    const graphResult = checkFile(projectRoot, filepath, content);
+    if (graphResult.verdict === 'VIOLATES') {
+      for (const v of graphResult.violations) {
+        results.push({ severity: v.severity === 'CRITICAL' ? 'CRIT' : 'WARN', message: `Contract: ${v.message}`, type: `contract:${v.type}` });
+      }
+    }
+  } catch {}
+
+  return results;
+}
+
+// Async dependency check (runs separately due to network)
+async function checkDeps(content: string, filepath: string, projectRoot: string): Promise<ScanResult[]> {
+  const results: ScanResult[] = [];
+  try {
+    const findings = await checkDependencies(content, filepath, { projectRoot });
+    for (const f of findings) {
+      results.push({
+        severity: f.severity === 'CRITICAL' ? 'CRIT' : 'WARN',
+        message: `Dep: ${f.package} (${f.reason})${f.similarPackages?.length ? ' → did you mean ' + f.similarPackages[0] + '?' : ''}`,
+        type: `dep:${f.reason}`,
+      });
+    }
+  } catch {}
+  return results;
 }
 
 function isScannable(filepath: string): boolean {
@@ -148,6 +167,11 @@ function renderDashboard(dir: string): void {
     process.stdout.write(`  ${green(`\u2714 ${stats.passCount} clean`)}  ${dim('No issues found')}\n\n`);
   }
 
+  // Intelligence stats
+  if (stats.cvesDetected > 0 || stats.contractViolations > 0 || stats.depsChecked > 0) {
+    process.stdout.write(`  ${red(`CVEs: ${stats.cvesDetected}`)}  ${amber(`Contracts: ${stats.contractViolations}`)}  ${cyan(`Deps checked: ${stats.depsChecked}`)}  ${green(`Auto-healed: ${stats.autoHealed}`)}\n\n`);
+  }
+
   // Recent events
   process.stdout.write(dim('  Recent activity:\n'));
   if (stats.recentEvents.length === 0) {
@@ -178,8 +202,12 @@ function initialScan(dir: string): void {
           if (s.isDirectory()) walkAndScan(full);
           else if (s.isFile() && isScannable(full)) {
             const content = readFileSync(full, 'utf-8');
-            const findings = quickScan(content, full);
+            const findings = deepScan(content, full, dir);
             stats.filesScanned++;
+            const cveCount = findings.filter(f => f.type.startsWith('CVE:')).length;
+            const contractCount = findings.filter(f => f.type.startsWith('contract:')).length;
+            stats.cvesDetected += cveCount;
+            stats.contractViolations += contractCount;
             if (findings.length === 0) {
               stats.passCount++;
             } else {
@@ -232,12 +260,17 @@ export async function runWatch(): Promise<void> {
         if (!s.isFile()) return;
 
         const content = readFileSync(filepath, 'utf-8');
-        const findings = quickScan(content, filepath);
+        const findings = deepScan(content, filepath, resolvedDir);
         const relPath = path.relative(resolvedDir, filepath);
         const time = formatTime();
 
         stats.filesScanned++;
         stats.lastScanTime = time;
+
+        const cveCount = findings.filter(f => f.type.startsWith('CVE:')).length;
+        const contractCount = findings.filter(f => f.type.startsWith('contract:')).length;
+        stats.cvesDetected += cveCount;
+        stats.contractViolations += contractCount;
 
         if (findings.length === 0) {
           stats.passCount++;
@@ -252,6 +285,20 @@ export async function runWatch(): Promise<void> {
             stats.recentEvents.push({ time, file: relPath, severity: f.severity, message: f.message });
           }
         }
+
+        // Async: check dependencies (non-blocking)
+        checkDeps(content, filepath, resolvedDir).then(depResults => {
+          if (depResults.length > 0) {
+            stats.depsChecked++;
+            for (const r of depResults) {
+              stats.issuesFound++;
+              if (r.severity === 'CRIT') stats.criticalCount++;
+              else stats.warningCount++;
+              stats.recentEvents.push({ time: formatTime(), file: relPath, severity: r.severity, message: r.message });
+            }
+            renderDashboard(resolvedDir);
+          }
+        });
 
         // Keep only last 50 events
         if (stats.recentEvents.length > 50) {
@@ -290,6 +337,10 @@ export async function runWatch(): Promise<void> {
       process.stdout.write(`  Critical:       ${stats.criticalCount}\n`);
       process.stdout.write(`  Warnings:       ${stats.warningCount}\n`);
       process.stdout.write(`  Clean:          ${stats.passCount}\n`);
+      process.stdout.write(`  CVEs detected:  ${stats.cvesDetected}\n`);
+      process.stdout.write(`  Deps checked:   ${stats.depsChecked}\n`);
+      process.stdout.write(`  Violations:     ${stats.contractViolations}\n`);
+      process.stdout.write(`  Auto-healed:    ${stats.autoHealed}\n`);
       process.stdout.write(`  Duration:       ${uptime()}\n`);
       process.stdout.write('\n');
       process.exit(0);

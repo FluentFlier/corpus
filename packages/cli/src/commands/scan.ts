@@ -2,6 +2,8 @@ import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from '
 import { execSync } from 'child_process';
 import path from 'path';
 import { green, amber, red, dim, bold, cyan } from '../utils/colors.js';
+import { checkForCVEs, type CVEFinding } from '@corpus/core';
+import { checkDependencies, type DependencyFinding } from '@corpus/core';
 
 interface ScanOptions {
   paths: string[];
@@ -12,6 +14,8 @@ interface ScanOptions {
   injection: boolean;
   safety: boolean;
   fix: boolean;
+  cve: boolean;
+  deps: boolean;
 }
 
 interface Finding {
@@ -214,6 +218,23 @@ function scanFile(filepath: string, opts: ScanOptions): Finding[] {
     }
   }
 
+  // CVE patterns
+  if (opts.safety) {
+    try {
+      const cveFindings = checkForCVEs(content, filepath);
+      for (const cve of cveFindings) {
+        findings.push({
+          severity: cve.severity === 'HIGH' ? 'CRITICAL' : cve.severity === 'MEDIUM' ? 'WARNING' : cve.severity as 'CRITICAL',
+          type: `CVE: ${cve.cveId}`,
+          file: filepath,
+          line: cve.line,
+          message: `${cve.name}: ${cve.description}`,
+          suggestion: cve.fixExample,
+        });
+      }
+    } catch {}
+  }
+
   return findings;
 }
 
@@ -371,6 +392,8 @@ export async function runScan(): Promise<void> {
     injection: false,
     safety: false,
     fix: false,
+    cve: false,
+    deps: false,
   };
 
   // Parse args — individual flags are collected first; if none are set we
@@ -386,6 +409,8 @@ export async function runScan(): Promise<void> {
       case '--secrets': opts.secrets = true; anyFilterFlag = true; break;
       case '--pii': opts.pii = true; anyFilterFlag = true; break;
       case '--injection': opts.injection = true; anyFilterFlag = true; break;
+      case '--cve': opts.cve = true; anyFilterFlag = true; break;
+      case '--deps': opts.deps = true; anyFilterFlag = true; break;
       case '--help': case '-h':
         process.stdout.write(`
   corpus scan [paths...] [options]
@@ -399,6 +424,8 @@ export async function runScan(): Promise<void> {
     --secrets      Scan for secrets only
     --pii          Scan for PII only
     --injection    Scan for injection patterns only
+    --cve          Scan for CVE-linked vulnerability patterns
+    --deps         Check imports for hallucinated/typosquatted packages
     --format <fmt> Output format: pretty (default) or json
     --help         Show this help
 
@@ -422,6 +449,8 @@ export async function runScan(): Promise<void> {
     opts.pii = true;
     opts.injection = true;
     opts.safety = true;
+    opts.cve = true;
+    opts.deps = true;
   }
 
   if (paths.length > 0) opts.paths = paths;
@@ -441,6 +470,26 @@ export async function runScan(): Promise<void> {
   const allFindings: Finding[] = [];
   for (const filepath of files) {
     allFindings.push(...scanFile(filepath, opts));
+  }
+
+  // Dependency checking (async - runs after file scan)
+  if (opts.deps) {
+    for (const filepath of files) {
+      try {
+        const content = readFileSync(filepath, 'utf-8');
+        const depFindings = await checkDependencies(content, filepath, { projectRoot: opts.paths[0] || '.' });
+        for (const d of depFindings) {
+          allFindings.push({
+            severity: d.severity,
+            type: `Hallucinated Dep: ${d.package}`,
+            file: filepath,
+            line: d.line,
+            message: `Package '${d.package}' ${d.reason === 'nonexistent' ? 'does not exist on npm' : d.reason === 'typosquat' ? 'may be a typosquat' : 'is suspiciously unpopular'}`,
+            suggestion: d.suggestion,
+          });
+        }
+      } catch {}
+    }
   }
 
   const timeMs = Date.now() - start;

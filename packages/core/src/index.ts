@@ -15,8 +15,11 @@ export type { CodebaseGraph, GraphNode, GraphEdge, GraphDiff } from './graph-eng
 export { checkFile, getHealthSummary } from './autofix.js';
 export type { FixInstruction, ViolationDetail } from './autofix.js';
 
+// CVE Pattern Detection
+export { checkForCVEs, loadCVEPatterns, getCVESummary, type CVEPattern, type CVEFinding } from './cve-patterns.js';
+
 // Corpus Pattern Learner (evolving immune system)
-export { learnFromFindings, getLearnedPatterns, shouldSuppress } from './pattern-learner.js';
+export { learnFromFindings, getLearnedPatterns, shouldSuppress, getPatternIntelligence, addKnownPackages, categorizeRepo } from './pattern-learner.js';
 export type { PatternSignature, LearnedPatterns } from './pattern-learner.js';
 
 // Corpus Immune Memory (Backboard.io + local fallback)
