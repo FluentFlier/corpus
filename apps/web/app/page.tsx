@@ -484,19 +484,19 @@ export default function HomePage(): React.ReactElement {
       <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 reveal-on-scroll" aria-label="Project statistics">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-corpus-muted text-sm text-center mb-10 font-mono">
-            Benchmarked on create-t3-app, shadcn/ui, and cal.com
+            Benchmarked on 7 repos: t3, shadcn/ui, cal.com, trpc, hono, drizzle, prisma
           </p>
           <div className="grid grid-cols-3 gap-8 text-center">
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">11K+</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">16K+</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">files scanned</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">36K+</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">52K+</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">graph nodes built</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">3.1s</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">4.5s</div>
               <div className="text-corpus-muted text-sm mt-2 font-mono">total scan time</div>
             </div>
           </div>
