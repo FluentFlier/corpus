@@ -7,6 +7,14 @@ async function main(): Promise<void> {
     case 'init': {
       const { runInit } = await import('./commands/init.js');
       await runInit();
+      // After init completes, also build the codebase graph
+      const { initGraph } = await import('./commands/init-graph.js');
+      await initGraph(process.argv.slice(3));
+      break;
+    }
+    case 'graph': {
+      const { initGraph } = await import('./commands/init-graph.js');
+      await initGraph(process.argv.slice(3));
       break;
     }
     case 'verify': {
@@ -46,9 +54,12 @@ async function main(): Promise<void> {
     watch     Real-time file watcher with live security scanning
 
   Policy Management:
-    init      Initialize Corpus in your project (+ pre-commit hooks)
+    init      Initialize Corpus in your project (+ pre-commit hooks + graph)
     check     Validate all policy files
     report    View your agent's behavioral report
+
+  Graph & Analysis:
+    graph     Build / rebuild the codebase graph
 
   Usage:
     corpus verify                Trust score for your codebase
@@ -59,6 +70,7 @@ async function main(): Promise<void> {
     corpus watch                 Watch files and scan on every save
     corpus watch src/            Watch specific directory
     corpus init                  Set up Corpus in your project
+    corpus graph                 Build the codebase graph
     corpus check                 Validate policy files
 
   MCP Server (for AI coding tools):
