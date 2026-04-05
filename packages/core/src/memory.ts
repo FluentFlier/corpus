@@ -39,7 +39,7 @@ export interface ImmuneMemory {
 
 // ── Backboard.io Client ──────────────────────────────────────────────────────
 
-const BACKBOARD_BASE_URL = 'https://api.backboard.io/v1';
+const BACKBOARD_BASE_URL = 'https://app.backboard.io/api';
 
 class BackboardClient {
   private apiKey: string;
@@ -49,26 +49,51 @@ class BackboardClient {
     this.apiKey = apiKey;
   }
 
-  private async request(path: string, options: RequestInit = {}): Promise<any> {
+  private async request<T = any>(
+    method: string,
+    endpoint: string,
+    options?: { json?: Record<string, unknown>; params?: Record<string, string | number> }
+  ): Promise<T> {
+    const url = new URL(`${BACKBOARD_BASE_URL}/${endpoint.replace(/^\//, '')}`);
+    if (options?.params) {
+      for (const [key, val] of Object.entries(options.params)) {
+        url.searchParams.set(key, String(val));
+      }
+    }
+
+    const headers: Record<string, string> = {
+      'X-API-Key': this.apiKey,
+      'User-Agent': 'corpus/1.0',
+    };
+
+    let body: string | undefined;
+    if (options?.json) {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(options.json);
+    }
+
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
+    const timeout = setTimeout(() => controller.abort(), 30000);
 
     try {
-      const res = await fetch(`${BACKBOARD_BASE_URL}${path}`, {
-        ...options,
+      const res = await fetch(url.toString(), {
+        method,
+        headers,
+        body,
         signal: controller.signal,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': this.apiKey,
-          ...options.headers,
-        },
       });
 
       if (!res.ok) {
-        throw new Error(`Backboard API error: ${res.status} ${res.statusText}`);
+        const text = await res.text().catch(() => '<no body>');
+        throw new Error(`Backboard API ${res.status}: ${text}`);
       }
 
-      return res.json();
+      // DELETE responses may have no body
+      if (res.status === 204 || res.headers.get('content-length') === '0') {
+        return undefined as T;
+      }
+
+      return (await res.json()) as T;
     } finally {
       clearTimeout(timeout);
     }
@@ -79,45 +104,44 @@ class BackboardClient {
 
     try {
       // Try to find existing assistant
-      const list = await this.request('/assistants?limit=50');
-      const existing = list.data?.find((a: any) => a.name === name);
+      const list = await this.request<Array<{ assistant_id: string; name: string }>>(
+        'GET', '/assistants', { params: { skip: 0, limit: 100 } }
+      );
+      const existing = (Array.isArray(list) ? list : []).find((a) => a.name === name);
       if (existing) {
-        this.assistantId = existing.id;
-        return existing.id;
+        this.assistantId = existing.assistant_id;
+        return existing.assistant_id;
       }
 
       // Create new
-      const created = await this.request('/assistants', {
-        method: 'POST',
-        body: JSON.stringify({
-          name,
-          description: 'Corpus immune memory for codebase health tracking',
-          system_prompt: 'You are the memory layer for Corpus, tracking codebase health patterns.',
-        }),
-      });
-      this.assistantId = created.id;
-      return created.id;
+      const created = await this.request<{ assistant_id: string }>(
+        'POST', '/assistants', {
+          json: {
+            name,
+            description: 'Corpus immune memory for codebase health tracking',
+            system_prompt: 'You are the memory layer for Corpus, tracking codebase health patterns.',
+          },
+        }
+      );
+      this.assistantId = created.assistant_id;
+      return created.assistant_id;
     } catch (e) {
       throw new Error(`Failed to initialize Backboard assistant: ${e}`);
     }
   }
 
   async addMemory(assistantId: string, content: string, metadata?: Record<string, unknown>): Promise<any> {
-    return this.request(`/assistants/${assistantId}/memory`, {
-      method: 'POST',
-      body: JSON.stringify({ content, metadata }),
+    return this.request('POST', `/assistants/${assistantId}/memories`, {
+      json: { content, metadata },
     });
   }
 
-  async getMemories(assistantId: string): Promise<any[]> {
-    const result = await this.request(`/assistants/${assistantId}/memory`);
-    return result.data || [];
+  async getMemories(assistantId: string): Promise<{ memories: any[]; total_count: number }> {
+    return this.request('GET', `/assistants/${assistantId}/memories`);
   }
 
   async deleteMemory(assistantId: string, memoryId: string): Promise<void> {
-    await this.request(`/assistants/${assistantId}/memory/${memoryId}`, {
-      method: 'DELETE',
-    });
+    await this.request('DELETE', `/assistants/${assistantId}/memories/${memoryId}`);
   }
 }
 
@@ -247,6 +271,22 @@ export function getMemoryStats(projectRoot: string): ImmuneMemory['stats'] {
  */
 export function getAllMemories(projectRoot: string): ImmuneMemory {
   return loadLocalMemory(projectRoot);
+}
+
+/**
+ * Get memories stored in Backboard.io for this project.
+ */
+export async function getBackboardMemories(projectRoot: string): Promise<{ memories: any[]; total_count: number } | null> {
+  const client = getBackboardClient();
+  if (!client) return null;
+
+  const projectName = path.basename(projectRoot);
+  try {
+    const assistantId = await client.ensureAssistant(`corpus-${projectName}`);
+    return await client.getMemories(assistantId);
+  } catch {
+    return null;
+  }
 }
 
 /**

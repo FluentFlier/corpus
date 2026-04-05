@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "corpus": {
+      "command": "npx",
+      "args": [
+        "corpus-mcp"
+      ],
+      "type": "stdio"
+    }
+  }
+}

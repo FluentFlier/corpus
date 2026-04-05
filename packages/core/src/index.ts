@@ -16,5 +16,5 @@ export { checkFile, getHealthSummary } from './autofix.js';
 export type { FixInstruction, ViolationDetail } from './autofix.js';
 
 // Corpus Immune Memory (Backboard.io + local fallback)
-export { recordMemory, getFlagCount, getRecentViolations, getMemoryStats, getAllMemories, syncToBackboard } from './memory.js';
+export { recordMemory, getFlagCount, getRecentViolations, getMemoryStats, getAllMemories, syncToBackboard, getBackboardMemories } from './memory.js';
 export type { MemoryEntry, ImmuneMemory } from './memory.js';
