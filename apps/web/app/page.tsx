@@ -80,8 +80,24 @@ function FloatingDots() {
 }
 
 /* ---- Terminal typing animation ---- */
+function HeroSubtitle() {
+  const [stats, setStats] = useState({ repos: 214, findings: 548 });
+  useEffect(() => {
+    fetch('/benchmarks.json').then(r => r.json()).then(d => {
+      setStats({ repos: d.totalReposScanned || 214, findings: 548 });
+    }).catch(() => {});
+  }, []);
+  return (
+    <p className="animate-slide-up-1 text-corpus-muted text-base md:text-lg max-w-2xl leading-relaxed mt-6">
+      Scanned <span className="text-white font-bold">{stats.repos}</span> repos. Found <span className="text-white font-bold">{stats.findings}+</span> issues. Learned which ones matter.
+      <br />
+      Your AI writes code. Corpus makes sure it works.
+    </p>
+  );
+}
+
 function LiveStats() {
-  const [stats, setStats] = useState({ repos: 183, files: 150000, findings: 401, nodes: 492000 });
+  const [stats, setStats] = useState({ repos: 214, files: 187000, findings: 548, nodes: 617000 });
   const [animated, setAnimated] = useState({ repos: 0, files: 0, findings: 0, nodes: 0 });
 
   useEffect(() => {
@@ -401,11 +417,7 @@ export default function HomePage(): React.ReactElement {
           <span className="text-gradient">No more AI slop.</span>
         </p>
 
-        <p className="animate-slide-up-1 text-corpus-muted text-base md:text-lg max-w-2xl leading-relaxed mt-6">
-          Scanned 183 repos. Found 401 issues. Learned which ones matter.
-          <br />
-          Your AI writes code. Corpus makes sure it works.
-        </p>
+        <HeroSubtitle />
 
         <div className="animate-slide-up-2 mt-10 flex flex-col sm:flex-row items-center gap-4">
           <div className="group relative">
