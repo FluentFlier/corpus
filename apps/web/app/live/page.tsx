@@ -13,13 +13,15 @@ interface LiveEvent {
   file: string;
   verdict: string;
   details: string;
+  fix?: string;
 }
 
 interface LiveStats {
   filesWatched: number;
   functionsTracked: number;
   violationsCaught: number;
-  autoFixes: number;
+  patternsLearned: number;
+  recurringIssues: number;
   uptimeStart: number;
 }
 
@@ -28,154 +30,118 @@ interface LiveStats {
 /* ------------------------------------------------------------------ */
 
 const DEMO_FILES = [
+  'src/auth/middleware.ts',
   'src/auth/login.ts',
+  'src/auth/session.ts',
+  'src/api/users.ts',
   'src/api/routes.ts',
+  'src/api/webhooks.ts',
+  'src/db/schema.ts',
   'src/db/queries.ts',
-  'src/utils/validate.ts',
-  'src/core/engine.ts',
-  'src/hooks/useSession.ts',
+  'src/db/migrations.ts',
+  'src/services/billing.ts',
+  'src/services/notifications.ts',
+  'src/services/search.ts',
+  'src/middleware/rateLimit.ts',
   'src/middleware/cors.ts',
-  'src/services/user.ts',
+  'src/middleware/auth.ts',
+  'src/utils/validate.ts',
+  'src/utils/format.ts',
+  'src/utils/crypto.ts',
+  'lib/utils.ts',
+  'lib/constants.ts',
+  'src/core/engine.ts',
+  'src/core/scheduler.ts',
+  'src/hooks/useSession.ts',
+  'src/hooks/useAuth.ts',
   'src/graph/traverse.ts',
+  'src/graph/resolve.ts',
   'src/policies/evaluate.ts',
+  'src/policies/rules.ts',
   'src/config/env.ts',
   'src/workers/scan.ts',
+  'src/workers/index.ts',
 ];
 
-const VIOLATION_MESSAGES = [
-  'guard clause removed',
-  'unused import introduced',
-  'type assertion bypasses safety',
-  'error handler removed',
-  'hardcoded credential detected',
-  'missing null check',
+const VIOLATIONS: { detail: string; fix: string }[] = [
+  { detail: 'Guard clause removed: if (!input) throw', fix: 'Restore input validation at entry point' },
+  { detail: 'Unused import introduced: lodash.merge', fix: 'Remove unused import to reduce bundle size' },
+  { detail: 'Type assertion bypasses null safety', fix: 'Replace `as` cast with proper type narrowing' },
+  { detail: 'Error handler removed from async block', fix: 'Restore try/catch around awaited call' },
+  { detail: 'Hardcoded credential detected in source', fix: 'Move secret to environment variable' },
+  { detail: 'Missing null check on user input', fix: 'Add validation before accessing property' },
+  { detail: 'SQL query built with string concatenation', fix: 'Use parameterized query instead' },
+  { detail: 'Authentication bypass: early return added', fix: 'Remove unconditional return before auth check' },
 ];
+
+let _fileIndex = 0;
+function getNextFile(): string {
+  const file = DEMO_FILES[_fileIndex % DEMO_FILES.length]!;
+  _fileIndex++;
+  return file;
+}
 
 function generateDemoEvent(counter: number): LiveEvent {
-  const isViolation = Math.random() < 0.15;
-  const file = DEMO_FILES[Math.floor(Math.random() * DEMO_FILES.length)]!;
+  const isViolation = Math.random() < 0.12;
+  const file = getNextFile();
+  if (isViolation) {
+    const v = VIOLATIONS[Math.floor(Math.random() * VIOLATIONS.length)]!;
+    return {
+      id: `demo-${counter}-${Date.now()}`,
+      type: 'violation',
+      timestamp: new Date().toISOString(),
+      file,
+      verdict: 'VIOLATION',
+      details: v.detail,
+      fix: v.fix,
+    };
+  }
   return {
     id: `demo-${counter}-${Date.now()}`,
-    type: isViolation ? 'violation' : 'verified',
+    type: 'verified',
     timestamp: new Date().toISOString(),
     file,
-    verdict: isViolation ? 'VIOLATES' : 'VERIFIED',
-    details: isViolation
-      ? VIOLATION_MESSAGES[Math.floor(Math.random() * VIOLATION_MESSAGES.length)]!
-      : 'All policies pass',
+    verdict: 'VERIFIED',
+    details: 'All policies pass',
   };
 }
 
 /* ------------------------------------------------------------------ */
-/*  Health Ring (SVG)                                                   */
+/*  Inline Sparkline (tiny, next to the health number)                 */
 /* ------------------------------------------------------------------ */
 
-function HealthRing({ score, size = 200 }: { score: number; size?: number }) {
-  const radius = (size - 24) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  const center = size / 2;
-
-  const color = score >= 90 ? '#10b981' : score >= 70 ? '#d97706' : '#dc2626';
-  const glowColor = score >= 90 ? 'rgba(16,185,129,0.3)' : score >= 70 ? 'rgba(217,119,6,0.3)' : 'rgba(220,38,38,0.3)';
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      {/* Outer glow */}
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          boxShadow: `0 0 40px 10px ${glowColor}, 0 0 80px 20px ${glowColor}`,
-          animation: 'live-ring-pulse 3s ease-in-out infinite',
-        }}
-      />
-      <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full -rotate-90">
-        {/* Background track */}
-        <circle
-          cx={center} cy={center} r={radius}
-          fill="none" stroke="#1a1a1a" strokeWidth="6"
-        />
-        {/* Score arc */}
-        <circle
-          cx={center} cy={center} r={radius}
-          fill="none" stroke={color} strokeWidth="6"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          style={{
-            transition: 'stroke-dashoffset 1s ease-out, stroke 0.5s ease',
-            filter: `drop-shadow(0 0 6px ${color})`,
-          }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-mono text-5xl font-bold" style={{ color, textShadow: `0 0 20px ${glowColor}` }}>
-          {score}
-        </span>
-        <span className="font-mono text-[10px] text-[#555] mt-1 tracking-[0.2em] uppercase">Health</span>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Sparkline                                                          */
-/* ------------------------------------------------------------------ */
-
-function Sparkline({ data }: { data: number[] }) {
+function MiniSparkline({ data }: { data: number[] }) {
   if (data.length < 2) return null;
 
-  const width = 600;
-  const height = 60;
-  const padding = 4;
-  const min = Math.min(...data) - 2;
-  const max = Math.max(...data) + 2;
+  const w = 80;
+  const h = 24;
+  const min = Math.min(...data) - 1;
+  const max = Math.max(...data) + 1;
   const range = max - min || 1;
 
   const points = data.map((val, i) => {
-    const x = padding + (i / (data.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((val - min) / range) * (height - padding * 2);
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((val - min) / range) * h;
     return `${x},${y}`;
   });
 
-  const pathD = `M${points.join(' L')}`;
-  const areaD = `${pathD} L${width - padding},${height} L${padding},${height} Z`;
-
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#10b981" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={areaD} fill="url(#sparkFill)" />
-      <path d={pathD} fill="none" stroke="#10b981" strokeWidth="2" strokeLinejoin="round" />
-      {/* Current point */}
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="inline-block ml-3 align-middle">
+      <polyline
+        points={points.join(' ')}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
       <circle
         cx={parseFloat(points[points.length - 1]!.split(',')[0]!)}
         cy={parseFloat(points[points.length - 1]!.split(',')[1]!)}
-        r="4" fill="#10b981"
-        style={{ filter: 'drop-shadow(0 0 4px rgba(16,185,129,0.6))' }}
+        r="2"
+        fill="#6b7280"
       />
     </svg>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Scan Line (radar sweep)                                            */
-/* ------------------------------------------------------------------ */
-
-function ScanLine() {
-  return (
-    <div
-      className="pointer-events-none absolute inset-x-0 h-[1px]"
-      style={{
-        background: 'linear-gradient(90deg, transparent 0%, rgba(16,185,129,0.4) 30%, rgba(16,185,129,0.6) 50%, rgba(16,185,129,0.4) 70%, transparent 100%)',
-        animation: 'live-scan-sweep 4s ease-in-out infinite',
-        boxShadow: '0 0 12px 2px rgba(16,185,129,0.15)',
-      }}
-    />
   );
 }
 
@@ -188,9 +154,9 @@ function formatUptime(startMs: number): string {
   const h = Math.floor(diff / 3600);
   const m = Math.floor((diff % 3600) / 60);
   const s = diff % 60;
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  if (h > 0) return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  return `${pad(m)}:${pad(s)}`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -202,18 +168,19 @@ export default function LivePage() {
   const [health, setHealth] = useState(100);
   const [events, setEvents] = useState<LiveEvent[]>([]);
   const [stats, setStats] = useState<LiveStats>({
-    filesWatched: 87,
-    functionsTracked: 172,
+    filesWatched: 96,
+    functionsTracked: 247,
     violationsCaught: 0,
-    autoFixes: 0,
+    patternsLearned: 0,
+    recurringIssues: 0,
     uptimeStart: Date.now(),
   });
   const [healthHistory, setHealthHistory] = useState<number[]>([100]);
-  const [uptime, setUptime] = useState('0s');
+  const [uptime, setUptime] = useState('00:00');
+  const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
   const eventCounterRef = useRef(0);
-  const eventListRef = useRef<HTMLDivElement>(null);
 
-  // SSE connection
+  /* SSE connection */
   useEffect(() => {
     let es: EventSource | null = null;
     let reconnectTimeout: ReturnType<typeof setTimeout>;
@@ -221,9 +188,7 @@ export default function LivePage() {
     function connect() {
       es = new EventSource('/api/events');
 
-      es.addEventListener('connected', () => {
-        setConnected(true);
-      });
+      es.addEventListener('connected', () => setConnected(true));
 
       es.addEventListener('health_update', (e: MessageEvent) => {
         try {
@@ -232,32 +197,22 @@ export default function LivePage() {
             setHealth(data.score);
             setHealthHistory((prev) => {
               const next = [...prev, data.score];
-              return next.length > 20 ? next.slice(-20) : next;
+              return next.length > 30 ? next.slice(-30) : next;
             });
           }
         } catch { /* ignore */ }
       });
 
-      es.addEventListener('scan', (e: MessageEvent) => {
+      const handleEvent = (e: MessageEvent, type?: string) => {
         try {
           const data = JSON.parse(e.data);
-          addRealEvent(data);
+          addRealEvent({ ...data, ...(type ? { type } : {}) });
         } catch { /* ignore */ }
-      });
+      };
 
-      es.addEventListener('violation', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          addRealEvent({ ...data, type: 'violation' });
-        } catch { /* ignore */ }
-      });
-
-      es.addEventListener('verified', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          addRealEvent({ ...data, type: 'verified' });
-        } catch { /* ignore */ }
-      });
+      es.addEventListener('scan', (e: MessageEvent) => handleEvent(e));
+      es.addEventListener('violation', (e: MessageEvent) => handleEvent(e, 'violation'));
+      es.addEventListener('verified', (e: MessageEvent) => handleEvent(e, 'verified'));
 
       es.onerror = () => {
         setConnected(false);
@@ -274,6 +229,7 @@ export default function LivePage() {
         file: data.file || 'unknown',
         verdict: data.verdict || 'SCAN',
         details: data.details || '',
+        fix: data.fix,
       };
       pushEvent(evt);
     }
@@ -285,14 +241,14 @@ export default function LivePage() {
     };
   }, []);
 
-  // Demo event generator
+  /* Demo event generator */
   useEffect(() => {
-    const interval = setInterval(() => {
+    const tick = () => {
       eventCounterRef.current++;
       const evt = generateDemoEvent(eventCounterRef.current);
       pushEvent(evt);
-    }, 3000 + Math.random() * 2000);
-
+    };
+    const interval = setInterval(tick, 2800 + Math.random() * 2400);
     return () => clearInterval(interval);
   }, []);
 
@@ -304,16 +260,14 @@ export default function LivePage() {
 
     if (evt.type === 'violation') {
       setStats((prev) => ({ ...prev, violationsCaught: prev.violationsCaught + 1 }));
-      // Dip health briefly
       setHealth((prev) => Math.max(0, prev - Math.floor(Math.random() * 3 + 1)));
     }
     if (evt.type === 'verified') {
-      // Recover health
       setHealth((prev) => Math.min(100, prev + 1));
     }
   }, []);
 
-  // Uptime ticker
+  /* Uptime ticker */
   useEffect(() => {
     const interval = setInterval(() => {
       setUptime(formatUptime(stats.uptimeStart));
@@ -321,214 +275,415 @@ export default function LivePage() {
     return () => clearInterval(interval);
   }, [stats.uptimeStart]);
 
-  // Health history tracking
+  /* Health history */
   useEffect(() => {
     const interval = setInterval(() => {
       setHealthHistory((prev) => {
         const next = [...prev, health];
-        return next.length > 20 ? next.slice(-20) : next;
+        return next.length > 30 ? next.slice(-30) : next;
       });
-    }, 5000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [health]);
 
   const timeStr = (iso: string) => {
     try {
-      return new Date(iso).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      return new Date(iso).toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } catch {
-      return '--:--:--';
+      return '--:--';
     }
   };
 
+  const healthColor = health >= 90 ? '#10b981' : health >= 70 ? '#d97706' : '#ef4444';
+
   return (
-    <div className="min-h-screen bg-[#060608] text-[#EDEDEA] font-mono relative overflow-hidden">
-      {/* ---- Scan line ---- */}
-      <ScanLine />
-
-      {/* ---- Background grid ---- */}
-      <div
-        className="absolute inset-0 pointer-events-none"
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#050505',
+        color: '#e5e7eb',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ---- Top nav ---- */}
+      <header
         style={{
-          backgroundImage:
-            'linear-gradient(rgba(16,185,129,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.03) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 24px',
+          height: 48,
+          borderBottom: '1px solid #1f2937',
+          flexShrink: 0,
         }}
-      />
-
-      {/* ---- Top bar ---- */}
-      <header className="relative z-20 flex items-center justify-between px-6 md:px-10 py-4 border-b border-[#111]">
-        <div className="flex items-center gap-4">
-          <a href="/" className="flex items-center gap-2.5 group">
-            <div className="relative w-3 h-3">
-              <div className="absolute inset-0 rounded-full bg-emerald-500" style={{ animation: 'live-ring-pulse 3s ease-in-out infinite' }} />
-              <div className="absolute inset-[2px] rounded-full bg-emerald-400" />
-            </div>
-            <span className="text-sm font-bold tracking-tight text-[#EDEDEA]">corpus</span>
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <a
+            href="/"
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#e5e7eb',
+              textDecoration: 'none',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            corpus
           </a>
-          <div className="h-4 w-px bg-[#222]" />
-          <span className="text-xs tracking-[0.15em] uppercase text-[#555]">Live Monitoring</span>
+          <span style={{ color: '#374151' }}>|</span>
+          <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}>Live</span>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              marginLeft: 4,
+            }}
+          >
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                backgroundColor: connected ? '#10b981' : '#ef4444',
+                display: 'inline-block',
+              }}
+            />
+            <span style={{ fontSize: 11, color: '#6b7280' }}>
+              {connected ? 'Connected' : 'Demo'}
+            </span>
+          </span>
         </div>
 
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4 text-xs text-[#555]">
-            <a href="/graph" className="hover:text-[#EDEDEA] transition-colors">Graph</a>
-            <a href="/demo" className="hover:text-[#EDEDEA] transition-colors">Demo</a>
-            <a href="/dashboard" className="hover:text-[#EDEDEA] transition-colors">Dashboard</a>
-          </div>
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-400' : 'bg-red-500'}`}
-              style={{ animation: connected ? 'live-ring-pulse 2s ease-in-out infinite' : 'none' }}
-            />
-            <span className={`text-[10px] uppercase tracking-wider ${connected ? 'text-emerald-400' : 'text-red-400'}`}>
-              {connected ? 'Connected' : 'Reconnecting'}
-            </span>
-          </div>
-        </div>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <a href="/graph" style={{ fontSize: 13, color: '#6b7280', textDecoration: 'none' }}>
+            Graph
+          </a>
+          <a href="/demo" style={{ fontSize: 13, color: '#6b7280', textDecoration: 'none' }}>
+            Demo
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 13, color: '#6b7280', textDecoration: 'none' }}
+          >
+            GitHub
+          </a>
+        </nav>
       </header>
 
-      {/* ---- Main grid ---- */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px_1fr] gap-6">
-
-          {/* ---- Left panel: Event feed ---- */}
-          <div className="order-2 lg:order-1">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[10px] uppercase tracking-[0.2em] text-[#555]">Event Feed</h2>
-              <span className="text-[10px] text-[#333]">{events.length} events</span>
+      {/* ---- Main content ---- */}
+      <div
+        style={{
+          flex: 1,
+          maxWidth: 1120,
+          width: '100%',
+          margin: '0 auto',
+          padding: '24px 24px 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 20,
+          overflow: 'hidden',
+        }}
+      >
+        {/* ---- Top stat cards ---- */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 12,
+          }}
+        >
+          {/* Health */}
+          <div style={cardStyle}>
+            <div style={cardLabelStyle}>HEALTH</div>
+            <div style={{ display: 'flex', alignItems: 'baseline' }}>
+              <span
+                style={{
+                  fontSize: 48,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  color: healthColor,
+                  fontVariantNumeric: 'tabular-nums',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {health}
+              </span>
+              <MiniSparkline data={healthHistory} />
             </div>
+            <div style={{ fontSize: 12, color: '#374151', marginTop: 4 }}>
+              {health >= 90 ? 'nominal' : health >= 70 ? 'degraded' : 'critical'}
+            </div>
+          </div>
+
+          {/* Files */}
+          <div style={cardStyle}>
+            <div style={cardLabelStyle}>FILES</div>
+            <div style={cardValueStyle}>{stats.filesWatched}</div>
+            <div style={cardSubStyle}>watched</div>
+          </div>
+
+          {/* Functions */}
+          <div style={cardStyle}>
+            <div style={cardLabelStyle}>FUNCTIONS</div>
+            <div style={cardValueStyle}>{stats.functionsTracked}</div>
+            <div style={cardSubStyle}>tracked</div>
+          </div>
+        </div>
+
+        {/* ---- Activity feed ---- */}
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 8,
+            }}
+          >
+            <span style={sectionLabelStyle}>ACTIVITY</span>
+            <span style={{ fontSize: 11, color: '#374151' }}>{uptime} uptime</span>
+          </div>
+
+          <div
+            style={{
+              flex: 1,
+              border: '1px solid #1f2937',
+              borderRadius: 8,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0,
+            }}
+          >
             <div
-              ref={eventListRef}
-              className="bg-[#0a0a0c] border border-[#151518] rounded-xl overflow-hidden"
-              style={{ maxHeight: 480 }}
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                minHeight: 0,
+              }}
             >
-              <div className="divide-y divide-[#111] overflow-y-auto" style={{ maxHeight: 480 }}>
-                {events.length === 0 ? (
-                  <div className="px-5 py-12 text-center text-[#333] text-xs">
-                    Waiting for events...
-                  </div>
-                ) : (
-                  events.map((evt) => (
+              {events.length === 0 ? (
+                <div
+                  style={{
+                    padding: '48px 0',
+                    textAlign: 'center',
+                    fontSize: 13,
+                    color: '#374151',
+                  }}
+                >
+                  Waiting for events...
+                </div>
+              ) : (
+                events.map((evt) => {
+                  const isViolation = evt.type === 'violation';
+                  const isExpanded = expandedEvent === evt.id;
+                  return (
                     <div
                       key={evt.id}
-                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#0e0e12] transition-colors"
-                      style={{ animation: 'live-event-slide-in 0.3s ease-out' }}
+                      style={{
+                        borderBottom: '1px solid #111827',
+                        cursor: isViolation ? 'pointer' : 'default',
+                      }}
+                      onClick={() => {
+                        if (isViolation) {
+                          setExpandedEvent(isExpanded ? null : evt.id);
+                        }
+                      }}
                     >
-                      <span className="text-[10px] text-[#333] w-[62px] shrink-0 tabular-nums">
-                        {timeStr(evt.timestamp)}
-                      </span>
-                      <span
-                        className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                      <div
                         style={{
-                          color: evt.type === 'violation' ? '#dc2626' : '#10b981',
-                          background: evt.type === 'violation' ? 'rgba(220,38,38,0.1)' : 'rgba(16,185,129,0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 12,
+                          padding: '8px 16px',
                         }}
                       >
-                        {evt.verdict}
-                      </span>
-                      <span className="text-[11px] text-[#888] truncate flex-1">{evt.file}</span>
-                      {evt.type === 'violation' && (
-                        <span className="text-[10px] text-[#444] truncate max-w-[140px]">{evt.details}</span>
+                        <span
+                          style={{
+                            fontSize: 12,
+                            color: '#374151',
+                            fontFamily: 'ui-monospace, "SF Mono", "Cascadia Code", monospace',
+                            fontVariantNumeric: 'tabular-nums',
+                            width: 42,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {timeStr(evt.timestamp)}
+                        </span>
+
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: isViolation ? '#ef4444' : '#10b981',
+                            backgroundColor: isViolation
+                              ? 'rgba(239,68,68,0.08)'
+                              : 'rgba(16,185,129,0.08)',
+                            padding: '2px 8px',
+                            borderRadius: 4,
+                            flexShrink: 0,
+                            letterSpacing: '0.03em',
+                          }}
+                        >
+                          {isViolation ? 'VIOLATION' : 'VERIFIED'}
+                        </span>
+
+                        <span
+                          style={{
+                            fontSize: 13,
+                            color: '#9ca3af',
+                            fontFamily: 'ui-monospace, "SF Mono", "Cascadia Code", monospace',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            flex: 1,
+                          }}
+                        >
+                          {evt.file}
+                        </span>
+                      </div>
+
+                      {/* Expanded violation detail */}
+                      {isViolation && isExpanded && (
+                        <div style={{ padding: '0 16px 10px 70px' }}>
+                          <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 3 }}>
+                            <span style={{ color: '#374151', marginRight: 6 }}>--</span>
+                            {evt.details}
+                          </div>
+                          {evt.fix && (
+                            <div style={{ fontSize: 12, color: '#10b981' }}>
+                              <span style={{ color: '#374151', marginRight: 6 }}>--</span>
+                              FIX: {evt.fix}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Inline violation hint (when not expanded) */}
+                      {isViolation && !isExpanded && (
+                        <div style={{ padding: '0 16px 6px 70px' }}>
+                          <span style={{ fontSize: 11, color: '#4b5563' }}>
+                            {evt.details}
+                          </span>
+                        </div>
                       )}
                     </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* ---- Center: Health ring ---- */}
-          <div className="order-1 lg:order-2 flex flex-col items-center justify-start pt-4">
-            <HealthRing score={health} size={200} />
-            <div className="mt-6 text-center">
-              <div className="text-[10px] text-[#333] uppercase tracking-[0.2em] mb-1">System Status</div>
-              <div className={`text-xs font-bold ${health >= 90 ? 'text-emerald-400' : health >= 70 ? 'text-yellow-400' : 'text-red-400'}`}>
-                {health >= 90 ? 'All Systems Nominal' : health >= 70 ? 'Degraded' : 'Critical'}
-              </div>
-            </div>
-          </div>
-
-          {/* ---- Right panel: Stats ---- */}
-          <div className="order-3">
-            <h2 className="text-[10px] uppercase tracking-[0.2em] text-[#555] mb-3">System Stats</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <StatBox label="Files Watched" value={stats.filesWatched} color="#EDEDEA" />
-              <StatBox label="Functions" value={stats.functionsTracked} color="#EDEDEA" />
-              <StatBox
-                label="Violations"
-                value={stats.violationsCaught}
-                color={stats.violationsCaught > 0 ? '#dc2626' : '#10b981'}
-                glow={stats.violationsCaught > 0}
-              />
-              <StatBox label="Auto-fixes" value={stats.autoFixes} color="#10b981" />
-              <div className="col-span-2 bg-[#0a0a0c] border border-[#151518] rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-[#888] tabular-nums">{uptime}</div>
-                <div className="text-[9px] text-[#333] mt-1 uppercase tracking-[0.2em]">Uptime</div>
-              </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
 
-        {/* ---- Bottom: Health trend sparkline ---- */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-[10px] uppercase tracking-[0.2em] text-[#555]">Health Trend</h2>
-            <span className="text-[10px] text-[#333]">Last {healthHistory.length} samples</span>
+        {/* ---- Bottom row ---- */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 12,
+            flexShrink: 0,
+          }}
+        >
+          {/* Violations */}
+          <div style={cardStyle}>
+            <div style={cardLabelStyle}>VIOLATIONS</div>
+            <div
+              style={{
+                ...cardValueStyle,
+                color: stats.violationsCaught > 0 ? '#ef4444' : '#10b981',
+              }}
+            >
+              {stats.violationsCaught}
+            </div>
+            <div style={cardSubStyle}>
+              {stats.violationsCaught === 0
+                ? 'No violations found'
+                : `${stats.violationsCaught} caught`}
+            </div>
           </div>
-          <div className="bg-[#0a0a0c] border border-[#151518] rounded-xl p-4">
-            <Sparkline data={healthHistory} />
+
+          {/* Immune Memory */}
+          <div style={cardStyle}>
+            <div style={cardLabelStyle}>IMMUNE MEMORY</div>
+            <div style={cardValueStyle}>{stats.patternsLearned}</div>
+            <div style={cardSubStyle}>
+              {stats.patternsLearned} patterns learned &middot; {stats.recurringIssues} recurring
+            </div>
           </div>
+        </div>
+
+        {/* ---- Footer ---- */}
+        <div
+          style={{
+            textAlign: 'center',
+            fontSize: 11,
+            color: '#374151',
+            padding: '4px 0 0',
+            flexShrink: 0,
+          }}
+        >
+          Built at JacHacks 2026 &mdash; Jac &mdash; Backboard
         </div>
       </div>
 
-      {/* ---- Inline styles for animations ---- */}
+      {/* ---- Minimal animations ---- */}
       <style>{`
-        @keyframes live-ring-pulse {
-          0%, 100% { opacity: 0.6; }
-          50% { opacity: 1; }
-        }
-        @keyframes live-scan-sweep {
-          0% { top: -2px; opacity: 0; }
-          5% { opacity: 1; }
-          95% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-        @keyframes live-event-slide-in {
-          from { opacity: 0; transform: translateX(-12px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
+        * { box-sizing: border-box; }
+        a:hover { color: #e5e7eb !important; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 2px; }
       `}</style>
     </div>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  Stat Box                                                           */
+/*  Shared styles                                                      */
 /* ------------------------------------------------------------------ */
 
-function StatBox({
-  label,
-  value,
-  color,
-  glow = false,
-}: {
-  label: string;
-  value: number;
-  color: string;
-  glow?: boolean;
-}) {
-  return (
-    <div className="bg-[#0a0a0c] border border-[#151518] rounded-xl p-4 text-center">
-      <div
-        className="text-2xl font-bold tabular-nums"
-        style={{
-          color,
-          textShadow: glow ? `0 0 12px ${color}` : 'none',
-        }}
-      >
-        {value}
-      </div>
-      <div className="text-[9px] text-[#333] mt-1 uppercase tracking-[0.2em]">{label}</div>
-    </div>
-  );
-}
+const cardStyle: React.CSSProperties = {
+  border: '1px solid #1f2937',
+  borderRadius: 8,
+  padding: '16px 20px',
+  backgroundColor: '#050505',
+};
+
+const cardLabelStyle: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 500,
+  color: '#6b7280',
+  letterSpacing: '0.06em',
+  marginBottom: 8,
+};
+
+const cardValueStyle: React.CSSProperties = {
+  fontSize: 32,
+  fontWeight: 700,
+  lineHeight: 1,
+  color: '#e5e7eb',
+  fontVariantNumeric: 'tabular-nums',
+  letterSpacing: '-0.02em',
+};
+
+const cardSubStyle: React.CSSProperties = {
+  fontSize: 12,
+  color: '#374151',
+  marginTop: 4,
+};
+
+const sectionLabelStyle: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 500,
+  color: '#6b7280',
+  letterSpacing: '0.06em',
+};

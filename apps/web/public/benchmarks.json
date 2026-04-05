@@ -1,0 +1,61 @@
+{
+  "benchmarks": [
+    {
+      "repo": "t3-oss/create-t3-app",
+      "files": 178,
+      "functions": 143,
+      "exports": 82,
+      "classes": 1,
+      "nodes": 322,
+      "edges": 257,
+      "edgesByType": {
+        "imports": 18,
+        "exports": 143,
+        "extends": 1,
+        "calls": 95
+      },
+      "scanTimeMs": 73,
+      "healthScore": 100
+    },
+    {
+      "repo": "shadcn-ui/ui",
+      "files": 3383,
+      "functions": 9419,
+      "exports": 7670,
+      "classes": 38,
+      "nodes": 12840,
+      "edges": 27527,
+      "edgesByType": {
+        "exports": 9419,
+        "imports": 253,
+        "extends": 16,
+        "calls": 17839
+      },
+      "scanTimeMs": 933,
+      "healthScore": 100
+    },
+    {
+      "repo": "calcom/cal.com",
+      "files": 7508,
+      "functions": 13341,
+      "exports": 3797,
+      "classes": 1945,
+      "nodes": 22794,
+      "edges": 44880,
+      "edgesByType": {
+        "exports": 13341,
+        "imports": 5297,
+        "extends": 381,
+        "calls": 25861
+      },
+      "scanTimeMs": 2118,
+      "healthScore": 100
+    }
+  ],
+  "totalReposScanned": 3,
+  "totalFilesScanned": 11069,
+  "totalFunctionsFound": 22903,
+  "totalNodes": 35956,
+  "totalEdges": 72664,
+  "generatedAt": "2026-04-05T03:24:07.463Z"
+}
