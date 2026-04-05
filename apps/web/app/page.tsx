@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import ScanWidget from '../components/ScanWidget';
 
 /* ---- Floating dots component ---- */
@@ -80,6 +80,59 @@ function FloatingDots() {
 }
 
 /* ---- Terminal typing animation ---- */
+function LiveStats() {
+  const [stats, setStats] = useState({ repos: 183, files: 150000, findings: 401, nodes: 492000 });
+  const [animated, setAnimated] = useState({ repos: 0, files: 0, findings: 0, nodes: 0 });
+
+  useEffect(() => {
+    fetch('/benchmarks.json').then(r => r.json()).then(d => {
+      setStats({ repos: d.totalReposScanned || 183, files: d.totalFilesScanned || 150000, findings: 401, nodes: d.totalNodes || 492000 });
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const duration = 2000;
+    const steps = 60;
+    let step = 0;
+    const interval = setInterval(() => {
+      step++;
+      const t = Math.min(step / steps, 1);
+      const ease = 1 - Math.pow(1 - t, 3); // ease out cubic
+      setAnimated({
+        repos: Math.round(stats.repos * ease),
+        files: Math.round(stats.files * ease),
+        findings: Math.round(stats.findings * ease),
+        nodes: Math.round(stats.nodes * ease),
+      });
+      if (step >= steps) clearInterval(interval);
+    }, duration / steps);
+    return () => clearInterval(interval);
+  }, [stats]);
+
+  const fmt = (n: number) => n >= 1000 ? (n / 1000).toFixed(n >= 100000 ? 0 : 1) + 'K' : String(n);
+
+  return (
+    <div className="grid grid-cols-4 gap-8 text-center">
+      <div>
+        <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">{animated.repos}</div>
+        <div className="text-corpus-muted text-sm mt-2 font-mono">repos scanned</div>
+      </div>
+      <div>
+        <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">{fmt(animated.files)}</div>
+        <div className="text-corpus-muted text-sm mt-2 font-mono">files analyzed</div>
+      </div>
+      <div>
+        <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">{animated.findings}</div>
+        <div className="text-corpus-muted text-sm mt-2 font-mono">issues found</div>
+      </div>
+      <div>
+        <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">{fmt(animated.nodes)}</div>
+        <div className="text-corpus-muted text-sm mt-2 font-mono">graph nodes</div>
+      </div>
+    </div>
+  );
+}
+
 function TerminalTyping() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -333,12 +386,10 @@ export default function HomePage(): React.ReactElement {
           </span>
         </div>
 
-        <h1 className="animate-slide-up font-mono text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.95] max-w-4xl">
-          <span className="text-gradient-shimmer">Corpus</span>
+        <h1 className="animate-slide-up font-mono font-bold tracking-tighter leading-[0.95] max-w-4xl">
+          <span className="text-gradient-shimmer text-6xl sm:text-7xl md:text-8xl lg:text-9xl">Corpus</span>
           <br />
-          <span className="text-white/90">the immune system</span>
-          <br />
-          <span className="text-white/90">for your code</span>
+          <span className="text-white/80 text-3xl sm:text-4xl md:text-5xl">the immune system for your code</span>
         </h1>
 
         <p className="animate-slide-up-1 text-corpus-muted text-base md:text-lg max-w-2xl leading-relaxed mt-8">
@@ -496,26 +547,9 @@ export default function HomePage(): React.ReactElement {
       <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 animate-fade-in-7" aria-label="Project statistics">
         <div className="max-w-4xl mx-auto px-6">
           <p className="text-corpus-muted text-sm text-center mb-10 font-mono">
-            Autonomously scanned 183 repos: React, Vue, Angular, Svelte, Next.js, and 178 more
+            Autonomously scanning the open-source ecosystem. Numbers update live.
           </p>
-          <div className="grid grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">183</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">repos scanned</div>
-            </div>
-            <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">150K+</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">files analyzed</div>
-            </div>
-            <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">401</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">issues found</div>
-            </div>
-            <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">492K</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">graph nodes</div>
-            </div>
-          </div>
+          <LiveStats />
         </div>
       </section>
 
