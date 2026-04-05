@@ -392,7 +392,11 @@ export default function HomePage(): React.ReactElement {
           <span className="text-white/80 text-3xl sm:text-4xl md:text-5xl">the immune system for your code</span>
         </h1>
 
-        <p className="animate-slide-up-1 text-corpus-muted text-base md:text-lg max-w-2xl leading-relaxed mt-8">
+        <p className="animate-slide-up-1 mt-5 text-xl sm:text-2xl font-mono font-bold">
+          <span className="text-gradient">No more AI slop.</span>
+        </p>
+
+        <p className="animate-slide-up-1 text-corpus-muted text-base md:text-lg max-w-2xl leading-relaxed mt-6">
           Scanned 183 repos. Found 401 issues. Learned which ones matter.
           <br />
           Corpus watches, catches, and self-heals. No more AI slop.
