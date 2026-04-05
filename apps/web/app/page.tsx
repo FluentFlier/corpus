@@ -481,12 +481,12 @@ export default function HomePage(): React.ReactElement {
         <div className="max-w-4xl mx-auto px-6">
           <div className="grid grid-cols-3 gap-8 text-center">
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">87</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">files scanned</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">&lt;1s</div>
+              <div className="text-corpus-muted text-sm mt-2 font-mono">scan time</div>
             </div>
             <div>
-              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">172</div>
-              <div className="text-corpus-muted text-sm mt-2 font-mono">functions mapped</div>
+              <div className="font-mono text-4xl md:text-5xl font-bold text-gradient">0</div>
+              <div className="text-corpus-muted text-sm mt-2 font-mono">config needed</div>
             </div>
             <div>
               <div className="font-mono text-4xl md:text-5xl font-bold text-emerald-400 stat-glow">100</div>

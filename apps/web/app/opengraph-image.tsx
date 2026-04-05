@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'Corpus - Runtime Safety for AI Agents';
+export const alt = 'Corpus - The Immune System for Vibe-Coded Software';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -91,7 +91,7 @@ export default async function Image() {
             marginBottom: 48,
           }}
         >
-          Runtime safety for AI agents
+          The immune system for vibe-coded software
         </div>
 
         {/* Stats row */}

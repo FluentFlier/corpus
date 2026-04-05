@@ -157,26 +157,18 @@ export default function DashboardPage() {
   const waiting = !data || data.status === 'waiting';
 
   return (
+    <AppShell>
     <main className="min-h-screen bg-[#0D0D0D] text-[#EDEDEA]">
-      {/* Nav */}
-      <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="relative">
-            <div className="w-2 h-2 rounded-full bg-[#16A34A]" />
-            <div className="absolute inset-0 w-2 h-2 rounded-full bg-[#16A34A] animate-ping opacity-40" />
-          </div>
-          <span className="font-mono text-sm font-bold">corpus</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <span className="text-xs text-[#888] font-mono">Live Dashboard</span>
-          <div className="flex items-center gap-1.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-[#16A34A]' : error ? 'bg-[#DC2626]' : 'bg-[#D97706]'}`} />
-            <span className="text-[10px] text-[#888] font-mono">
-              {connected ? 'Connected' : error ? 'Disconnected' : 'Connecting...'}
-            </span>
-          </div>
+      {/* Status bar */}
+      <div className="flex items-center justify-between px-8 py-4 border-b border-[#1a1a1a]">
+        <span className="text-xs text-[#888] font-mono">Live Dashboard</span>
+        <div className="flex items-center gap-1.5">
+          <div className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-[#16A34A]' : error ? 'bg-[#DC2626]' : 'bg-[#D97706]'}`} />
+          <span className="text-[10px] text-[#888] font-mono">
+            {connected ? 'Connected' : error ? 'Disconnected' : 'Connecting...'}
+          </span>
         </div>
-      </nav>
+      </div>
 
       <div className="max-w-5xl mx-auto px-8 py-8">
         {waiting ? (
@@ -331,5 +323,6 @@ export default function DashboardPage() {
         )}
       </div>
     </main>
+    </AppShell>
   );
 }
