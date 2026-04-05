@@ -12,7 +12,7 @@ export function NavBar() {
     { href: '/live', label: 'Live', pulse: true },
     { href: '/policies', label: 'Jac' },
     { href: '/demo', label: 'Demo' },
-    { href: 'https://github.com/FluentFlier/corpus', label: 'GitHub', external: true },
+    { href: 'https://github.com/FluentFlier/Corpus', label: 'GitHub', external: true },
   ];
 
   return (
@@ -40,7 +40,7 @@ export function NavBar() {
           background: 'linear-gradient(135deg, #10b981, #6366f1)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-        }}>corpus</span>
+        }}>Corpus</span>
       </Link>
       <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
         {links.map(link => (

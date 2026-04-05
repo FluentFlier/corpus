@@ -364,14 +364,19 @@ export default function HomePage(): React.ReactElement {
             <div className="absolute inset-0 rounded-full bg-emerald-500 animate-glow-pulse" />
             <div className="absolute inset-[2px] rounded-full bg-emerald-400" />
           </div>
-          <span className="font-mono text-base tracking-tight font-bold text-corpus-text">
-            corpus
+          <span className="font-mono text-base tracking-tight font-bold text-gradient-shimmer">
+            Corpus
           </span>
         </a>
         <div className="flex items-center gap-6">
           <a href="/scan" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Scan</a>
           <a href="/graph" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Explorer</a>
           <a href="/evolution" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Evolution</a>
+          <a href="/live" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-glow-pulse" />
+            Live
+          </a>
+          <a href="/policies" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Jac</a>
           <a href="/demo" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">Demo</a>
           <a href="https://github.com/FluentFlier/corpus" target="_blank" rel="noopener noreferrer" className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200">GitHub</a>
         </div>
@@ -754,7 +759,7 @@ export default function HomePage(): React.ReactElement {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="font-mono text-xs text-corpus-muted">corpus</span>
+            <span className="font-mono text-xs text-corpus-muted">Corpus</span>
           </div>
           <div className="flex items-center gap-6 text-[11px] text-corpus-muted font-mono">
             <span>
