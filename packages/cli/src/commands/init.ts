@@ -1,0 +1,232 @@
+import { existsSync, readFileSync, writeFileSync, mkdirSync, chmodSync } from 'fs';
+import { resolve as resolvePath } from 'path';
+
+function configureMcp(): void {
+  const mcpPath = '.mcp.json';
+  let config: Record<string, unknown> = {};
+
+  if (existsSync(mcpPath)) {
+    try {
+      config = JSON.parse(readFileSync(mcpPath, 'utf-8'));
+    } catch { /* invalid json, overwrite */ }
+  }
+
+  const servers = (config.mcpServers ?? {}) as Record<string, unknown>;
+  if ('corpus' in servers) return; // Already configured
+
+  // Find the corpus MCP server binary
+  const homeCorpus = `${process.env.HOME}/.corpus/packages/mcp-server/dist/index.js`;
+  const localCorpus = '.corpus/packages/mcp-server/dist/index.js';
+
+  if (existsSync(homeCorpus)) {
+    servers.corpus = {
+      command: 'node',
+      args: [homeCorpus],
+      type: 'stdio',
+    };
+  } else if (existsSync(localCorpus)) {
+    servers.corpus = {
+      command: 'node',
+      args: [resolvePath(localCorpus)],
+      type: 'stdio',
+    };
+  } else {
+    servers.corpus = {
+      command: 'npx',
+      args: ['corpus-mcp'],
+      type: 'stdio',
+    };
+  }
+
+  config.mcpServers = servers;
+  writeFileSync(mcpPath, JSON.stringify(config, null, 2) + '\n');
+}
+import { createInterface } from 'readline';
+import { randomBytes } from 'crypto';
+import path from 'path';
+import { green, bold, dim, cyan, amber } from '../utils/colors.js';
+import { writeEnvFile } from '../utils/config.js';
+
+function ask(rl: ReturnType<typeof createInterface>, question: string, defaultVal: string): Promise<string> {
+  return new Promise((resolve) => {
+    rl.question(`  ${question} ${dim(`(${defaultVal})`)}: `, (answer) => {
+      resolve(answer.trim() || defaultVal);
+    });
+  });
+}
+
+function kebabCase(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function installPreCommitHook(): boolean {
+  const gitDir = '.git';
+  if (!existsSync(gitDir)) return false;
+
+  const hooksDir = path.join(gitDir, 'hooks');
+  if (!existsSync(hooksDir)) mkdirSync(hooksDir, { recursive: true });
+
+  const hookPath = path.join(hooksDir, 'pre-commit');
+  const hookContent = `#!/bin/sh
+# Corpus pre-commit hook - scans staged files for secrets, PII, and unsafe code
+# Installed by: corpus init --hooks
+
+echo "[corpus] Scanning staged changes..."
+npx corpus scan --staged
+
+EXIT_CODE=$?
+if [ $EXIT_CODE -eq 2 ]; then
+  echo ""
+  echo "[corpus] BLOCKED: Critical security issues found. Fix them before committing."
+  echo "[corpus] Run 'corpus scan' for details, or 'git commit --no-verify' to bypass."
+  exit 1
+elif [ $EXIT_CODE -eq 1 ]; then
+  echo "[corpus] Warnings found. Proceeding with commit."
+fi
+
+exit 0
+`;
+
+  // Check if hook already exists
+  if (existsSync(hookPath)) {
+    const existing = readFileSync(hookPath, 'utf-8');
+    if (existing.includes('corpus')) {
+      return false; // Already installed
+    }
+    // Append to existing hook
+    writeFileSync(hookPath, existing + '\n' + hookContent);
+  } else {
+    writeFileSync(hookPath, hookContent);
+  }
+
+  chmodSync(hookPath, '755');
+  return true;
+}
+
+function installHuskyHook(): boolean {
+  const huskyDir = '.husky';
+  if (!existsSync(huskyDir)) return false;
+
+  const hookPath = path.join(huskyDir, 'pre-commit');
+  const hookContent = `npx corpus scan --staged\n`;
+
+  if (existsSync(hookPath)) {
+    const existing = readFileSync(hookPath, 'utf-8');
+    if (existing.includes('corpus')) return false;
+    writeFileSync(hookPath, existing + '\n' + hookContent);
+  } else {
+    writeFileSync(hookPath, hookContent);
+    chmodSync(hookPath, '755');
+  }
+
+  return true;
+}
+
+export async function runInit(): Promise<void> {
+  const args = process.argv.slice(3);
+  const wantHooks = args.includes('--hooks');
+  const wantHusky = args.includes('--husky');
+
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+
+  const policyPath = './corpus.policy.yaml';
+  if (existsSync(policyPath)) {
+    const overwrite = await ask(rl, 'corpus.policy.yaml exists. Overwrite?', 'n');
+    if (overwrite.toLowerCase() !== 'y') {
+      process.stdout.write('  Keeping existing policy file.\n');
+      // Still install hooks if requested
+      if (wantHooks || wantHusky) {
+        installHooks(wantHusky);
+      }
+      rl.close();
+      return;
+    }
+  }
+
+  const dirName = path.basename(process.cwd());
+  const projectName = await ask(rl, 'Project name', dirName);
+  const projectSlug = await ask(rl, 'Project slug', kebabCase(projectName));
+
+  // Ask about hooks if not specified via flag
+  let doHooks = wantHooks || wantHusky;
+  if (!doHooks) {
+    const hookAnswer = await ask(rl, 'Install pre-commit hook? (scans before every commit)', 'y');
+    doHooks = hookAnswer.toLowerCase() === 'y';
+  }
+
+  rl.close();
+
+  // Write policy file
+  const policyTemplate = `# corpus.policy.yaml
+# Generated by corpus init
+# Scans for: secrets, PII, prompt injection, unsafe code patterns
+
+agent: ${projectSlug}
+version: "1.0"
+
+rules:
+  - name: block_production_writes
+    verdict: BLOCK
+    message: "Production writes require a deployment process."
+    trigger:
+      actionContains: ["prod", "production"]
+
+  - name: confirm_external_calls
+    verdict: CONFIRM
+    message: "This action calls an external service. Proceed?"
+    trigger:
+      actionStartsWith: ["http_request", "webhook_call", "api_call"]
+
+  - name: low_confidence_block
+    verdict: BLOCK
+    blockReason: LOW_CONFIDENCE
+    message: "Not confident enough to act. Please clarify your intent."
+    trigger:
+      contextKey: "confidence"
+      contextValueBelow: 0.50
+`;
+  writeFileSync(policyPath, policyTemplate);
+
+  // Install hooks
+  let hookResult = '';
+  if (doHooks) {
+    hookResult = installHooks(wantHusky);
+  }
+
+  // Auto-configure MCP for Claude Code if .mcp.json doesn't have corpus
+  configureMcp();
+
+  // Print summary
+  process.stdout.write('\n');
+  process.stdout.write(green(bold(`  Corpus initialized for ${projectName}\n`)));
+  process.stdout.write('\n');
+  process.stdout.write(`  Policy file:  ${cyan('corpus.policy.yaml')}\n`);
+  process.stdout.write(`  MCP config:   ${cyan('.mcp.json')} ${dim('(Claude Code / Cursor integration)')}\n`);
+  if (hookResult) {
+    process.stdout.write(`  Pre-commit:   ${green(hookResult)}\n`);
+  }
+  process.stdout.write('\n');
+  process.stdout.write(`  ${bold('What Corpus scans for:')}\n`);
+  process.stdout.write(`    Secrets     API keys, tokens, credentials, database URLs\n`);
+  process.stdout.write(`    PII         Email addresses, phone numbers, SSNs\n`);
+  process.stdout.write(`    Injection   Prompt injection patterns in content\n`);
+  process.stdout.write(`    Safety      eval(), innerHTML, SQL injection, disabled SSL\n`);
+  process.stdout.write(`    AI patterns Inlined env vars, placeholder creds, wildcard CORS\n`);
+  process.stdout.write('\n');
+  process.stdout.write(`  ${bold('Commands:')}\n`);
+  process.stdout.write(`    corpus scan            Scan your codebase now\n`);
+  process.stdout.write(`    corpus scan --staged   Scan only staged changes\n`);
+  process.stdout.write(`    corpus watch           Real-time file watcher\n`);
+  process.stdout.write(`    corpus check           Validate policy files\n`);
+  process.stdout.write('\n');
+}
+
+function installHooks(useHusky: boolean): string {
+  if (useHusky) {
+    const installed = installHuskyHook();
+    return installed ? 'Husky pre-commit hook installed' : 'Husky hook already exists';
+  }
+
+  const installed = installPreCommitHook();
+  return installed ? 'Git pre-commit hook installed' : 'Hook already installed';
+}

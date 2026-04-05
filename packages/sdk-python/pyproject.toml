@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vouch-sdk"
+version = "0.1.0"
+description = "Runtime behavioral safety for AI agents"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = ["pyyaml"]
+optional-dependencies = { http = ["requests>=2.28"] }
+keywords = ["ai", "agents", "safety", "policies", "llm", "jac"]
+
+[project.urls]
+Homepage = "https://vouch.run"
+Repository = "https://github.com/vouch-run/vouch"

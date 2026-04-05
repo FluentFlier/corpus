@@ -1,0 +1,9 @@
+export declare const CORPUS_VERSION = "0.1.0";
+export declare const DEFAULT_CONFIDENCE_BLOCK = 0.5;
+export declare const DEFAULT_CONFIDENCE_CONFIRM = 0.72;
+export declare const DEFAULT_POLICY_EVAL_TIMEOUT_MS = 200;
+export declare const DEFAULT_UNDO_WINDOW_MS = 5000;
+export declare const INGEST_PATH = "/api/ingest";
+export declare const PROJECT_STATS_PATH = "/api/project";
+export declare const MAX_PAYLOAD_BYTES = 65536;
+export declare const RATE_LIMIT_PER_MINUTE = 300;

@@ -1,0 +1,43 @@
+# vouch.policy.yaml
+# Minimal Vouch policy for any AI agent.
+# Copy this file to your project root and customize it.
+
+agent: my-agent
+version: "1.0"
+
+# Rules are evaluated top to bottom. First match wins.
+# Built-in rules (action_safety, rate_guard) always run AFTER these.
+rules:
+  # Example: block actions on production systems
+  - name: no_production_writes
+    verdict: BLOCK
+    message: "Writing to production requires a deployment process, not an agent."
+    trigger:
+      actionContains: ["prod", "production", "live"]
+
+  # Example: confirm before external API calls
+  - name: confirm_external_calls
+    verdict: CONFIRM
+    message: "This action calls an external service. Proceed?"
+    trigger:
+      actionStartsWith: ["http_request", "webhook_call", "api_call"]
+
+  # Example: block if agent confidence is too low
+  - name: low_confidence_block
+    verdict: BLOCK
+    blockReason: LOW_CONFIDENCE
+    message: "Not confident enough to act. Please clarify your intent."
+    trigger:
+      contextKey: "confidence"
+      contextValueBelow: 0.50
+
+  # Example: confirm if confidence is moderate
+  - name: moderate_confidence_confirm
+    verdict: CONFIRM
+    message: "Confirm this action before proceeding."
+    trigger:
+      contextKey: "confidence"
+      contextValueBelow: 0.72
+
+# Optional: path to a .jac file for complex stateful rules
+# jacExtension: ./policies/custom.jac

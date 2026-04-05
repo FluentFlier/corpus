@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vouch Policy File",
+  "type": "object",
+  "required": ["agent", "version", "rules"],
+  "properties": {
+    "agent": { "type": "string", "description": "Agent identifier" },
+    "version": { "type": "string", "description": "Policy version" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "verdict", "message", "trigger"],
+        "properties": {
+          "name": { "type": "string" },
+          "verdict": { "enum": ["PASS", "BLOCK", "CONFIRM"] },
+          "message": { "type": "string" },
+          "blockReason": { "enum": ["DESTRUCTIVE_ACTION", "AUTO_SEND", "EXTERNAL_WRITE", "SCOPE_VIOLATION", "LOW_CONFIDENCE", "RATE_EXCEEDED", "UNKNOWN_ACTION", "CUSTOM"] },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "actionType": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+              "actionContains": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+              "actionStartsWith": { "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }] },
+              "contextKey": { "type": "string" },
+              "contextValueIn": { "type": "array" },
+              "contextValueBelow": { "type": "number" },
+              "contextValueAbove": { "type": "number" },
+              "userApproved": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "jacExtension": { "type": "string" },
+    "allowedActions": { "type": "array", "items": { "type": "string" } },
+    "rateLimits": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["count", "windowSeconds"],
+        "properties": {
+          "count": { "type": "integer" },
+          "windowSeconds": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

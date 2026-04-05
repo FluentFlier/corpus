@@ -1,0 +1,19 @@
+{
+  "name": "corpus",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm --filter @corpus/core run test",
+    "test:python": "cd packages/sdk-python && python -m pytest tests/ -v",
+    "dev": "pnpm --filter web dev",
+    "scan": "node packages/cli/dist/index.js scan",
+    "watch": "node packages/cli/dist/index.js watch",
+    "check-policies": "node packages/cli/dist/index.js check",
+    "publish:core": "cd packages/core && npm publish --access public",
+    "publish:sdk": "cd packages/sdk-ts && npm publish --access public",
+    "publish:cli": "cd packages/cli && npm publish --access public",
+    "publish:mcp": "cd packages/mcp-server && npm publish --access public",
+    "publish:all": "pnpm run build && pnpm run publish:core && pnpm run publish:sdk && pnpm run publish:cli && pnpm run publish:mcp"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

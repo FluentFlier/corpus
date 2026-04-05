@@ -1,0 +1,26 @@
+{
+  "name": "corpus-sdk",
+  "version": "0.1.0",
+  "description": "Runtime behavioral safety for AI agents",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@corpus/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0"
+  },
+  "keywords": ["ai", "agents", "safety", "policies", "llm", "jac", "runtime"],
+  "license": "MIT"
+}

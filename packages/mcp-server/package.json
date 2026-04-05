@@ -1,0 +1,22 @@
+{
+  "name": "corpus-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Corpus - AI coding tools check security before writing code",
+  "type": "module",
+  "main": "dist/standalone.js",
+  "bin": {
+    "corpus-mcp": "dist/standalone.js"
+  },
+  "scripts": {
+    "build": "tsc && tsc src/standalone.ts --outDir dist --target ES2022 --module CommonJS --moduleResolution node --esModuleInterop --skipLibCheck"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@corpus/core": "workspace:*",
+    "typescript": "^5.3.0"
+  },
+  "keywords": ["mcp", "ai", "security", "corpus", "claude", "cursor", "copilot", "trust-score"],
+  "repository": { "type": "git", "url": "https://github.com/fluentflier/corpus" },
+  "license": "MIT"
+}

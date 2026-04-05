@@ -1,0 +1,21 @@
+agent: data-pipeline
+version: "1.0"
+
+rules:
+  - name: block_production_db
+    verdict: BLOCK
+    message: "Direct writes to production database are not permitted."
+    trigger:
+      actionContains: ["prod_db", "production_database", "main_db"]
+
+  - name: confirm_large_exports
+    verdict: CONFIRM
+    message: "This export may be large. Confirm before proceeding."
+    trigger:
+      actionStartsWith: ["export_", "dump_"]
+
+  - name: block_schema_changes
+    verdict: BLOCK
+    message: "Schema changes must go through the migration process."
+    trigger:
+      actionType: ["alter_table", "create_table", "drop_column", "add_column"]

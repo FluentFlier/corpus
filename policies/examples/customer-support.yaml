@@ -1,0 +1,24 @@
+agent: customer-support-bot
+version: "1.0"
+
+rules:
+  - name: no_refunds_over_threshold
+    verdict: CONFIRM
+    message: "Refunds over $100 require human review."
+    trigger:
+      actionType: "process_refund"
+      contextKey: "amount"
+      contextValueAbove: 100
+
+  - name: escalate_angry_users
+    verdict: CONFIRM
+    message: "This customer has escalated sentiment. A human should review before responding."
+    trigger:
+      contextKey: "sentiment"
+      contextValueIn: ["angry", "frustrated", "threatening"]
+
+  - name: block_account_changes
+    verdict: BLOCK
+    message: "Account modifications require identity verification."
+    trigger:
+      actionStartsWith: ["modify_account", "change_email", "change_password", "update_billing"]

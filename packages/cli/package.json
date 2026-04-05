@@ -1,0 +1,25 @@
+{
+  "name": "corpus-cli",
+  "version": "0.1.0",
+  "description": "Security scanner and trust scores for AI-generated code",
+  "type": "module",
+  "bin": {
+    "corpus": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@corpus/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0"
+  },
+  "keywords": ["ai", "security", "scanner", "trust-score", "secrets", "vibe-coding", "claude", "cursor", "copilot"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fluentflier/corpus"
+  },
+  "license": "MIT"
+}

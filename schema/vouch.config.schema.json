@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vouch Configuration",
+  "type": "object",
+  "required": ["projectSlug", "policyPath"],
+  "properties": {
+    "projectSlug": { "type": "string" },
+    "apiEndpoint": { "type": "string", "format": "uri" },
+    "apiKey": { "type": "string" },
+    "mode": { "enum": ["observe", "enforce"], "default": "observe" },
+    "policyPath": { "type": "string" },
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "confidenceBlock": { "type": "number", "default": 0.50 },
+        "confidenceConfirm": { "type": "number", "default": 0.72 }
+      }
+    },
+    "timeouts": {
+      "type": "object",
+      "properties": {
+        "policyEvalMs": { "type": "integer", "default": 200 },
+        "undoWindowMs": { "type": "integer", "default": 5000 }
+      }
+    }
+  }
+}

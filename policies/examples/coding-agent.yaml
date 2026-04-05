@@ -1,0 +1,27 @@
+agent: coding-agent
+version: "1.0"
+
+rules:
+  - name: no_system_files
+    verdict: BLOCK
+    message: "Modifying system files is not permitted."
+    trigger:
+      actionContains: ["/etc/", "/usr/", "/bin/", "/sys/", "~/.ssh"]
+
+  - name: confirm_test_suite
+    verdict: CONFIRM
+    message: "About to run the full test suite. This may take a while."
+    trigger:
+      actionType: ["run_tests", "run_all_tests", "test_suite"]
+
+  - name: confirm_dependency_install
+    verdict: CONFIRM
+    message: "Installing new dependencies will modify package.json and lock files."
+    trigger:
+      actionStartsWith: ["npm_install", "pip_install", "yarn_add"]
+
+  - name: block_force_push
+    verdict: BLOCK
+    message: "Force push is not allowed. Use a standard push or PR."
+    trigger:
+      actionType: ["git_force_push", "git_push_force"]

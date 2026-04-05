@@ -1,0 +1,23 @@
+{
+  "name": "@corpus/core",
+  "version": "0.1.0",
+  "description": "Core policy evaluation engine for Corpus",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.2.0"
+  },
+  "keywords": ["ai", "security", "trust-score", "scanner", "policy-engine", "secrets", "pii"],
+  "repository": { "type": "git", "url": "https://github.com/fluentflier/corpus" },
+  "license": "MIT"
+}
