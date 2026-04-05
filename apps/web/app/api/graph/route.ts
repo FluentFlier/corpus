@@ -8,13 +8,25 @@ import path from 'path';
  * Returns the codebase graph for visualization.
  * Reads from .corpus/graph.json in the project root.
  */
+function findGraphFile(startDir: string): string | null {
+  let dir = startDir;
+  for (let i = 0; i < 10; i++) {
+    const candidate = path.join(dir, '.corpus', 'graph.json');
+    if (existsSync(candidate)) return candidate;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
 export async function GET(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);
   const projectRoot = searchParams.get('root') || process.cwd();
 
-  const graphPath = path.join(projectRoot, '.corpus', 'graph.json');
+  const graphPath = findGraphFile(projectRoot);
 
-  if (!existsSync(graphPath)) {
+  if (!graphPath) {
     return NextResponse.json({
       error: 'No corpus graph found. Run `corpus init` to build the immune system.',
       nodes: [],

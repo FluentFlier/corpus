@@ -46,17 +46,30 @@ function ForceGraph({ data }: { data: GraphData }) {
   const nodesRef = useRef<GraphNode[]>([]);
   const animRef = useRef<number>(0);
 
-  // Initialize node positions
+  // Initialize node positions in a tighter cluster
   useEffect(() => {
     if (!data.nodes.length) return;
 
-    const nodes = data.nodes.map((n, i) => ({
-      ...n,
-      x: 400 + Math.cos(i * 2.399) * (150 + Math.random() * 200),
-      y: 300 + Math.sin(i * 2.399) * (150 + Math.random() * 200),
-      vx: 0,
-      vy: 0,
-    }));
+    // Group nodes by file for spatial clustering
+    const fileGroups = new Map<string, number>();
+    data.nodes.forEach(n => {
+      if (!fileGroups.has(n.file)) fileGroups.set(n.file, fileGroups.size);
+    });
+    const totalGroups = fileGroups.size || 1;
+
+    const nodes = data.nodes.map((n, i) => {
+      const groupIdx = fileGroups.get(n.file) || 0;
+      const groupAngle = (groupIdx / totalGroups) * Math.PI * 2;
+      const groupRadius = 120 + (groupIdx % 3) * 40;
+      const jitter = Math.random() * 30 - 15;
+      return {
+        ...n,
+        x: 400 + Math.cos(groupAngle) * groupRadius + jitter,
+        y: 300 + Math.sin(groupAngle) * groupRadius + jitter,
+        vx: 0,
+        vy: 0,
+      };
+    });
     nodesRef.current = nodes;
   }, [data.nodes]);
 
@@ -72,20 +85,29 @@ function ForceGraph({ data }: { data: GraphData }) {
     nodesRef.current.forEach(n => nodeMap.set(n.id, n));
 
     let frame = 0;
-    const maxFrames = 300;
+    const maxFrames = 500;
+
+    // Scale canvas for retina
+    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    canvas.width = 800 * dpr;
+    canvas.height = 600 * dpr;
+    ctx.scale(dpr, dpr);
 
     function simulate() {
       if (!ctx) return;
       const nodes = nodesRef.current;
       const alpha = Math.max(0.001, 1 - frame / maxFrames);
 
-      // Repulsion between all nodes
+      // Repulsion: use Barnes-Hut-style approximation for speed
+      // Only compute between nearby nodes (skip distant ones)
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[j].x! - nodes[i].x!;
           const dy = nodes[j].y! - nodes[i].y!;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const force = (80 * alpha) / dist;
+          const distSq = dx * dx + dy * dy;
+          if (distSq > 40000) continue; // Skip nodes >200px apart
+          const dist = Math.sqrt(distSq) || 1;
+          const force = (15 * alpha) / (dist * 0.5);
           const fx = (dx / dist) * force;
           const fy = (dy / dist) * force;
           nodes[i].vx! -= fx;
@@ -95,7 +117,7 @@ function ForceGraph({ data }: { data: GraphData }) {
         }
       }
 
-      // Attraction along edges
+      // Attraction along edges (much stronger)
       for (const edge of data.edges) {
         const source = nodeMap.get(edge.source);
         const target = nodeMap.get(edge.target);
@@ -103,7 +125,8 @@ function ForceGraph({ data }: { data: GraphData }) {
         const dx = target.x! - source.x!;
         const dy = target.y! - source.y!;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const force = dist * 0.005 * alpha;
+        const idealDist = edge.type === 'exports' ? 20 : 50;
+        const force = (dist - idealDist) * 0.03 * alpha;
         const fx = (dx / dist) * force;
         const fy = (dy / dist) * force;
         source.vx! += fx;
@@ -112,16 +135,19 @@ function ForceGraph({ data }: { data: GraphData }) {
         target.vy! -= fy;
       }
 
-      // Center gravity
+      // Strong center gravity to keep everything visible
       const cx = canvas.width / 2;
       const cy = canvas.height / 2;
       for (const node of nodes) {
-        node.vx! += (cx - node.x!) * 0.001 * alpha;
-        node.vy! += (cy - node.y!) * 0.001 * alpha;
-        node.vx! *= 0.9;
-        node.vy! *= 0.9;
+        node.vx! += (cx - node.x!) * 0.008 * alpha;
+        node.vy! += (cy - node.y!) * 0.008 * alpha;
+        node.vx! *= 0.85;
+        node.vy! *= 0.85;
         node.x! += node.vx!;
         node.y! += node.vy!;
+        // Clamp to canvas bounds
+        node.x! = Math.max(20, Math.min(canvas.width - 20, node.x!));
+        node.y! = Math.max(20, Math.min(canvas.height - 20, node.y!));
       }
 
       // Draw
@@ -172,12 +198,12 @@ function ForceGraph({ data }: { data: GraphData }) {
           ctx.stroke();
         }
 
-        // Label for larger nodes
-        if (node.size >= 8 || isHovered) {
-          ctx.fillStyle = '#fff';
-          ctx.font = `${isHovered ? 12 : 10}px system-ui, sans-serif`;
+        // Label: only on hover or for module nodes
+        if (isHovered || isSelected || (node.type === 'module' && node.size >= 10)) {
+          ctx.fillStyle = isHovered ? '#fff' : '#ffffffaa';
+          ctx.font = `${isHovered ? 11 : 9}px system-ui, sans-serif`;
           ctx.textAlign = 'center';
-          ctx.fillText(node.name, node.x!, node.y! + radius + 14);
+          ctx.fillText(node.name, node.x!, node.y! + radius + 12);
         }
       }
 
