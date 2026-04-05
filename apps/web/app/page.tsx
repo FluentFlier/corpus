@@ -41,6 +41,12 @@ export default function HomePage(): React.ReactElement {
             Demo
           </a>
           <a
+            href="/policies"
+            className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
+          >
+            Policies
+          </a>
+          <a
             href="/dashboard"
             className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
           >
@@ -318,6 +324,71 @@ export default function HomePage(): React.ReactElement {
                 diagnostics.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ======== POWERED BY JAC ======== */}
+      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-24" aria-labelledby="jac-heading">
+        <div className="card-glow p-8 md:p-10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-6">
+            <div>
+              <h2
+                id="jac-heading"
+                className="font-mono text-2xl font-bold tracking-tight"
+              >
+                Powered by{' '}
+                <a
+                  href="https://jaseci.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gradient hover:underline"
+                >
+                  Jac
+                </a>
+              </h2>
+              <p className="text-corpus-muted text-sm mt-2 leading-relaxed max-w-lg">
+                Deterministic policy evaluation. No LLM opinions. Pure graph
+                traversal. 10 built-in walkers guard every AI action your agent
+                takes.
+              </p>
+            </div>
+            <a
+              href="/policies"
+              className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 font-mono text-sm hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-all duration-200"
+            >
+              View all 10 walkers
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+
+          {/* Mini code preview */}
+          <div className="rounded-lg bg-[#0a0a0a] border border-corpus-line/40 overflow-hidden">
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-corpus-line/30">
+              <div className="w-2 h-2 rounded-full bg-[#FF5F57]" />
+              <div className="w-2 h-2 rounded-full bg-[#FEBC2E]" />
+              <div className="w-2 h-2 rounded-full bg-[#28C840]" />
+              <span className="ml-2 text-[10px] text-corpus-muted font-mono">
+                action_safety.jac
+              </span>
+            </div>
+            <pre className="p-4 text-xs font-mono leading-6 overflow-x-auto text-corpus-muted">
+              <code>{`walker CheckActionSafety {
+    has action_type: str;
+
+    can check with entry {
+        for prefix in ALWAYS_BLOCK_PREFIXES {
+            if action_lower.startswith(prefix) {
+                report block_result("action_safety",
+                    BlockReason.DESTRUCTIVE_ACTION,
+                    f"'{self.action_type}' is destructive.");
+                disengage;
+            }
+        }
+        report pass_result("action_safety");
+    }
+}`}</code>
+            </pre>
           </div>
         </div>
       </section>
