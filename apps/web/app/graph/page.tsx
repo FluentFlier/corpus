@@ -189,6 +189,9 @@ export default function GraphPage() {
           </svg>
         </div>
 
+        {/* ── Dependency graph ── */}
+        <DependencyGraph clusters={clusters} edges={data.edges} nodes={data.nodes} />
+
         {/* ── Grid + detail panel ── */}
         <div style={{ display: 'flex' }}>
           <div style={{ flex: 1, padding: 24 }}>
