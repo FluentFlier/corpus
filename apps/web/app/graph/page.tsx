@@ -302,8 +302,8 @@ function ForceGraph({
               if (distSq > 25600) continue; // ~160px
               const dist = Math.sqrt(distSq) || 0.1;
               const sameCluster = n.cluster === m.cluster;
-              const repulsion = sameCluster ? 4 : 40;
-              const force = (repulsion * alpha) / (dist * 0.4);
+              const repulsion = sameCluster ? 2 : 30;
+              const force = (repulsion * alpha) / (dist * 0.6);
               const fx = (ddx / dist) * force;
               const fy = (ddy / dist) * force;
               n.vx -= fx;
@@ -353,8 +353,8 @@ function ForceGraph({
           n.vy = 0;
           continue;
         }
-        n.vx *= 0.82;
-        n.vy *= 0.82;
+        n.vx *= 0.7;
+        n.vy *= 0.7;
         n.x += n.vx;
         n.y += n.vy;
       }
@@ -403,9 +403,9 @@ function ForceGraph({
         const isHighlighted =
           activeId && (edge.source === activeId || edge.target === activeId);
 
-        let opacity = 0.08;
-        if (isHighlighted) opacity = 0.7;
-        else if (activeId) opacity = 0.03;
+        let opacity = 0.15;
+        if (isHighlighted) opacity = 0.8;
+        else if (activeId) opacity = 0.05;
         if (isSearching) {
           const srcMatch = source.name.toLowerCase().includes(searchLower) || source.file.toLowerCase().includes(searchLower);
           const tgtMatch = target.name.toLowerCase().includes(searchLower) || target.file.toLowerCase().includes(searchLower);
