@@ -35,6 +35,12 @@ export default function HomePage(): React.ReactElement {
             Graph
           </a>
           <a
+            href="/demo"
+            className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
+          >
+            Demo
+          </a>
+          <a
             href="/dashboard"
             className="text-corpus-muted text-sm hover:text-corpus-text transition-colors duration-200"
           >
