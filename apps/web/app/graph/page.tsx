@@ -302,7 +302,7 @@ function ForceGraph({
               if (distSq > 25600) continue; // ~160px
               const dist = Math.sqrt(distSq) || 0.1;
               const sameCluster = n.cluster === m.cluster;
-              const repulsion = sameCluster ? 8 : 20;
+              const repulsion = sameCluster ? 4 : 40;
               const force = (repulsion * alpha) / (dist * 0.4);
               const fx = (ddx / dist) * force;
               const fy = (ddy / dist) * force;
@@ -314,11 +314,11 @@ function ForceGraph({
           }
         }
 
-        // Cluster attraction: pull toward cluster center
+        // Cluster attraction: pull toward cluster center (strong for tight grouping)
         const cc = clusterCenters.get(n.cluster);
         if (cc) {
-          n.vx += (cc.x - n.x) * 0.003 * alpha;
-          n.vy += (cc.y - n.y) * 0.003 * alpha;
+          n.vx += (cc.x - n.x) * 0.02 * alpha;
+          n.vy += (cc.y - n.y) * 0.02 * alpha;
         }
 
         // Global center gravity (weak)
@@ -367,7 +367,7 @@ function ForceGraph({
       const gridSpacing = 40 * cam.zoom;
       const offsetX = (W / 2 - cam.x * cam.zoom) % gridSpacing;
       const offsetY = (H / 2 - cam.y * cam.zoom) % gridSpacing;
-      ctx.strokeStyle = '#ffffff06';
+      ctx.strokeStyle = '#ffffff08';
       ctx.lineWidth = 1;
       for (let x = offsetX; x < W; x += gridSpacing) {
         ctx.beginPath();
@@ -403,9 +403,9 @@ function ForceGraph({
         const isHighlighted =
           activeId && (edge.source === activeId || edge.target === activeId);
 
-        let opacity = 0.12;
+        let opacity = 0.08;
         if (isHighlighted) opacity = 0.7;
-        else if (activeId) opacity = 0.04;
+        else if (activeId) opacity = 0.03;
         if (isSearching) {
           const srcMatch = source.name.toLowerCase().includes(searchLower) || source.file.toLowerCase().includes(searchLower);
           const tgtMatch = target.name.toLowerCase().includes(searchLower) || target.file.toLowerCase().includes(searchLower);
@@ -481,14 +481,14 @@ function ForceGraph({
           nodeOpacity = matches ? 1 : 0.08;
         }
 
-        const baseRadius = node.type === 'module' ? 14 : node.type === 'class' ? 11 : node.exported ? 7 : 4.5;
+        const baseRadius = node.type === 'module' ? 12 : node.type === 'class' ? 5 : node.exported ? 3 : 2;
         const radius = baseRadius * (isActive ? 1.4 : isConnected ? 1.15 : 1);
 
         ctx.globalAlpha = nodeOpacity;
 
-        // Outer glow halo (health color)
+        // Outer glow halo (health color) -- only prominent for modules/active
         const healthColor = getHealthColor(node.health);
-        const glowRadius = radius + (isActive ? 14 : 6);
+        const glowRadius = radius + (isActive ? 14 : node.type === 'module' ? 6 : 2);
         const glow = ctx.createRadialGradient(node.x, node.y, radius, node.x, node.y, glowRadius);
         glow.addColorStop(0, healthColor + (isActive ? '50' : '20'));
         glow.addColorStop(1, healthColor + '00');
@@ -539,9 +539,9 @@ function ForceGraph({
           ctx.setLineDash([]);
         }
 
-        // Labels
-        if (isActive || isConnected || node.type === 'module' || (cam.zoom > 1.5 && node.exported)) {
-          const fontSize = isActive ? 12 : isConnected ? 10 : 9;
+        // Labels: only show for module nodes by default; others only on hover/select
+        if (isActive || (isConnected && activeId) || node.type === 'module') {
+          const fontSize = isActive ? 12 : isConnected ? 10 : 8;
           ctx.font = `${isActive ? '600' : '400'} ${fontSize}px 'JetBrains Mono', monospace`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
@@ -845,7 +845,7 @@ function ForceGraph({
           zIndex: 50,
           transition: 'right 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
           overflowY: 'auto',
-          padding: '28px 24px',
+          padding: '36px 28px',
           fontFamily: "'JetBrains Mono', monospace",
         }}
       >
@@ -875,8 +875,8 @@ function ForceGraph({
             </button>
 
             {/* Header */}
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+            <div style={{ marginBottom: 28, paddingBottom: 20, borderBottom: '1px solid #ffffff08' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                 <span
                   style={{
                     fontSize: 18,
@@ -908,7 +908,7 @@ function ForceGraph({
             </div>
 
             {/* Metadata */}
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 24 }}>
               <div style={sectionLabelStyle}>Type</div>
               <div style={{ color: '#d1d5db', fontSize: 13, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span
@@ -929,7 +929,7 @@ function ForceGraph({
 
             {/* Parameters */}
             {selected.params?.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
+              <div style={{ marginBottom: 24 }}>
                 <div style={sectionLabelStyle}>Parameters</div>
                 {selected.params.map((p, i) => (
                   <div
@@ -949,7 +949,7 @@ function ForceGraph({
 
             {/* Return Type */}
             {selected.returnType && (
-              <div style={{ marginBottom: 20 }}>
+              <div style={{ marginBottom: 24 }}>
                 <div style={sectionLabelStyle}>Return Type</div>
                 <div style={{ color: '#67e8f9', fontSize: 12 }}>{selected.returnType}</div>
               </div>
@@ -957,7 +957,7 @@ function ForceGraph({
 
             {/* Guard Clauses */}
             {selected.guards?.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
+              <div style={{ marginBottom: 24 }}>
                 <div style={sectionLabelStyle}>Guard Clauses</div>
                 {selected.guards.map((g, i) => (
                   <div
