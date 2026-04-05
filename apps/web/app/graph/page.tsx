@@ -33,6 +33,7 @@ export default function GraphPage() {
   const [selected, setSelected] = useState<GraphNode | null>(null);
   const [search, setSearch] = useState('');
   const [hovered, setHovered] = useState<string | null>(null);
+  const [view, setView] = useState<'explorer' | 'visual'>('explorer');
 
   useEffect(() => {
     fetch('/api/graph').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
@@ -80,13 +81,19 @@ export default function GraphPage() {
             type="text" placeholder="Search nodes..." value={search} onChange={e => setSearch(e.target.value)}
             style={{ background: '#111', border: '1px solid #1f2937', borderRadius: 6, padding: '6px 12px', color: '#e5e7eb', fontSize: 13, width: 200, outline: 'none' }}
           />
+          <span style={{ color: '#6b7280', fontSize: 12 }}>Codebase Explorer</span>
           <Link href="/live" style={{ color: '#6b7280', textDecoration: 'none', fontSize: 13 }}>Live</Link>
           <Link href="/demo" style={{ color: '#6b7280', textDecoration: 'none', fontSize: 13 }}>Demo</Link>
         </div>
       </div>
 
-      <div style={{ display: 'flex' }}>
-        {/* Main graph area */}
+      {/* Visual Graph View */}
+      {view === 'visual' && (
+        <VisualGraph data={data} clusters={clusters} selected={selected} onSelect={setSelected} search={searchLower} />
+      )}
+
+      {/* Explorer View */}
+      {view === 'explorer' && <div style={{ display: 'flex' }}>
         <div style={{ flex: 1, padding: 24 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
             {clusters.map(([clusterName, nodes]) => {
@@ -265,7 +272,161 @@ export default function GraphPage() {
             )}
           </div>
         )}
-      </div>
+      </div>}
+    </div>
+  );
+}
+
+// ── Visual Graph Component (SVG, pre-computed positions) ─────────────────────
+
+function VisualGraph({ data, clusters, selected, onSelect, search }: {
+  data: GraphData;
+  clusters: [string, GraphNode[]][];
+  selected: GraphNode | null;
+  onSelect: (n: GraphNode | null) => void;
+  search: string;
+}) {
+  const W = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  const H = typeof window !== 'undefined' ? window.innerHeight - 60 : 700;
+
+  // Position clusters in a circle
+  const clusterPositions = useMemo(() => {
+    const positions = new Map<string, { cx: number; cy: number; r: number }>();
+    const centerX = W / 2;
+    const centerY = H / 2;
+    const orbitRadius = Math.min(W, H) * 0.32;
+
+    clusters.forEach(([name, nodes], i) => {
+      const angle = (i / clusters.length) * Math.PI * 2 - Math.PI / 2;
+      const r = Math.max(40, Math.sqrt(nodes.length) * 12);
+      positions.set(name, {
+        cx: centerX + Math.cos(angle) * orbitRadius,
+        cy: centerY + Math.sin(angle) * orbitRadius,
+        r,
+      });
+    });
+    return positions;
+  }, [clusters, W, H]);
+
+  // Position nodes within their clusters
+  const nodePositions = useMemo(() => {
+    const pos = new Map<string, { x: number; y: number }>();
+
+    clusters.forEach(([clusterName, nodes]) => {
+      const cp = clusterPositions.get(clusterName);
+      if (!cp) return;
+
+      // Sort: modules first (larger), then by name
+      const sorted = [...nodes].sort((a, b) => {
+        if (a.type === 'module' && b.type !== 'module') return -1;
+        if (a.type !== 'module' && b.type === 'module') return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      sorted.forEach((n, i) => {
+        const angle = (i / sorted.length) * Math.PI * 2;
+        const dist = n.type === 'module'
+          ? cp.r * 0.5 * (0.3 + (i / sorted.length) * 0.7)
+          : cp.r * (0.4 + Math.random() * 0.5);
+        pos.set(n.id, {
+          x: cp.cx + Math.cos(angle) * dist,
+          y: cp.cy + Math.sin(angle) * dist,
+        });
+      });
+    });
+
+    return pos;
+  }, [clusters, clusterPositions]);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
+      <svg width={W} height={H} style={{ background: '#050505' }}>
+        {/* Cluster backgrounds */}
+        {clusters.map(([name]) => {
+          const cp = clusterPositions.get(name);
+          if (!cp) return null;
+          const color = COLORS[name] || '#64748b';
+          return (
+            <g key={`cluster-${name}`}>
+              <circle cx={cp.cx} cy={cp.cy} r={cp.r + 20} fill={color} opacity={0.03} />
+              <circle cx={cp.cx} cy={cp.cy} r={cp.r + 20} stroke={color} strokeWidth={0.5} fill="none" opacity={0.15} />
+              <text x={cp.cx} y={cp.cy - cp.r - 8} textAnchor="middle" fill={color} fontSize={11} fontWeight={600} fontFamily="system-ui">{name}</text>
+            </g>
+          );
+        })}
+
+        {/* Edges */}
+        {data.edges.map((e, i) => {
+          const s = nodePositions.get(e.source);
+          const t = nodePositions.get(e.target);
+          if (!s || !t) return null;
+          const isHighlighted = selected && (e.source === selected.id || e.target === selected.id);
+          return (
+            <line key={i} x1={s.x} y1={s.y} x2={t.x} y2={t.y}
+              stroke={e.color || '#6366f1'} strokeWidth={isHighlighted ? 1 : 0.3}
+              opacity={isHighlighted ? 0.6 : 0.08}
+            />
+          );
+        })}
+
+        {/* Nodes */}
+        {data.nodes.map(n => {
+          const p = nodePositions.get(n.id);
+          if (!p) return null;
+          const cluster = getCluster(n.file);
+          const color = COLORS[cluster] || '#64748b';
+          const r = n.type === 'module' ? 5 : n.exported ? 2.5 : 1.2;
+          const isSelected = selected?.id === n.id;
+          const isMatch = search && (n.name.toLowerCase().includes(search) || n.file.toLowerCase().includes(search));
+          const isDimmed = search && !isMatch;
+
+          return (
+            <g key={n.id} onClick={() => onSelect(isSelected ? null : n)} style={{ cursor: 'pointer' }}
+              opacity={isDimmed ? 0.1 : 1}>
+              {isSelected && <circle cx={p.x} cy={p.y} r={r + 6} fill={color} opacity={0.2} />}
+              {isMatch && <circle cx={p.x} cy={p.y} r={r + 4} stroke="#10b981" strokeWidth={1} fill="none" />}
+              <circle cx={p.x} cy={p.y} r={r} fill={color} />
+              {(n.type === 'module' || isSelected || isMatch) && (
+                <text x={p.x} y={p.y + r + 10} textAnchor="middle"
+                  fill={isSelected ? '#fff' : '#ffffff88'} fontSize={isSelected ? 10 : 8}
+                  fontFamily="system-ui" fontWeight={isSelected ? 600 : 400}>
+                  {n.name}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* Selected detail overlay */}
+      {selected && (
+        <div style={{
+          position: 'absolute', top: 16, right: 16, width: 300,
+          background: '#0a0a0aee', backdropFilter: 'blur(8px)',
+          border: '1px solid #1f2937', borderRadius: 12, padding: 20,
+          fontSize: 13, color: '#e5e7eb',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+            <strong style={{ fontSize: 15 }}>{selected.name}</strong>
+            <button onClick={() => onSelect(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer' }}>x</button>
+          </div>
+          <div style={{ color: '#6b7280', fontFamily: 'monospace', fontSize: 11, marginBottom: 8 }}>{selected.file}</div>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 12 }}>
+            <Tag color={COLORS[getCluster(selected.file)] || '#64748b'}>{getCluster(selected.file)}</Tag>
+            <Tag color="#374151">{selected.type}</Tag>
+            {selected.exported && <Tag color="#10b981">exported</Tag>}
+          </div>
+          {selected.guards?.length > 0 && (
+            <div style={{ marginBottom: 8 }}>
+              <div style={{ color: '#6b7280', fontSize: 10, marginBottom: 4 }}>GUARDS</div>
+              {selected.guards.map((g, i) => (
+                <div key={i} style={{ fontFamily: 'monospace', fontSize: 10, color: '#6ee7b7', borderLeft: '2px solid #10b98140', paddingLeft: 6, marginBottom: 2 }}>{g}</div>
+              ))}
+            </div>
+          )}
+          <div style={{ color: '#10b981', fontSize: 20, fontWeight: 700 }}>{selected.trustScore}<span style={{ color: '#6b7280', fontSize: 12, fontWeight: 400 }}>/100</span></div>
+        </div>
+      )}
     </div>
   );
 }
