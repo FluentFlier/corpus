@@ -26,6 +26,7 @@ interface Finding {
   line: number;
   message: string;
   suggestion?: string;
+  codeSnippet?: string;
 }
 
 interface ScanResult {
@@ -486,6 +487,9 @@ export default function ScanPage(): React.ReactElement {
                                 <span className="font-mono text-[10px] text-corpus-muted">Fix:</span>
                                 <span className="font-mono text-[10px] text-emerald-400">{finding.suggestion}</span>
                               </div>
+                            )}
+                            {finding.codeSnippet && (
+                              <pre className="mt-2 p-3 rounded-lg bg-[#050505] border border-corpus-line/20 overflow-x-auto font-mono text-[11px] leading-5 text-corpus-muted whitespace-pre">{finding.codeSnippet}</pre>
                             )}
                           </div>
                         </div>

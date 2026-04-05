@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
+import ScanWidget from '../components/ScanWidget';
 
 /* ---- Floating dots component ---- */
 function FloatingDots() {
@@ -184,7 +185,7 @@ function TerminalTyping() {
     return () => clearTimeout(timeout);
   }, []);
 
-  return <div ref={containerRef} className="p-5 font-mono text-sm leading-7" />;
+  return <div ref={containerRef} className="p-5 font-mono text-sm leading-7" style={{ height: 280, overflow: 'hidden' }} />;
 }
 
 /* ---- Live Graph Preview SVG ---- */
@@ -287,7 +288,6 @@ const JAC_COLOR_MAP = {
 
 export default function HomePage(): React.ReactElement {
   const handleCardGlow = useCardGlow();
-  const [scanUrl, setScanUrl] = useState('');
 
   return (
     <main className="min-h-screen bg-corpus-bg bg-grid relative overflow-hidden">
@@ -387,57 +387,7 @@ export default function HomePage(): React.ReactElement {
           <p className="text-corpus-muted text-sm mb-8">
             Paste a repo URL and Corpus builds the structural graph, runs security scanners, and shows findings.
           </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (scanUrl.trim()) {
-                window.location.href = `/scan?url=${encodeURIComponent(scanUrl.trim())}`;
-              } else {
-                window.location.href = '/scan';
-              }
-            }}
-            className="flex flex-col sm:flex-row items-center gap-3 max-w-xl mx-auto"
-          >
-            <div className="relative flex-1 w-full group">
-              <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-emerald-500/40 to-indigo-500/40 opacity-0 group-focus-within:opacity-100 blur-[1px] transition-opacity duration-300" />
-              <input
-                type="url"
-                value={scanUrl}
-                onChange={(e) => setScanUrl(e.target.value)}
-                placeholder="https://github.com/..."
-                className="relative w-full bg-[#111] rounded-xl border border-corpus-line/60 px-5 py-3.5 font-mono text-sm text-corpus-text placeholder:text-corpus-muted/40 outline-none focus:border-transparent transition-colors"
-                aria-label="GitHub repository URL"
-              />
-            </div>
-            <button
-              type="submit"
-              className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-mono text-sm font-medium bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-200"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
-              Scan
-            </button>
-          </form>
-          <div className="mt-6 flex items-center justify-center gap-2 text-xs font-mono text-corpus-muted">
-            <span>or try:</span>
-            {[
-              { label: 'hono', url: 'https://github.com/honojs/hono' },
-              { label: 'trpc', url: 'https://github.com/trpc/trpc' },
-              { label: 'drizzle-orm', url: 'https://github.com/drizzle-team/drizzle-orm' },
-            ].map((example, i) => (
-              <span key={example.label} className="flex items-center gap-2">
-                {i > 0 && <span className="text-corpus-line">|</span>}
-                <a
-                  href={`/scan?url=${encodeURIComponent(example.url)}`}
-                  className="text-emerald-400/80 hover:text-emerald-400 transition-colors"
-                >
-                  {example.label}
-                </a>
-              </span>
-            ))}
-          </div>
+          <ScanWidget />
         </div>
       </section>
 
@@ -557,6 +507,67 @@ export default function HomePage(): React.ReactElement {
               <div className="text-corpus-muted text-sm mt-2 font-mono">total scan time</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ======== PREVIOUSLY SCANNED REPOS ======== */}
+      <section className="relative z-10 max-w-4xl mx-auto px-6 py-24 animate-fade-in" aria-labelledby="scanned-heading">
+        <h2 id="scanned-heading" className="font-mono text-2xl md:text-3xl font-bold text-center tracking-tight mb-4">
+          <span className="text-gradient">Previously Scanned Repos</span>
+        </h2>
+        <p className="text-corpus-muted text-sm text-center mb-10 font-mono">
+          Benchmarked against popular open-source projects
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full font-mono text-sm">
+            <thead>
+              <tr className="border-b border-corpus-line/30">
+                <th className="text-left py-3 px-4 text-corpus-muted text-xs font-normal uppercase tracking-wider">Repository</th>
+                <th className="text-right py-3 px-4 text-corpus-muted text-xs font-normal uppercase tracking-wider">Files</th>
+                <th className="text-right py-3 px-4 text-corpus-muted text-xs font-normal uppercase tracking-wider">Nodes</th>
+                <th className="text-right py-3 px-4 text-corpus-muted text-xs font-normal uppercase tracking-wider">Findings</th>
+                <th className="text-right py-3 px-4 text-corpus-muted text-xs font-normal uppercase tracking-wider">Scan Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { repo: 'honojs/hono', files: 362, nodes: 1567, findings: 69, timeMs: 107 },
+                { repo: 'drizzle-team/drizzle-orm', files: 966, nodes: 4874, findings: 37, timeMs: 334 },
+                { repo: 'trpc/trpc', files: 909, nodes: 2936, findings: 8, timeMs: 255 },
+                { repo: 'shadcn-ui/ui', files: 3383, nodes: 12840, findings: null, timeMs: 933 },
+                { repo: 'calcom/cal.com', files: 7508, nodes: 22794, findings: null, timeMs: 2118 },
+                { repo: 'prisma/prisma', files: 2813, nodes: 6782, findings: null, timeMs: 642 },
+                { repo: 't3-oss/create-t3-app', files: 178, nodes: 322, findings: 0, timeMs: 73 },
+              ].map((row) => (
+                <tr key={row.repo} className="border-b border-corpus-line/15 hover:bg-emerald-500/[0.03] transition-colors">
+                  <td className="py-3 px-4">
+                    <a
+                      href={`https://github.com/${row.repo}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-corpus-text hover:text-emerald-400 transition-colors"
+                    >
+                      {row.repo}
+                    </a>
+                  </td>
+                  <td className="py-3 px-4 text-right text-corpus-muted">{row.files.toLocaleString()}</td>
+                  <td className="py-3 px-4 text-right text-corpus-muted">{row.nodes.toLocaleString()}</td>
+                  <td className="py-3 px-4 text-right">
+                    {row.findings === null ? (
+                      <span className="text-corpus-muted/40">--</span>
+                    ) : row.findings === 0 ? (
+                      <span className="text-emerald-400">0</span>
+                    ) : (
+                      <span className="text-amber-400">{row.findings}</span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-right text-corpus-muted">
+                    {row.timeMs < 1000 ? `${row.timeMs}ms` : `${(row.timeMs / 1000).toFixed(1)}s`}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 

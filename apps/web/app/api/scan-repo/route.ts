@@ -109,7 +109,21 @@ export async function POST(request: Request) {
       line: number;
       message: string;
       suggestion?: string;
+      codeSnippet?: string;
     }> = [];
+
+    /** Extract up to 3 lines around a given 1-based line number. */
+    function extractSnippet(content: string, lineNum: number): string | undefined {
+      if (!lineNum || lineNum < 1) return undefined;
+      const lines = content.split('\n');
+      const start = Math.max(0, lineNum - 2); // 1 line before (0-based)
+      const end = Math.min(lines.length, lineNum + 1); // 1 line after
+      return lines.slice(start, end).map((l, i) => {
+        const num = start + i + 1;
+        const marker = num === lineNum ? '>' : ' ';
+        return `${marker} ${num} | ${l}`;
+      }).join('\n');
+    }
 
     let secretDetect: ((content: string, filepath: string) => unknown[]) | null = null;
     let codeSafety: ((content: string, filepath: string) => unknown[]) | null = null;
@@ -146,6 +160,7 @@ export async function POST(request: Request) {
               file: relPath,
               line: s.line,
               message: s.message,
+              codeSnippet: extractSnippet(content, s.line),
             });
           }
         } catch { /* skip file */ }
@@ -165,6 +180,7 @@ export async function POST(request: Request) {
               line: f.line,
               message: f.message,
               suggestion: f.suggestion,
+              codeSnippet: extractSnippet(content, f.line),
             });
           }
         } catch { /* skip file */ }
