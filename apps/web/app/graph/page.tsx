@@ -1,7 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { NavBar } from '../../components/NavBar';
+
+const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false });
 
 interface GraphNode {
   id: string; name: string; type: string; file: string; line: number;
@@ -665,7 +668,7 @@ function DependencyGraph({
   );
 }
 
-// ── Layered Visual Graph (packages → files → functions) ──────────────────────
+// ── Force-directed Visual Graph (react-force-graph-2d) ───────────────────────
 
 function VisualGraph({ data, clusters, selected, onSelect, search }: {
   data: GraphData;
@@ -674,268 +677,191 @@ function VisualGraph({ data, clusters, selected, onSelect, search }: {
   onSelect: (n: GraphNode | null) => void;
   search: string;
 }) {
-  const [expanded, setExpanded] = useState<string | null>(null); // cluster name
-  const [expandedFile, setExpandedFile] = useState<string | null>(null); // file path
+  const fgRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState({ w: 1200, h: 700 });
 
-  const W = typeof window !== 'undefined' ? window.innerWidth : 1200;
-  const H = typeof window !== 'undefined' ? window.innerHeight - 100 : 650;
-  const centerX = W / 2;
-  const centerY = H / 2;
-
-  // Cross-cluster edge counts for line thickness
-  const crossEdges = useMemo(() => {
-    const counts = new Map<string, number>();
-    data.edges.forEach(e => {
-      const sc = clusters.find(([, ns]) => ns.some(n => n.id === e.source))?.[0];
-      const tc = clusters.find(([, ns]) => ns.some(n => n.id === e.target))?.[0];
-      if (sc && tc && sc !== tc) {
-        const key = [sc, tc].sort().join('::');
-        counts.set(key, (counts.get(key) || 0) + 1);
+  useEffect(() => {
+    function updateSize() {
+      if (containerRef.current) {
+        setDims({ w: containerRef.current.offsetWidth, h: window.innerHeight - 100 });
       }
-    });
-    return counts;
-  }, [data.edges, clusters]);
+    }
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
-  // ── LAYER 1: Package overview ──
-  if (!expanded) {
-    const orbitR = Math.min(W, H) * 0.28;
-    const positions = clusters.map(([name, nodes], i) => {
-      const angle = (i / clusters.length) * Math.PI * 2 - Math.PI / 2;
-      const modules = nodes.filter(n => n.type === 'module').length;
-      const funcs = nodes.filter(n => n.type === 'function').length;
-      const r = Math.max(32, Math.sqrt(nodes.length) * 6);
-      return {
-        name, nodes, modules, funcs, r,
-        cx: centerX + Math.cos(angle) * orbitR,
-        cy: centerY + Math.sin(angle) * orbitR,
-        color: COLORS[name] || '#64748b',
-      };
-    });
+  // Build force-graph data: only modules (files) + cross-file edges for a clean view
+  const graphData = useMemo(() => {
+    const modules = data.nodes.filter(n => n.type === 'module');
+    const moduleIds = new Set(modules.map(n => n.id));
 
-    return (
-      <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
-        <svg width={W} height={H} style={{ background: '#050505' }}>
-          {/* Center label */}
-          <text x={centerX} y={centerY - 12} textAnchor="middle" fill="#ffffff20" fontSize={14} fontWeight={700} fontFamily="system-ui">corpus</text>
-          <text x={centerX} y={centerY + 8} textAnchor="middle" fill="#ffffff10" fontSize={11} fontFamily="system-ui">{data.stats.totalFiles} files · {data.stats.totalFunctions} functions</text>
-
-          {/* Cross-cluster edges */}
-          {positions.map((a, ai) =>
-            positions.slice(ai + 1).map(b => {
-              const key = [a.name, b.name].sort().join('::');
-              const count = crossEdges.get(key) || 0;
-              if (count === 0) return null;
-              return (
-                <line key={key} x1={a.cx} y1={a.cy} x2={b.cx} y2={b.cy}
-                  stroke="#ffffff" strokeWidth={Math.min(count * 0.3, 3)} opacity={0.06}
-                />
-              );
-            })
-          )}
-
-          {/* Package nodes */}
-          {positions.map(p => (
-            <g key={p.name} onClick={() => setExpanded(p.name)} style={{ cursor: 'pointer' }}>
-              {/* Glow */}
-              <circle cx={p.cx} cy={p.cy} r={p.r + 16} fill={p.color} opacity={0.04} />
-              {/* Ring */}
-              <circle cx={p.cx} cy={p.cy} r={p.r} fill={p.color + '15'} stroke={p.color} strokeWidth={1.5} opacity={0.7} />
-              {/* Name */}
-              <text x={p.cx} y={p.cy - 4} textAnchor="middle" fill="#e5e7eb" fontSize={13} fontWeight={700} fontFamily="system-ui">
-                {p.name}
-              </text>
-              {/* Stats */}
-              <text x={p.cx} y={p.cy + 12} textAnchor="middle" fill={p.color} fontSize={10} fontFamily="system-ui">
-                {p.modules} files · {p.funcs} fn
-              </text>
-            </g>
-          ))}
-        </svg>
-
-        {/* Breadcrumb */}
-        <div style={{ position: 'absolute', top: 12, left: 16, fontSize: 12, color: '#6b7280', fontFamily: 'ui-monospace, monospace' }}>
-          <span style={{ color: '#10b981' }}>corpus</span>
-          <span style={{ color: '#333', margin: '0 6px' }}>/</span>
-          <span>click a package to drill in</span>
-        </div>
-      </div>
-    );
-  }
-
-  // ── LAYER 2: Files within a package ──
-  const clusterNodes = clusters.find(([n]) => n === expanded)?.[1] || [];
-  const clusterColor = COLORS[expanded] || '#64748b';
-  const files = clusterNodes.filter(n => n.type === 'module');
-  const funcs = clusterNodes.filter(n => n.type === 'function');
-
-  if (!expandedFile) {
-    const fileOrbit = Math.min(W, H) * 0.3;
-    const filePositions = files.map((f, i) => {
-      const angle = (i / files.length) * Math.PI * 2 - Math.PI / 2;
-      const fileFuncs = funcs.filter(fn => fn.file === f.file);
-      const r = Math.max(18, Math.sqrt(fileFuncs.length + 1) * 8);
-      return {
-        ...f, fileFuncs, r,
-        cx: centerX + Math.cos(angle) * fileOrbit,
-        cy: centerY + Math.sin(angle) * fileOrbit,
-      };
-    });
-
-    // Intra-cluster edges between files
-    const fileEdges: { from: typeof filePositions[0]; to: typeof filePositions[0] }[] = [];
-    data.edges.forEach(e => {
-      const sf = filePositions.find(f => f.id === e.source || funcs.find(fn => fn.id === e.source && fn.file === f.file));
-      const tf = filePositions.find(f => f.id === e.target || funcs.find(fn => fn.id === e.target && fn.file === f.file));
-      if (sf && tf && sf.id !== tf.id && !fileEdges.some(fe => (fe.from.id === sf.id && fe.to.id === tf.id) || (fe.from.id === tf.id && fe.to.id === sf.id))) {
-        fileEdges.push({ from: sf, to: tf });
+    // For functions, map them to their parent module
+    const funcToModule = new Map<string, string>();
+    data.nodes.forEach(n => {
+      if (n.type === 'function') {
+        const modId = `mod:${n.file}`;
+        if (moduleIds.has(modId)) funcToModule.set(n.id, modId);
       }
     });
 
-    return (
-      <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
-        <svg width={W} height={H} style={{ background: '#050505' }}>
-          {/* Center label */}
-          <text x={centerX} y={centerY - 8} textAnchor="middle" fill={clusterColor} fontSize={16} fontWeight={700} fontFamily="system-ui">{expanded}</text>
-          <text x={centerX} y={centerY + 10} textAnchor="middle" fill="#ffffff15" fontSize={11} fontFamily="system-ui">{files.length} files · {funcs.length} functions</text>
+    // Build edges between modules (aggregate function-level edges)
+    const edgeSet = new Set<string>();
+    const links: { source: string; target: string; type: string }[] = [];
+    data.edges.forEach(e => {
+      let s = moduleIds.has(e.source) ? e.source : funcToModule.get(e.source);
+      let t = moduleIds.has(e.target) ? e.target : funcToModule.get(e.target);
+      if (s && t && s !== t) {
+        const key = `${s}::${t}`;
+        if (!edgeSet.has(key)) {
+          edgeSet.add(key);
+          links.push({ source: s, target: t, type: e.type });
+        }
+      }
+    });
 
-          {/* File-to-file edges */}
-          {fileEdges.map((e, i) => (
-            <line key={i} x1={e.from.cx} y1={e.from.cy} x2={e.to.cx} y2={e.to.cy}
-              stroke={clusterColor} strokeWidth={0.5} opacity={0.15}
-            />
-          ))}
+    const nodes = modules.map(n => {
+      const cluster = getCluster(n.file);
+      const color = COLORS[cluster] || '#64748b';
+      const fileFuncs = data.nodes.filter(f => f.type === 'function' && f.file === n.file);
+      const isMatch = search && (n.name.toLowerCase().includes(search) || n.file.toLowerCase().includes(search));
+      return {
+        id: n.id,
+        name: n.name,
+        file: n.file,
+        cluster,
+        color,
+        funcCount: fileFuncs.length,
+        exported: n.exported,
+        val: Math.max(2, fileFuncs.length + 1),
+        isMatch,
+        _original: n,
+      };
+    });
 
-          {/* File nodes */}
-          {filePositions.map(f => {
-            const isMatch = search && f.name.toLowerCase().includes(search);
-            return (
-              <g key={f.id} onClick={() => setExpandedFile(f.file)} style={{ cursor: 'pointer' }}
-                opacity={search && !isMatch ? 0.2 : 1}>
-                <circle cx={f.cx} cy={f.cy} r={f.r + 8} fill={clusterColor} opacity={0.03} />
-                <circle cx={f.cx} cy={f.cy} r={f.r} fill={clusterColor + '18'} stroke={clusterColor} strokeWidth={1} opacity={0.6} />
-                {isMatch && <circle cx={f.cx} cy={f.cy} r={f.r + 4} stroke="#10b981" strokeWidth={1.5} fill="none" />}
-                <text x={f.cx} y={f.cy - 2} textAnchor="middle" fill="#e5e7eb" fontSize={10} fontWeight={600} fontFamily="ui-monospace, monospace">
-                  {f.name}
-                </text>
-                <text x={f.cx} y={f.cy + 10} textAnchor="middle" fill={clusterColor} fontSize={9} fontFamily="system-ui">
-                  {f.fileFuncs.length} fn
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+    return { nodes, links };
+  }, [data, search]);
 
-        {/* Breadcrumb */}
-        <div style={{ position: 'absolute', top: 12, left: 16, fontSize: 12, fontFamily: 'ui-monospace, monospace' }}>
-          <span onClick={() => setExpanded(null)} style={{ color: '#10b981', cursor: 'pointer' }}>corpus</span>
-          <span style={{ color: '#333', margin: '0 6px' }}>/</span>
-          <span style={{ color: clusterColor }}>{expanded}</span>
-          <span style={{ color: '#333', margin: '0 6px' }}>/</span>
-          <span style={{ color: '#6b7280' }}>click a file</span>
-        </div>
-      </div>
-    );
-  }
+  const handleNodeClick = useCallback((node: any) => {
+    onSelect(node._original);
+    if (fgRef.current) {
+      fgRef.current.centerAt(node.x, node.y, 400);
+      fgRef.current.zoom(3, 400);
+    }
+  }, [onSelect]);
 
-  // ── LAYER 3: Functions within a file ──
-  const fileFuncs = funcs.filter(f => f.file === expandedFile);
-  const fileModule = files.find(f => f.file === expandedFile);
-  const fileName = expandedFile.split('/').pop() || expandedFile;
-  const funcOrbit = Math.min(W, H) * 0.28;
+  // Paint nodes with canvas for performance
+  const paintNode = useCallback((node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
+    const r = Math.sqrt(node.val) * 2.5;
+    const isSelected = selected?.id === node.id;
+    const isMatch = node.isMatch;
+    const isDimmed = search && !isMatch;
+    const color = node.color;
 
-  const funcPositions = fileFuncs.map((f, i) => {
-    const angle = (i / Math.max(fileFuncs.length, 1)) * Math.PI * 2 - Math.PI / 2;
-    const r = f.exported ? 22 : 16;
-    return {
-      ...f, r,
-      cx: centerX + Math.cos(angle) * funcOrbit,
-      cy: centerY + Math.sin(angle) * funcOrbit,
-    };
-  });
+    ctx.globalAlpha = isDimmed ? 0.15 : 1;
 
-  // Edges between functions in this file
-  const funcEdges: { from: typeof funcPositions[0]; to: typeof funcPositions[0]; type: string }[] = [];
-  data.edges.forEach(e => {
-    const sf = funcPositions.find(f => f.id === e.source);
-    const tf = funcPositions.find(f => f.id === e.target);
-    if (sf && tf) funcEdges.push({ from: sf, to: tf, type: e.type });
-  });
+    // Glow for selected
+    if (isSelected) {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, r + 6, 0, 2 * Math.PI);
+      ctx.fillStyle = color + '30';
+      ctx.fill();
+    }
+
+    // Match ring
+    if (isMatch) {
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, r + 4, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1.5 / globalScale;
+      ctx.stroke();
+    }
+
+    // Node circle
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
+    ctx.fillStyle = isSelected ? color : color + '90';
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = (isSelected ? 2 : 0.5) / globalScale;
+    ctx.stroke();
+
+    // Label (show at reasonable zoom)
+    if (globalScale > 0.8 || isSelected || isMatch) {
+      ctx.font = `${(isSelected ? 600 : 400)} ${Math.max(10, 12 / globalScale)}px ui-monospace, "SF Mono", Menlo, monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = isSelected ? '#fff' : isDimmed ? '#ffffff20' : '#ffffffaa';
+      ctx.fillText(node.name, node.x, node.y + r + 2);
+
+      // Function count
+      if (node.funcCount > 0 && globalScale > 1.2) {
+        ctx.font = `400 ${Math.max(8, 9 / globalScale)}px system-ui`;
+        ctx.fillStyle = color + '99';
+        ctx.fillText(`${node.funcCount} fn`, node.x, node.y + r + 14 / globalScale + 2);
+      }
+    }
+
+    ctx.globalAlpha = 1;
+  }, [selected, search]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: H, overflow: 'hidden' }}>
-      <svg width={W} height={H} style={{ background: '#050505' }}>
-        {/* Center: file name */}
-        <text x={centerX} y={centerY - 8} textAnchor="middle" fill={clusterColor} fontSize={14} fontWeight={700} fontFamily="ui-monospace, monospace">{fileName}</text>
-        <text x={centerX} y={centerY + 10} textAnchor="middle" fill="#ffffff15" fontSize={11} fontFamily="system-ui">{fileFuncs.length} functions</text>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: dims.h, background: '#050505' }}>
+      <ForceGraph2D
+        ref={fgRef}
+        width={dims.w}
+        height={dims.h}
+        graphData={graphData}
+        nodeCanvasObject={paintNode}
+        nodePointerAreaPaint={(node: any, color: string, ctx: CanvasRenderingContext2D) => {
+          const r = Math.sqrt(node.val) * 2.5 + 4;
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
+          ctx.fillStyle = color;
+          ctx.fill();
+        }}
+        linkColor={() => '#ffffff10'}
+        linkWidth={0.5}
+        linkDirectionalParticles={0}
+        onNodeClick={handleNodeClick}
+        backgroundColor="#050505"
+        cooldownTicks={80}
+        d3AlphaDecay={0.03}
+        d3VelocityDecay={0.3}
+        enableZoomInteraction={true}
+        enablePanInteraction={true}
+      />
 
-        {/* Function edges */}
-        {funcEdges.map((e, i) => (
-          <line key={i} x1={e.from.cx} y1={e.from.cy} x2={e.to.cx} y2={e.to.cy}
-            stroke={e.type === 'calls' ? '#6366f1' : clusterColor} strokeWidth={1} opacity={0.2}
-          />
+      {/* Legend */}
+      <div style={{
+        position: 'absolute', bottom: 16, left: 16,
+        display: 'flex', gap: 12, fontSize: 10, fontFamily: 'ui-monospace, monospace',
+        background: '#0a0a0acc', backdropFilter: 'blur(4px)', padding: '6px 12px', borderRadius: 8,
+      }}>
+        {clusters.slice(0, 7).map(([name]) => (
+          <span key={name} style={{ display: 'flex', alignItems: 'center', gap: 4, color: COLORS[name] || '#64748b' }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: COLORS[name] || '#64748b' }} />
+            {name}
+          </span>
         ))}
-
-        {/* Function nodes */}
-        {funcPositions.map(f => {
-          const isSelected = selected?.id === f.id;
-          const isMatch = search && f.name.toLowerCase().includes(search);
-          const hasGuards = f.guards?.length > 0;
-          return (
-            <g key={f.id} onClick={() => onSelect(isSelected ? null : f)} style={{ cursor: 'pointer' }}
-              opacity={search && !isMatch ? 0.2 : 1}>
-              {isSelected && <circle cx={f.cx} cy={f.cy} r={f.r + 10} fill={clusterColor} opacity={0.1} />}
-              {isMatch && <circle cx={f.cx} cy={f.cy} r={f.r + 6} stroke="#10b981" strokeWidth={1.5} fill="none" />}
-              <circle cx={f.cx} cy={f.cy} r={f.r}
-                fill={isSelected ? clusterColor + '30' : clusterColor + '12'}
-                stroke={hasGuards ? '#10b981' : f.exported ? clusterColor : '#333'}
-                strokeWidth={isSelected ? 2 : 1}
-              />
-              <text x={f.cx} y={f.cy + 1} textAnchor="middle" fill="#e5e7eb" fontSize={10} fontWeight={600} fontFamily="ui-monospace, monospace">
-                {f.name}
-              </text>
-              {f.exported && (
-                <text x={f.cx} y={f.cy + 12} textAnchor="middle" fill="#10b981" fontSize={8} fontFamily="system-ui">exported</text>
-              )}
-              {hasGuards && (
-                <text x={f.cx} y={f.cy - f.r - 4} textAnchor="middle" fill="#10b981" fontSize={8} fontFamily="system-ui">guarded</text>
-              )}
-            </g>
-          );
-        })}
-
-        {/* If no functions, show the module info */}
-        {fileFuncs.length === 0 && fileModule && (
-          <text x={centerX} y={centerY + 30} textAnchor="middle" fill="#6b7280" fontSize={12} fontFamily="system-ui">
-            Module node only — no extracted functions
-          </text>
-        )}
-      </svg>
-
-      {/* Breadcrumb */}
-      <div style={{ position: 'absolute', top: 12, left: 16, fontSize: 12, fontFamily: 'ui-monospace, monospace' }}>
-        <span onClick={() => { setExpanded(null); setExpandedFile(null); }} style={{ color: '#10b981', cursor: 'pointer' }}>corpus</span>
-        <span style={{ color: '#333', margin: '0 6px' }}>/</span>
-        <span onClick={() => setExpandedFile(null)} style={{ color: clusterColor, cursor: 'pointer' }}>{expanded}</span>
-        <span style={{ color: '#333', margin: '0 6px' }}>/</span>
-        <span style={{ color: '#e5e7eb' }}>{fileName}</span>
       </div>
 
-      {/* Selected function detail overlay */}
+      {/* Selected detail overlay */}
       {selected && (
         <div style={{
-          position: 'absolute', top: 12, right: 16, width: 280,
+          position: 'absolute', top: 12, right: 16, width: 300,
           background: '#0a0a0aee', backdropFilter: 'blur(8px)',
           border: '1px solid #1f2937', borderRadius: 12, padding: 16,
           fontSize: 13, color: '#e5e7eb',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <strong style={{ fontSize: 14 }}>{selected.name}</strong>
+            <strong style={{ fontSize: 15 }}>{selected.name}</strong>
             <button onClick={() => onSelect(null)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: 14 }}>x</button>
           </div>
-          <div style={{ color: '#6b7280', fontFamily: 'ui-monospace, monospace', fontSize: 10, marginBottom: 8 }}>
-            {selected.file}:{selected.line}
-          </div>
+          <div style={{ color: '#6b7280', fontFamily: 'ui-monospace, monospace', fontSize: 11, marginBottom: 8 }}>{selected.file}:{selected.line}</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 10 }}>
+            <Tag color={COLORS[getCluster(selected.file)] || '#64748b'}>{getCluster(selected.file)}</Tag>
             <Tag color="#374151">{selected.type}</Tag>
             {selected.exported && <Tag color="#10b981">exported</Tag>}
           </div>
@@ -955,7 +881,7 @@ function VisualGraph({ data, clusters, selected, onSelect, search }: {
               ))}
             </div>
           )}
-          <div style={{ color: '#10b981', fontSize: 18, fontWeight: 700 }}>{selected.trustScore}<span style={{ color: '#6b7280', fontSize: 11, fontWeight: 400 }}>/100</span></div>
+          <div style={{ color: '#10b981', fontSize: 20, fontWeight: 700 }}>{selected.trustScore}<span style={{ color: '#6b7280', fontSize: 12, fontWeight: 400 }}>/100</span></div>
         </div>
       )}
     </div>

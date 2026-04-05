@@ -608,37 +608,6 @@ export default function HomePage(): React.ReactElement {
         </div>
       </section>
 
-      {/* ======== LIVE GRAPH PREVIEW ======== */}
-      <section className="relative z-10 max-w-4xl mx-auto px-6 pb-24 animate-fade-in-6">
-        <div className="text-center mb-12">
-          <h2 className="font-mono text-2xl md:text-3xl font-bold tracking-tight mb-4">
-            <span className="text-gradient">Live Graph Preview</span>
-          </h2>
-          <p className="text-corpus-muted text-sm max-w-lg mx-auto">
-            Every node is a function. Every edge is a dependency. Green means healthy. Watch your codebase breathe.
-          </p>
-        </div>
-        <div className="flex justify-center">
-          <div className="card-glow p-8 w-full max-w-lg">
-            <LiveGraphPreview />
-            <div className="flex items-center justify-center gap-6 mt-6 text-xs font-mono text-corpus-muted">
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                Healthy
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                Modified
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
-                Broken
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ======== STATS ======== */}
       <section className="relative z-10 py-20 border-t border-b border-corpus-line/20 animate-fade-in-7" aria-label="Project statistics">
         <div className="max-w-4xl mx-auto px-6">
