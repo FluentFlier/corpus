@@ -89,7 +89,7 @@ export default function GraphPage() {
   const [selected, setSelected] = useState<GraphNode | null>(null);
   const [search, setSearch] = useState('');
   const [hovered, setHovered] = useState<string | null>(null);
-  const [view, setView] = useState<'explorer' | 'visual'>('explorer');
+  const [view, setView] = useState<'explorer' | 'visual'>('visual');
 
   useEffect(() => {
     // Try API first, fall back to static graph.json
@@ -147,7 +147,28 @@ export default function GraphPage() {
             type="text" placeholder="Search nodes..." value={search} onChange={e => setSearch(e.target.value)}
             style={{ background: '#111', border: '1px solid #1f2937', borderRadius: 6, padding: '6px 12px', color: '#e5e7eb', fontSize: 13, width: 200, outline: 'none' }}
           />
-          <span style={{ color: '#6b7280', fontSize: 12 }}>Codebase Explorer</span>
+          <div style={{ display: 'flex', gap: 4, background: '#111', borderRadius: 6, padding: 2 }}>
+            <button
+              onClick={() => setView('visual')}
+              style={{
+                padding: '4px 12px', borderRadius: 4, border: 'none', cursor: 'pointer',
+                fontSize: 11, fontWeight: 600, fontFamily: 'inherit',
+                background: view === 'visual' ? '#10b981' : 'transparent',
+                color: view === 'visual' ? '#000' : '#6b7280',
+                transition: 'all 0.15s',
+              }}
+            >Visual</button>
+            <button
+              onClick={() => setView('explorer')}
+              style={{
+                padding: '4px 12px', borderRadius: 4, border: 'none', cursor: 'pointer',
+                fontSize: 11, fontWeight: 600, fontFamily: 'inherit',
+                background: view === 'explorer' ? '#10b981' : 'transparent',
+                color: view === 'explorer' ? '#000' : '#6b7280',
+                transition: 'all 0.15s',
+              }}
+            >Explorer</button>
+          </div>
         </div>
       </div>
 
