@@ -1447,5 +1447,358 @@
         "snippet": "\n        console.log('file upload completed', blob, tokenPayload);\n"
       }
     ]
+  },
+  {
+    "repo": "hapijs/hapi",
+    "url": "https://github.com/hapijs/hapi",
+    "totalFindings": 21,
+    "critical": 0,
+    "warning": 21,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "lib/cors.js",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "lib/cors.js",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "lib/types/server/options.d.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "lib/types/server/options.d.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "test/auth.js",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "test/auth.js",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "test/auth.js",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/core.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/core.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/core.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "feathersjs/feathers",
+    "url": "https://github.com/feathersjs/feathers",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/authentication-oauth/test/utils/fixture.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/authentication-oauth/test/utils.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/authentication-oauth/test/utils.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "facebook/react",
+    "url": "https://github.com/facebook/react",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "compiler/packages/babel-plugin-react-compiler/scripts/jest/makeTransform.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "pmndrs/drei",
+    "url": "https://github.com/pmndrs/drei",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/core/Cloud.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/core/Ktx2.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/core/MatcapTexture.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/core/MatcapTexture.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/core/NormalTexture.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/core/NormalTexture.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "TanStack/router",
+    "url": "https://github.com/TanStack/router",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/react-router/basepath-file-based/tests/scroll-restoration-session-storage-error.test.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "vuejs/router",
+    "url": "https://github.com/vuejs/router",
+    "totalFindings": 14,
+    "critical": 0,
+    "warning": 14,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/playground-file-based/src/router/resolver.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/router/e2e/guards-instances/index.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/router/e2e/multi-app/index.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/router/e2e/multi-app/index.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/router/e2e/transitions/index.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/router/src/experimental/data-loaders/defineColadaLoader.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/router/src/experimental/data-loaders/defineColadaLoader.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/router/src/experimental/data-loaders/defineColadaLoader.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/router/src/experimental/data-loaders/defineColadaLoader.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "packages/router/src/experimental/data-loaders/defineColadaLoader.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "nuxt/nuxt",
+    "url": "https://github.com/nuxt/nuxt",
+    "totalFindings": 5,
+    "critical": 0,
+    "warning": 5,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/nitro-server/src/runtime/utils/dev.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/nitro-server/src/runtime/utils/dev.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/nitro-server/src/runtime/utils/dev.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/nitro-server/src/runtime/utils/dev.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "packages/nitro-server/src/runtime/utils/dev.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "sveltejs/svelte",
+    "url": "https://github.com/sveltejs/svelte",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/svelte/src/constants.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/svelte/src/constants.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/svelte/src/constants.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
   }
 ]

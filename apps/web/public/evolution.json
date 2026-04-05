@@ -34,6 +34,20 @@
       "patternsLearned": 11,
       "suppressed": 5,
       "note": "Added koa, nestjs, vue, preact, solid, webpack. System stabilizing."
+    },
+    {
+      "reposScanned": 34,
+      "totalFindings": 31,
+      "patternsLearned": 12,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:09:25 AM"
+    },
+    {
+      "reposScanned": 39,
+      "totalFindings": 46,
+      "patternsLearned": 12,
+      "suppressed": 6,
+      "note": "Auto-scan batch at 2:09:37 AM"
     }
   ],
   "insights": [
@@ -64,12 +78,12 @@
     }
   ],
   "summary": {
-    "totalRepos": 29,
+    "totalRepos": 39,
     "totalFiles": 50418,
     "totalNodes": 164295,
-    "totalFindings": 400,
-    "patternsLearned": 11,
-    "patternsSuppressed": 5,
+    "totalFindings": 46,
+    "patternsLearned": 12,
+    "patternsSuppressed": 6,
     "falsePositiveReduction": "45%",
     "note": "Corpus reduces noise by 45% compared to a static scanner by learning which patterns are test-only."
   }
