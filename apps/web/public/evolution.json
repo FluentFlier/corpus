@@ -307,6 +307,104 @@
       "patternsLearned": 16,
       "suppressed": 1,
       "note": "Auto-scan batch at 2:59:38 AM"
+    },
+    {
+      "reposScanned": 219,
+      "totalFindings": 19,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:12:55 AM"
+    },
+    {
+      "reposScanned": 224,
+      "totalFindings": 26,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:12:59 AM"
+    },
+    {
+      "reposScanned": 229,
+      "totalFindings": 55,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:14:14 AM"
+    },
+    {
+      "reposScanned": 234,
+      "totalFindings": 64,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:14:25 AM"
+    },
+    {
+      "reposScanned": 239,
+      "totalFindings": 93,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:14:34 AM"
+    },
+    {
+      "reposScanned": 244,
+      "totalFindings": 104,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:12 AM"
+    },
+    {
+      "reposScanned": 249,
+      "totalFindings": 109,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:40 AM"
+    },
+    {
+      "reposScanned": 254,
+      "totalFindings": 110,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:42 AM"
+    },
+    {
+      "reposScanned": 259,
+      "totalFindings": 113,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:44 AM"
+    },
+    {
+      "reposScanned": 263,
+      "totalFindings": 125,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:47 AM"
+    },
+    {
+      "reposScanned": 268,
+      "totalFindings": 130,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:49 AM"
+    },
+    {
+      "reposScanned": 273,
+      "totalFindings": 161,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:52 AM"
+    },
+    {
+      "reposScanned": 278,
+      "totalFindings": 163,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:15:55 AM"
+    },
+    {
+      "reposScanned": 280,
+      "totalFindings": 163,
+      "patternsLearned": 16,
+      "suppressed": 1,
+      "note": "Auto-scan batch at 3:17:58 AM"
     }
   ],
   "insights": [
@@ -337,10 +435,10 @@
     }
   ],
   "summary": {
-    "totalRepos": 214,
+    "totalRepos": 280,
     "totalFiles": 50418,
     "totalNodes": 164295,
-    "totalFindings": 148,
+    "totalFindings": 163,
     "patternsLearned": 16,
     "patternsSuppressed": 1,
     "falsePositiveReduction": "45%",

@@ -6235,5 +6235,1219 @@
         "message": "console.log may be logging sensitive data."
       }
     ]
+  },
+  {
+    "repo": "microsoft/playwright",
+    "url": "https://github.com/microsoft/playwright",
+    "totalFindings": 11,
+    "critical": 3,
+    "warning": 8,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "browser_patches/firefox/juggler/SimpleChannel.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "browser_patches/firefox/juggler/TargetRegistry.js",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "browser_patches/firefox/juggler/content/Runtime.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "browser_patches/firefox/juggler/protocol/PageHandler.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/mock-battery/demo-battery-api/src/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/mock-battery/demo-battery-api/src/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/mock-battery/demo-battery-api/src/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/mock-battery/demo-battery-api/src/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "examples/mock-battery/demo-battery-api/src/index.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "packages/injected/src/clock.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      }
+    ]
+  },
+  {
+    "repo": "denoland/fresh",
+    "url": "https://github.com/denoland/fresh",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/fresh/src/app.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/fresh/src/app.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/fresh/src/dev/builder_test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "packages/fresh/src/middlewares/cors.ts",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "packages/fresh/src/middlewares/cors.ts",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/fresh/src/server/tailwind_aot_error_page.tsx",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "vercel/turborepo",
+    "url": "https://github.com/vercel/turborepo",
+    "totalFindings": 2,
+    "critical": 0,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "apps/agents/lib/audit.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "apps/docs/app/feed.xml/route.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "honojs/middleware",
+    "url": "https://github.com/honojs/middleware",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/auth-js/src/client.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Bearer Token",
+        "file": "packages/cloudflare-access/src/index.ts",
+        "line": 0,
+        "message": "Bearer token detected"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/firebase-auth/src/index.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/firebase-auth/src/index.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/mcp/src/auth/helpers/authorize.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/mcp/src/auth/helpers/utils.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/nitro",
+    "url": "https://github.com/unjs/nitro",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/vite-ssr-html/routes/quote.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "quasarframework/quasar",
+    "url": "https://github.com/quasarframework/quasar",
+    "totalFindings": 7,
+    "critical": 0,
+    "warning": 7,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "app-vite/lib/cmd/info.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "app-vite/lib/quasar-config-file.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "app-vite/lib/quasar-config-file.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "app-vite/lib/quasar-config-file.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "app-vite/lib/quasar-config-file.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "app-vite/lib/utils/banner.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "app-vite/lib/utils/banner.js",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "ionic-team/ionic-framework",
+    "url": "https://github.com/ionic-team/ionic-framework",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "core/scripts/testing/scripts.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "core/src/components/accordion/test/accordion.spec.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "core/src/components/accordion/test/accordion.spec.ts",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "capacitorjs/capacitor",
+    "url": "https://github.com/capacitorjs/capacitor",
+    "totalFindings": 17,
+    "critical": 6,
+    "warning": 11,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "extension/background/lib/background.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "extension/content/lib/content.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "extension/injected/lib/injected.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "extension/panel/lib/panel.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "expo/expo",
+    "url": "https://github.com/expo/expo",
+    "totalFindings": 2,
+    "critical": 0,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "apps/bare-expo/e2e/_nested-flows/compare-images-http.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "apps/bare-expo/e2e/image-comparison/src/server.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "shopify/hydrogen",
+    "url": "https://github.com/shopify/hydrogen",
+    "totalFindings": 6,
+    "critical": 0,
+    "warning": 6,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "cookbook/src/lib/render.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "cookbook/src/lib/render.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "e2e/fixtures/msw/handlers.ts",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "e2e/fixtures/msw/handlers.ts",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "e2e/fixtures/msw/handlers.ts",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "e2e/fixtures/server.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "shopify/cli",
+    "url": "https://github.com/shopify/cli",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "bin/github-utils.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "bin/github-utils.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Generic API Key Assignment",
+        "file": "bin/update-bugsnag.js",
+        "line": 0,
+        "message": "Possible API key or secret in assignment"
+      }
+    ]
+  },
+  {
+    "repo": "tursodatabase/libsql-client-ts",
+    "url": "https://github.com/tursodatabase/libsql-client-ts",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "packages/libsql-core/src/util.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "cloudflare/workers-sdk",
+    "url": "https://github.com/cloudflare/workers-sdk",
+    "totalFindings": 6,
+    "critical": 2,
+    "warning": 4,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "fixtures/browser-rendering/src/puppeteer.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "fixtures/browser-rendering/src/puppeteer.ts",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "fixtures/get-platform-proxy/tests/get-platform-proxy.env.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "fixtures/no-bundle-import/src/index.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "fixtures/nodejs-hybrid-app/tests/index.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "fixtures/nodejs-hybrid-app/tests/index.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "cloudflare/miniflare",
+    "url": "https://github.com/cloudflare/miniflare",
+    "totalFindings": 22,
+    "critical": 4,
+    "warning": 18,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Generic API Key Assignment",
+        "file": "docs/docs-config.js",
+        "line": 0,
+        "message": "Possible API key or secret in assignment"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/core/test/standards/http.spec.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/core/test/standards/http.spec.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/core/test/standards/http.spec.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/d1/src/api.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/d1/src/api.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/d1/src/api.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "packages/d1/src/api.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/http-server/src/index.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/http-server/src/index.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "date-fns/date-fns",
+    "url": "https://github.com/date-fns/date-fns",
+    "totalFindings": 5,
+    "critical": 5,
+    "warning": 0,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "examples/cdn/basic.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "examples/cdn/fp.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "examples/cdn/locale.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "examples/cdn/locales.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "examples/cdn/locales.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      }
+    ]
+  },
+  {
+    "repo": "moment/luxon",
+    "url": "https://github.com/moment/luxon",
+    "totalFindings": 2,
+    "critical": 1,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "site/demo/demo.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "WARNING",
+        "type": "innerHTML_assignment",
+        "file": "site/demo/demo.js",
+        "line": 0,
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      }
+    ]
+  },
+  {
+    "repo": "axios/axios",
+    "url": "https://github.com/axios/axios",
+    "totalFindings": 4,
+    "critical": 0,
+    "warning": 4,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "disabled_auth",
+        "file": "lib/adapters/http.js",
+        "line": 0,
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "sandbox/client.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "scripts/axios-build-instance.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "tests/module/cjs/tests/helpers/cjs-typing.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "elysiajs/eden",
+    "url": "https://github.com/elysiajs/eden",
+    "totalFindings": 2,
+    "critical": 0,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/treaty2/index.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/treaty2/index.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "hattipjs/hattip",
+    "url": "https://github.com/hattipjs/hattip",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/adapter/adapter-bun/src/index.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/adapter/adapter-cloudflare-workers/src/index.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "packages/adapter/adapter-cloudflare-workers/src/no-static.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/defu",
+    "url": "https://github.com/unjs/defu",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/defu.test.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/giget",
+    "url": "https://github.com/unjs/giget",
+    "totalFindings": 2,
+    "critical": 0,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/registry.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "src/registry.ts",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      }
+    ]
+  },
+  {
+    "repo": "unjs/c12",
+    "url": "https://github.com/unjs/c12",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/loader.test.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/jiti",
+    "url": "https://github.com/unjs/jiti",
+    "totalFindings": 3,
+    "critical": 0,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/fixtures/env/index.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/fixtures/env/index.js",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/fixtures/typescript/decorators.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/listhen",
+    "url": "https://github.com/unjs/listhen",
+    "totalFindings": 9,
+    "critical": 0,
+    "warning": 9,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/_cert.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/_cert.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/_utils.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/_utils.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/cert.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/cert.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/cert.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/cert.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/index.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/unenv",
+    "url": "https://github.com/unjs/unenv",
+    "totalFindings": 1,
+    "critical": 0,
+    "warning": 1,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "src/runtime/node/internal/dgram/socket.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/unstorage",
+    "url": "https://github.com/unjs/unstorage",
+    "totalFindings": 4,
+    "critical": 1,
+    "warning": 3,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "exec_usage",
+        "file": "test/drivers/deno-kv.test.ts",
+        "line": 0,
+        "message": "Shell command built with dynamic input. Command injection risk."
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/drivers/deno-kv.test.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/drivers/http.test.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "severity": "WARNING",
+        "type": "console_log_sensitive",
+        "file": "test/drivers/http.test.ts",
+        "line": 0,
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  },
+  {
+    "repo": "unjs/h3",
+    "url": "https://github.com/unjs/h3",
+    "totalFindings": 20,
+    "critical": 0,
+    "warning": 20,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "src/utils/cors.ts",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "src/utils/internal/cors.ts",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "WARNING",
+        "type": "Wildcard CORS",
+        "file": "src/utils/internal/cors.ts",
+        "line": 0,
+        "message": "CORS set to wildcard (*). AI defaults to permissive CORS to avoid errors during development."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/app.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/auth.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/auth.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/auth.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/middleware.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/mount.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "severity": "WARNING",
+        "type": "debug_endpoint",
+        "file": "test/router.test.ts",
+        "line": 0,
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      }
+    ]
+  },
+  {
+    "repo": "vercel/ncc",
+    "url": "https://github.com/vercel/ncc",
+    "totalFindings": 11,
+    "critical": 11,
+    "warning": 0,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/cli.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/cli.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      },
+      {
+        "severity": "CRITICAL",
+        "type": "eval_usage",
+        "file": "src/index.js",
+        "line": 0,
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      }
+    ]
+  },
+  {
+    "repo": "vercel/micro",
+    "url": "https://github.com/vercel/micro",
+    "totalFindings": 2,
+    "critical": 0,
+    "warning": 2,
+    "info": 0,
+    "findings": [
+      {
+        "severity": "WARNING",
+        "type": "Inlined Environment Variable",
+        "file": "examples/with-graphql-request/index.js",
+        "line": 0,
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools of"
+      },
+      {
+        "severity": "INFO",
+        "type": "hardcoded_ip",
+        "file": "test/suite/parse-endpoint.ts",
+        "line": 0,
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      }
+    ]
   }
 ]
