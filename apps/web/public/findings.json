@@ -1,0 +1,320 @@
+[
+  {
+    "repo": "trpc/trpc",
+    "filesScanned": 907,
+    "findings": 8,
+    "details": [
+      {
+        "file": "examples/bun/src/client.ts",
+        "type": "Inlined Environment Variable",
+        "severity": "WARNING",
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "isAiPattern": true
+      },
+      {
+        "file": "examples/cloudflare-workers/src/client.ts",
+        "type": "Inlined Environment Variable",
+        "severity": "WARNING",
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "isAiPattern": true
+      },
+      {
+        "file": "examples/deno-deploy/src/client.ts",
+        "type": "Inlined Environment Variable",
+        "severity": "WARNING",
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "isAiPattern": true
+      },
+      {
+        "file": "examples/next-prisma-websockets-starter/src/pages/api/auth/[...nextauth].ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "examples/next-sse-chat/src/server/auth.tsx",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "examples/next-websockets-encoder/src/utils/trpc.ts",
+        "type": "Inlined Environment Variable",
+        "severity": "WARNING",
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "isAiPattern": true
+      },
+      {
+        "file": "examples/vercel-edge-runtime/src/client.ts",
+        "type": "Inlined Environment Variable",
+        "severity": "WARNING",
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "isAiPattern": true
+      },
+      {
+        "file": "packages/next/test/issue-4130-ssr-different-transformers.test.tsx",
+        "type": "eval_usage",
+        "severity": "CRITICAL",
+        "message": "eval() usage detected. This enables arbitrary code execution."
+      }
+    ]
+  },
+  {
+    "repo": "honojs/hono",
+    "filesScanned": 366,
+    "findings": 60,
+    "details": [
+      {
+        "file": "runtime-tests/lambda/index.test.ts",
+        "type": "disabled_auth",
+        "severity": "WARNING",
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "file": "runtime-tests/lambda/stream.test.ts",
+        "type": "disabled_auth",
+        "severity": "WARNING",
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "file": "runtime-tests/node/index.test.ts",
+        "type": "hardcoded_ip",
+        "severity": "INFO",
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "file": "src/adapter/aws-lambda/conninfo.test.ts",
+        "type": "disabled_auth",
+        "severity": "WARNING",
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "file": "src/adapter/aws-lambda/handler.test.ts",
+        "type": "disabled_auth",
+        "severity": "WARNING",
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "file": "src/adapter/aws-lambda/types.ts",
+        "type": "disabled_auth",
+        "severity": "WARNING",
+        "message": "Authentication appears to be disabled."
+      },
+      {
+        "file": "src/adapter/lambda-edge/handler.test.ts",
+        "type": "debug_endpoint",
+        "severity": "WARNING",
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "file": "src/adapter/lambda-edge/handler.test.ts",
+        "type": "debug_endpoint",
+        "severity": "WARNING",
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "file": "src/adapter/lambda-edge/handler.test.ts",
+        "type": "debug_endpoint",
+        "severity": "WARNING",
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "file": "src/helper/proxy/index.ts",
+        "type": "hardcoded_ip",
+        "severity": "INFO",
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "file": "src/helper/proxy/index.ts",
+        "type": "hardcoded_ip",
+        "severity": "INFO",
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "file": "src/helper/proxy/index.ts",
+        "type": "debug_endpoint",
+        "severity": "WARNING",
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      },
+      {
+        "file": "src/helper/ssg/ssg.ts",
+        "type": "Inlined Environment Variable",
+        "severity": "WARNING",
+        "message": "URL with credentials hardcoded in code instead of read from environment variable. AI coding tools often inline values instead of referencing process.env.",
+        "isAiPattern": true
+      },
+      {
+        "file": "src/jsx/dom/index.test.tsx",
+        "type": "innerHTML_assignment",
+        "severity": "WARNING",
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "file": "src/jsx/dom/intrinsic-element/components.test.tsx",
+        "type": "innerHTML_assignment",
+        "severity": "WARNING",
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "file": "src/jsx/dom/intrinsic-element/components.test.tsx",
+        "type": "innerHTML_assignment",
+        "severity": "WARNING",
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "file": "src/jsx/dom/intrinsic-element/components.ts",
+        "type": "innerHTML_assignment",
+        "severity": "WARNING",
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "file": "src/jsx/dom/render.ts",
+        "type": "innerHTML_assignment",
+        "severity": "WARNING",
+        "message": "Direct innerHTML assignment. Risk of XSS if content is user-controlled."
+      },
+      {
+        "file": "src/middleware/basic-auth/index.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "src/middleware/body-limit/index.test.ts",
+        "type": "debug_endpoint",
+        "severity": "WARNING",
+        "message": "Debug/admin endpoint detected. May be accessible in production."
+      }
+    ]
+  },
+  {
+    "repo": "drizzle-team/drizzle-orm",
+    "filesScanned": 941,
+    "findings": 37,
+    "details": [
+      {
+        "file": "drizzle-kit/src/api.ts",
+        "type": "hardcoded_ip",
+        "severity": "INFO",
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "file": "drizzle-kit/src/api.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/commands/mysqlPushUtils.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/commands/mysqlPushUtils.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/commands/singlestorePushUtils.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/commands/singlestorePushUtils.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/commands/utils.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/commands/utils.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/connections.ts",
+        "type": "Disabled SSL Verification",
+        "severity": "INFO",
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
+        "isAiPattern": true
+      },
+      {
+        "file": "drizzle-kit/src/cli/connections.ts",
+        "type": "Disabled SSL Verification",
+        "severity": "INFO",
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
+        "isAiPattern": true
+      },
+      {
+        "file": "drizzle-kit/src/cli/connections.ts",
+        "type": "Disabled SSL Verification",
+        "severity": "INFO",
+        "message": "SSL verification disabled. AI adds this to \"make it work\" during development but it should not ship to production.",
+        "isAiPattern": true
+      },
+      {
+        "file": "drizzle-kit/src/cli/schema.ts",
+        "type": "hardcoded_ip",
+        "severity": "INFO",
+        "message": "Hardcoded IP address. May bind to all interfaces (0.0.0.0) in production."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/gel.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/libsql.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/mysql.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/postgres.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/postgres.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/postgres.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/singlestore.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      },
+      {
+        "file": "drizzle-kit/src/cli/validations/sqlite.ts",
+        "type": "console_log_sensitive",
+        "severity": "WARNING",
+        "message": "console.log may be logging sensitive data."
+      }
+    ]
+  }
+]

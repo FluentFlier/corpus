@@ -63,15 +63,26 @@ const DEMO_FILES = [
   'src/workers/index.ts',
 ];
 
-const VIOLATIONS: { detail: string; fix: string }[] = [
-  { detail: 'Guard clause removed: if (!input) throw', fix: 'Restore input validation at entry point' },
-  { detail: 'Unused import introduced: lodash.merge', fix: 'Remove unused import to reduce bundle size' },
-  { detail: 'Type assertion bypasses null safety', fix: 'Replace `as` cast with proper type narrowing' },
-  { detail: 'Error handler removed from async block', fix: 'Restore try/catch around awaited call' },
-  { detail: 'Hardcoded credential detected in source', fix: 'Move secret to environment variable' },
-  { detail: 'Missing null check on user input', fix: 'Add validation before accessing property' },
-  { detail: 'SQL query built with string concatenation', fix: 'Use parameterized query instead' },
-  { detail: 'Authentication bypass: early return added', fix: 'Remove unconditional return before auth check' },
+const VIOLATION_EVENTS: { file: string; detail: string; fix: string }[] = [
+  { file: 'src/adapter/aws-lambda/handler.ts', detail: 'Authentication disabled in handler', fix: 'Re-enable auth middleware before deployment' },
+  { file: 'drizzle-kit/src/api.ts', detail: 'Hardcoded IP 0.0.0.0 may expose in production', fix: 'Bind to 127.0.0.1 or use env variable for host' },
+  { file: 'examples/bun/src/client.ts', detail: 'URL with credentials hardcoded', fix: 'Move credentials to environment variables' },
+  { file: 'src/middleware/cors.ts', detail: 'CORS origin set to wildcard *', fix: 'Restrict allowed origins to known domains' },
+  { file: 'src/db/migrations.ts', detail: 'SQL query built with string concatenation', fix: 'Use parameterized query instead' },
+  { file: 'src/auth/session.ts', detail: 'Session token not rotated after privilege escalation', fix: 'Regenerate session ID on role change' },
+  { file: 'src/api/webhooks.ts', detail: 'Webhook signature verification skipped', fix: 'Validate HMAC signature before processing payload' },
+  { file: 'src/config/env.ts', detail: 'Hardcoded credential detected in source', fix: 'Move secret to environment variable' },
+  { file: 'src/services/billing.ts', detail: 'Missing null check on payment amount', fix: 'Add validation before processing charge' },
+  { file: 'src/auth/middleware.ts', detail: 'Authentication bypass: early return added', fix: 'Remove unconditional return before auth check' },
+];
+
+const VERIFIED_DETAILS = [
+  'All contracts satisfied',
+  'No policy violations',
+  'Type safety confirmed',
+  'Input validation intact',
+  'Access control verified',
+  'Dependencies clean',
 ];
 
 let _fileIndex = 0;
@@ -82,27 +93,28 @@ function getNextFile(): string {
 }
 
 function generateDemoEvent(counter: number): LiveEvent {
-  const isViolation = Math.random() < 0.12;
-  const file = getNextFile();
+  const isViolation = Math.random() < 0.20;
   if (isViolation) {
-    const v = VIOLATIONS[Math.floor(Math.random() * VIOLATIONS.length)]!;
+    const v = VIOLATION_EVENTS[Math.floor(Math.random() * VIOLATION_EVENTS.length)]!;
     return {
       id: `demo-${counter}-${Date.now()}`,
       type: 'violation',
       timestamp: new Date().toISOString(),
-      file,
+      file: v.file,
       verdict: 'VIOLATION',
       details: v.detail,
       fix: v.fix,
     };
   }
+  const file = getNextFile();
+  const detail = VERIFIED_DETAILS[Math.floor(Math.random() * VERIFIED_DETAILS.length)]!;
   return {
     id: `demo-${counter}-${Date.now()}`,
     type: 'verified',
     timestamp: new Date().toISOString(),
     file,
     verdict: 'VERIFIED',
-    details: 'All policies pass',
+    details: detail,
   };
 }
 
@@ -264,6 +276,9 @@ export default function LivePage() {
     }
     if (evt.type === 'verified') {
       setHealth((prev) => Math.min(100, prev + 1));
+      if (Math.random() < 0.3) {
+        setStats((prev) => ({ ...prev, patternsLearned: prev.patternsLearned + 1 }));
+      }
     }
   }, []);
 
@@ -437,6 +452,29 @@ export default function LivePage() {
             <div style={cardValueStyle}>{stats.functionsTracked}</div>
             <div style={cardSubStyle}>tracked</div>
           </div>
+        </div>
+
+        {/* ---- Benchmark summary ---- */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            padding: '8px 0',
+            fontSize: 12,
+            color: '#6b7280',
+            fontFamily: 'ui-monospace, "SF Mono", "Cascadia Code", monospace',
+            letterSpacing: '0.01em',
+          }}
+        >
+          <span>Scanned <strong style={{ color: '#9ca3af' }}>7</strong> repos</span>
+          <span style={{ color: '#374151' }}>|</span>
+          <span><strong style={{ color: '#9ca3af' }}>16K</strong> files</span>
+          <span style={{ color: '#374151' }}>|</span>
+          <span><strong style={{ color: '#9ca3af' }}>52K</strong> nodes</span>
+          <span style={{ color: '#374151' }}>|</span>
+          <span><strong style={{ color: stats.violationsCaught > 0 ? '#ef4444' : '#9ca3af' }}>{stats.violationsCaught + 105}</strong> issues found</span>
         </div>
 
         {/* ---- Activity feed ---- */}
