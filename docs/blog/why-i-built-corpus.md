@@ -138,6 +138,16 @@ The bar I'm building toward is simple and high: *"I can't vibe code without this
 
 ---
 
+## How I ended up at JacHacks
+
+I want to say where Corpus actually came from, because it wasn't a roadmap or a market analysis. It was a dinner.
+
+I got the chance to sit down with Lingjia Tang and Jason Mars — the two people behind Jaseci and the Jac language — and we spent the evening talking about AI: where it's heading, what it quietly breaks on the way there, and what it means to build infrastructure for a world where machines write most of the code. They're the reason I was at JacHacks 2026 at all; they opened the door and gave me the opportunity to be in the room. That conversation is also why Corpus's policy layer is written in Jac. When you've talked with the people who built a language about *why* deterministic graph traversal matters, reaching for it stops being a checkbox and becomes a conviction.
+
+But the part of a hackathon that actually keeps you up for the full stretch is the people next to you, and I got lucky with mine — **Ponita Ty, Edward Lee, Vatsal Shah, Noah Liu, and Shaurya Singh.** We swapped ideas at 3am, broke each other's demos, and talked each other off the ledge when something that worked an hour ago suddenly didn't. Corpus is the artifact I walked out with. The dinner and those friendships are the reason it's any good.
+
+---
+
 ## Try it
 
 ```bash
@@ -157,6 +167,6 @@ Or wire it directly into Claude Code or Cursor via MCP:
 }
 ```
 
-Corpus was built at JacHacks 2026. The thesis is that the answer to AI writing more of our code isn't to write less of it — it's to build the immune system that lets us trust it. AI writes the code; Corpus makes sure it's safe to keep.
+That's Corpus. The thesis is that the answer to AI writing more of our code isn't to write less of it — it's to build the immune system that lets us trust it. AI writes the code; Corpus makes sure it's safe to keep.
 
 *The immune system never sleeps.*
